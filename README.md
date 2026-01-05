@@ -2,6 +2,8 @@
 
 A collection of skills for [Claude.ai](https://claude.ai) and [Claude Code](https://claude.com/claude-code) for working with Vercel deployments.
 
+Skills follow the [Agent Skills](https://agentskills.io/) format.
+
 ## Available Skills
 
 ### vercel-deploy
