@@ -114,8 +114,6 @@ Follow the [Codex skills guide](https://developers.openai.com/codex/skills/) and
 ```bash
 # from the repo root
 # defaults to ~/.codex if CODEX_HOME is unset
-export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-mkdir -p "$CODEX_HOME/skills"
 cp -r skills/vercel-deploy "$CODEX_HOME/skills/"
 ```
 
