@@ -71,8 +71,6 @@ Follow the [Codex skills guide](https://developers.openai.com/codex/skills/) and
 ```bash
 # from the repo root
 # defaults to ~/.codex if CODEX_HOME is unset
-export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-mkdir -p "$CODEX_HOME/skills"
 cp -r skills/vercel-deploy "$CODEX_HOME/skills/"
 ```
 
@@ -108,6 +106,30 @@ For network-dependent skills (like vercel-deploy-claimable), you may need to all
 
 1. Go to [claude.ai/admin-settings/capabilities](https://claude.ai/admin-settings/capabilities)
 2. Add required domains (e.g., `*.vercel.com`)
+
+### Codex
+
+Follow the [Codex skills guide](https://developers.openai.com/codex/skills/) and place the skill under `$CODEX_HOME/skills`:
+
+```bash
+# from the repo root
+# defaults to ~/.codex if CODEX_HOME is unset
+export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+mkdir -p "$CODEX_HOME/skills"
+cp -r skills/vercel-deploy "$CODEX_HOME/skills/"
+```
+
+Codex will auto-discover `SKILL.md` files in that directory on the next start.
+
+### OpenCode
+
+Copy the desired skill folder to your skills directory:
+
+```bash
+cp -r skills/vercel-deploy ~/.claude/skills/
+```
+
+OpenCode discovers skills from `~/.claude/skills/<name>/SKILL.md` automatically. See [OpenCode Skills docs](https://opencode.ai/docs/skills/) for more details.
 
 ## Usage
 
