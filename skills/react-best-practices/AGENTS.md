@@ -429,7 +429,7 @@ function AnimationPlayer({ enabled, setEnabled }: { enabled: boolean; setEnabled
         .then(mod => setFrames(mod.frames))
         .catch(() => setEnabled(false))
     }
-  }, [enabled, frames])
+  }, [enabled, frames, setEnabled])
 
   if (!frames) return <Skeleton />
   return <Canvas frames={frames} />
@@ -1235,7 +1235,7 @@ Subscribe to derived boolean state instead of continuous values to reduce re-ren
 function Sidebar() {
   const width = useWindowWidth()  // updates continuously
   const isMobile = width < 768
-  return <nav className={isMobile ? 'mobile' : 'desktop'}>
+  return <nav className={isMobile ? 'mobile' : 'desktop'} />
 }
 ```
 
@@ -1244,7 +1244,7 @@ function Sidebar() {
 ```tsx
 function Sidebar() {
   const isMobile = useMediaQuery('(max-width: 767px)')
-  return <nav className={isMobile ? 'mobile' : 'desktop'}>
+  return <nav className={isMobile ? 'mobile' : 'desktop'} />
 }
 ```
 
