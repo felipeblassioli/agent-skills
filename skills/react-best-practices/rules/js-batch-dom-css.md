@@ -1,19 +1,18 @@
 ---
-title: Batch DOM CSS Changes
+title: Avoid Layout Thrashing
 impact: MEDIUM
-impactDescription: reduces reflows/repaints
-tags: javascript, dom, css, performance, reflow
+impactDescription: prevents forced synchronous layouts and reduces performance bottlenecks
+tags: javascript, dom, css, performance, reflow, layout-thrashing
 ---
 
-## Batch DOM CSS Changes
+## Avoid Layout Thrashing
 
-Avoid changing styles one property at a time. Group multiple CSS changes together via classes or `cssText` to minimize browser reflows.
+Avoid interleaving style changes with layout queries. Browsers batch style recalculations automatically, but certain methods/properties force immediate layout computation, causing performance issues.
 
-**Incorrect (multiple reflows):**
-
+**This is OK (browser batches style changes):**
 ```typescript
 function updateElementStyles(element: HTMLElement) {
-  // Each line triggers a reflow
+  // Each line invalidates style, but browser batches the recalculation
   element.style.width = '100px'
   element.style.height = '200px'
   element.style.backgroundColor = 'blue'
@@ -21,8 +20,35 @@ function updateElementStyles(element: HTMLElement) {
 }
 ```
 
-**Correct (add class - single reflow):**
+**Incorrect (forces multiple layout recalculations):**
+```typescript
+function layoutThrashing(element: HTMLElement) {
+  // Invalidates style
+  element.style.width = '100px'
+  // Forces immediate layout recalculation
+  const rect1 = element.getBoundingClientRect()
+  
+  // Invalidates style again
+  element.style.height = '200px'
+  // Forces another layout recalculation
+  const rect2 = element.getBoundingClientRect()
+}
+```
 
+**Correct (batch reads, then writes):**
+```typescript
+function avoidThrashing(element: HTMLElement) {
+  // Read phase - all layout queries first
+  const rect1 = element.getBoundingClientRect()
+  const rect2 = element.getBoundingClientRect()
+  
+  // Write phase - all style changes after
+  element.style.width = '100px'
+  element.style.height = '200px'
+}
+```
+
+**Correct (add class - single reflow):**
 ```typescript
 // CSS file
 .highlighted-box {
@@ -31,7 +57,6 @@ function updateElementStyles(element: HTMLElement) {
   background-color: blue;
   border: 1px solid black;
 }
-
 // JavaScript
 function updateElementStyles(element: HTMLElement) {
   element.classList.add('highlighted-box')
@@ -39,7 +64,6 @@ function updateElementStyles(element: HTMLElement) {
 ```
 
 **Correct (change cssText - single reflow):**
-
 ```typescript
 function updateElementStyles(element: HTMLElement) {
   element.style.cssText = `
@@ -52,17 +76,16 @@ function updateElementStyles(element: HTMLElement) {
 ```
 
 **React example:**
-
 ```tsx
-// Incorrect: changing styles one by one
+// Incorrect: interleaving style changes with layout queries
 function Box({ isHighlighted }: { isHighlighted: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   
   useEffect(() => {
     if (ref.current && isHighlighted) {
       ref.current.style.width = '100px'
+      const width = ref.current.offsetWidth // Forces layout
       ref.current.style.height = '200px'
-      ref.current.style.backgroundColor = 'blue'
     }
   }, [isHighlighted])
   
@@ -80,3 +103,5 @@ function Box({ isHighlighted }: { isHighlighted: boolean }) {
 ```
 
 Prefer CSS classes over inline styles when possible. Classes are cached by the browser and provide better separation of concerns.
+
+See [this gist](https://gist.github.com/paulirish/5d52fb081b3570c81e3a) and [CSS Triggers](https://csstriggers.com/) for more information on layout-forcing operations.
