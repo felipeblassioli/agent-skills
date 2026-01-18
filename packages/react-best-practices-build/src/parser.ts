@@ -3,6 +3,7 @@
  */
 
 import { readFile } from 'fs/promises'
+import { basename } from 'path'
 import { Rule, ImpactLevel } from './types.js'
 
 export interface RuleFile {
@@ -15,7 +16,9 @@ export interface RuleFile {
  * Parse a rule markdown file into a Rule object
  */
 export async function parseRuleFile(filePath: string): Promise<RuleFile> {
-  const content = await readFile(filePath, 'utf-8')
+  const rawContent = await readFile(filePath, 'utf-8')
+  // Normalize Windows CRLF line endings to LF for consistent parsing
+  const content = rawContent.replace(/\r\n/g, '\n')
   const lines = content.split('\n')
 
   // Extract frontmatter if present
@@ -194,7 +197,7 @@ export async function parseRuleFile(filePath: string): Promise<RuleFile> {
 
   // Infer section from filename patterns
   // Pattern: area-description.md where area determines section
-  const filename = filePath.split('/').pop() || ''
+  const filename = basename(filePath)
   const sectionMap: Record<string, number> = {
     async: 1,
     bundle: 2,
