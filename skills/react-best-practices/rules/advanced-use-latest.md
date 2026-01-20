@@ -25,8 +25,6 @@ function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
 }
 ```
 
-**Note:** `useEffectEvent` is currently experimental. See the [React documentation](https://react.dev/reference/react/useEffectEvent) for the latest status and usage guidelines.
-
 **Incorrect (effect re-runs on every callback change):**
 
 ```tsx
