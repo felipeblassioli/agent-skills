@@ -49,7 +49,8 @@ function updateElementStyles(element: HTMLElement) {
 function avoidThrashing(element: HTMLElement) {
   // Read phase - all layout queries first
   const rect1 = element.getBoundingClientRect()
-  const rect2 = element.getBoundingClientRect()
+  const offsetWidth = element.offsetWidth
+  const offsetHeight = element.offsetHeight
   
   // Write phase - all style changes after
   element.style.width = '100px'
