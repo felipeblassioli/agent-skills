@@ -1,25 +1,31 @@
 ---
-title: useLatest for Stable Callback Refs
+title: useEffectEvent for Stable Callback Refs
 impact: LOW
 impactDescription: prevents effect re-runs
-tags: advanced, hooks, useLatest, refs, optimization
+tags: advanced, hooks, useEffectEvent, refs, optimization
 ---
 
-## useLatest for Stable Callback Refs
+## useEffectEvent for Stable Callback Refs
 
 Access latest values in callbacks without adding them to dependency arrays. Prevents effect re-runs while avoiding stale closures.
 
-**Implementation:**
+**Recommended approach (using React's useEffectEvent):**
 
-```typescript
-function useLatest<T>(value: T) {
-  const ref = useRef(value)
-  useLayoutEffect(() => {
-    ref.current = value
-  }, [value])
-  return ref
+```tsx
+import { useEffectEvent } from 'react';
+
+function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
+  const [query, setQuery] = useState('')
+  const onSearchEvent = useEffectEvent(onSearch)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => onSearchEvent(query), 300)
+    return () => clearTimeout(timeout)
+  }, [query])
 }
 ```
+
+**Note:** `useEffectEvent` is currently experimental. See the [React documentation](https://react.dev/reference/react/useEffectEvent) for the latest status and usage guidelines.
 
 **Incorrect (effect re-runs on every callback change):**
 
@@ -34,9 +40,20 @@ function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
 }
 ```
 
-**Correct (stable effect, fresh callback):**
+**Alternative (custom useLatest hook):**
 
-```tsx
+If `useEffectEvent` is not available in your React version, you can use a custom hook:
+
+```typescript
+function useLatest<T>(value: T) {
+  const ref = useRef(value)
+  useLayoutEffect(() => {
+    ref.current = value
+  }, [value])
+  return ref
+}
+
+// Usage:
 function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
   const [query, setQuery] = useState('')
   const onSearchRef = useLatest(onSearch)
