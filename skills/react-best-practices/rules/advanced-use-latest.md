@@ -9,7 +9,20 @@ tags: advanced, hooks, useEffectEvent, refs, optimization
 
 Access latest values in callbacks without adding them to dependency arrays. Prevents effect re-runs while avoiding stale closures.
 
-**Recommended approach (using React's useEffectEvent):**
+**Incorrect (effect re-runs on every callback change):**
+
+```tsx
+function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
+  const [query, setQuery] = useState('')
+
+  useEffect(() => {
+    const timeout = setTimeout(() => onSearch(query), 300)
+    return () => clearTimeout(timeout)
+  }, [query, onSearch])
+}
+```
+
+**Correct (using React's useEffectEvent):**
 
 ```tsx
 import { useEffectEvent } from 'react';
@@ -22,18 +35,5 @@ function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
     const timeout = setTimeout(() => onSearchEvent(query), 300)
     return () => clearTimeout(timeout)
   }, [query])
-}
-```
-
-**Incorrect (effect re-runs on every callback change):**
-
-```tsx
-function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
-  const [query, setQuery] = useState('')
-
-  useEffect(() => {
-    const timeout = setTimeout(() => onSearch(query), 300)
-    return () => clearTimeout(timeout)
-  }, [query, onSearch])
 }
 ```
