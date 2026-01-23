@@ -17,6 +17,22 @@
   },
   {
     "ruleId": "",
+    "ruleTitle": "Initialize App Once, Not Per Mount",
+    "type": "bad",
+    "code": "function Comp() {\n  useEffect(() => {\n    loadFromStorage()\n    checkAuthToken()\n  }, [])\n\n  // ...\n}",
+    "language": "tsx",
+    "description": "runs twice in dev, re-runs on remount"
+  },
+  {
+    "ruleId": "",
+    "ruleTitle": "Initialize App Once, Not Per Mount",
+    "type": "good",
+    "code": "let didInit = false\n\nfunction Comp() {\n  useEffect(() => {\n    if (didInit) return\n    didInit = true\n    loadFromStorage()\n    checkAuthToken()\n  }, [])\n\n  // ...\n}",
+    "language": "tsx",
+    "description": "once per app load"
+  },
+  {
+    "ruleId": "",
     "ruleTitle": "useEffectEvent for Stable Callback Refs",
     "type": "bad",
     "code": "function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {\n  const [query, setQuery] = useState('')\n\n  useEffect(() => {\n    const timeout = setTimeout(() => onSearch(query), 300)\n    return () => clearTimeout(timeout)\n  }, [query, onSearch])\n}",
@@ -505,6 +521,22 @@
   },
   {
     "ruleId": "",
+    "ruleTitle": "Suppress Expected Hydration Mismatches",
+    "type": "bad",
+    "code": "function Timestamp() {\n  return <span>{new Date().toLocaleString()}</span>\n}",
+    "language": "tsx",
+    "description": "known mismatch warnings"
+  },
+  {
+    "ruleId": "",
+    "ruleTitle": "Suppress Expected Hydration Mismatches",
+    "type": "good",
+    "code": "function Timestamp() {\n  return (\n    <span suppressHydrationWarning>\n      {new Date().toLocaleString()}\n    </span>\n  )\n}",
+    "language": "tsx",
+    "description": "suppress expected mismatch only"
+  },
+  {
+    "ruleId": "",
     "ruleTitle": "Optimize SVG Precision",
     "type": "bad",
     "code": "<path d=\"M 10.293847 20.847362 L 30.938472 40.192837\" />",
@@ -566,6 +598,22 @@
     "code": "useEffect(() => {\n  console.log(user.id)\n}, [user.id])",
     "language": "tsx",
     "description": "re-runs only when id changes"
+  },
+  {
+    "ruleId": "",
+    "ruleTitle": "Calculate Derived State During Rendering",
+    "type": "bad",
+    "code": "function Form() {\n  const [firstName, setFirstName] = useState('First')\n  const [lastName, setLastName] = useState('Last')\n  const [fullName, setFullName] = useState('')\n\n  useEffect(() => {\n    setFullName(firstName + ' ' + lastName)\n  }, [firstName, lastName])\n\n  return <p>{fullName}</p>\n}",
+    "language": "tsx",
+    "description": "redundant state and effect"
+  },
+  {
+    "ruleId": "",
+    "ruleTitle": "Calculate Derived State During Rendering",
+    "type": "good",
+    "code": "function Form() {\n  const [firstName, setFirstName] = useState('First')\n  const [lastName, setLastName] = useState('Last')\n  const fullName = firstName + ' ' + lastName\n\n  return <p>{fullName}</p>\n}",
+    "language": "tsx",
+    "description": "derive during render"
   },
   {
     "ruleId": "",
@@ -649,6 +697,22 @@
   },
   {
     "ruleId": "",
+    "ruleTitle": "Put Interaction Logic in Event Handlers",
+    "type": "bad",
+    "code": "function Form() {\n  const [submitted, setSubmitted] = useState(false)\n  const theme = useContext(ThemeContext)\n\n  useEffect(() => {\n    if (submitted) {\n      post('/api/register')\n      showToast('Registered', theme)\n    }\n  }, [submitted, theme])\n\n  return <button onClick={() => setSubmitted(true)}>Submit</button>\n}",
+    "language": "tsx",
+    "description": "event modeled as state + effect"
+  },
+  {
+    "ruleId": "",
+    "ruleTitle": "Put Interaction Logic in Event Handlers",
+    "type": "good",
+    "code": "function Form() {\n  const theme = useContext(ThemeContext)\n\n  function handleSubmit() {\n    post('/api/register')\n    showToast('Registered', theme)\n  }\n\n  return <button onClick={handleSubmit}>Submit</button>\n}",
+    "language": "tsx",
+    "description": "do it in the handler"
+  },
+  {
+    "ruleId": "",
     "ruleTitle": "Do not wrap a simple expression with a primitive result type in useMemo",
     "type": "bad",
     "code": "function Header({ user, notifications }: Props) {\n  const isLoading = useMemo(() => {\n    return user.isLoading || notifications.isLoading\n  }, [user.isLoading, notifications.isLoading])\n\n  if (isLoading) return <Skeleton />\n  // return some markup\n}",
@@ -678,6 +742,22 @@
     "code": "import { startTransition } from 'react'\n\nfunction ScrollTracker() {\n  const [scrollY, setScrollY] = useState(0)\n  useEffect(() => {\n    const handler = () => {\n      startTransition(() => setScrollY(window.scrollY))\n    }\n    window.addEventListener('scroll', handler, { passive: true })\n    return () => window.removeEventListener('scroll', handler)\n  }, [])\n}",
     "language": "tsx",
     "description": "non-blocking updates"
+  },
+  {
+    "ruleId": "",
+    "ruleTitle": "Use useRef for Transient Values",
+    "type": "bad",
+    "code": "function Tracker() {\n  const [lastX, setLastX] = useState(0)\n\n  useEffect(() => {\n    const onMove = (e: MouseEvent) => setLastX(e.clientX)\n    window.addEventListener('mousemove', onMove)\n    return () => window.removeEventListener('mousemove', onMove)\n  }, [])\n\n  return (\n    <div\n      style={{\n        position: 'fixed',\n        top: 0,\n        left: lastX,\n        width: 8,\n        height: 8,\n        background: 'black',\n      }}\n    />\n  )\n}",
+    "language": "tsx",
+    "description": "renders every update"
+  },
+  {
+    "ruleId": "",
+    "ruleTitle": "Use useRef for Transient Values",
+    "type": "good",
+    "code": "function Tracker() {\n  const lastXRef = useRef(0)\n  const dotRef = useRef<HTMLDivElement>(null)\n\n  useEffect(() => {\n    const onMove = (e: MouseEvent) => {\n      lastXRef.current = e.clientX\n      const node = dotRef.current\n      if (node) {\n        node.style.transform = `translateX(${e.clientX}px)`\n      }\n    }\n    window.addEventListener('mousemove', onMove)\n    return () => window.removeEventListener('mousemove', onMove)\n  }, [])\n\n  return (\n    <div\n      ref={dotRef}\n      style={{\n        position: 'fixed',\n        top: 0,\n        left: 0,\n        width: 8,\n        height: 8,\n        background: 'black',\n        transform: 'translateX(0px)',\n      }}\n    />\n  )\n}",
+    "language": "tsx",
+    "description": "no re-render for tracking"
   },
   {
     "ruleId": "",
