@@ -81,12 +81,13 @@ function ComposerInput() {
 function ForwardMessageProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState(initialState)
   const inputRef = useRef(null)
+  const submit = useForwardMessage()
 
   return (
     <ComposerContext
       value={{
         state,
-        actions: { update: setState, submit: useForwardMessage() },
+        actions: { update: setState, submit },
         meta: { inputRef },
       }}
     >
@@ -167,7 +168,7 @@ function ForwardMessageDialog() {
   )
 }
 
-// This button lives OUTSIDE Composer.Frame but can still submit!
+// This button lives OUTSIDE Composer.Frame but can still submit based on its context!
 function ForwardButton() {
   const {
     actions: { submit },
@@ -175,7 +176,7 @@ function ForwardButton() {
   return <Button onPress={submit}>Forward</Button>
 }
 
-// This preview lives OUTSIDE Composer.Frame but can read state!
+// This preview lives OUTSIDE Composer.Frame but can read composer's state!
 function MessagePreview() {
   const { state } = use(ComposerContext)
   return <Preview message={state.input} attachments={state.attachments} />
