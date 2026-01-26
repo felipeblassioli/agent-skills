@@ -7,11 +7,76 @@ import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// Path to the skill directory (relative to this package)
-export const SKILL_DIR = join(__dirname, '../../..', 'skills/react-best-practices')
+// Base paths
+export const SKILLS_DIR = join(__dirname, '../../..', 'skills')
 export const BUILD_DIR = join(__dirname, '..')
-export const RULES_DIR = join(SKILL_DIR, 'rules')
-export const METADATA_FILE = join(SKILL_DIR, 'metadata.json')
-export const OUTPUT_FILE = join(SKILL_DIR, 'AGENTS.md')
+
+// Skill configurations
+export interface SkillConfig {
+  name: string
+  title: string
+  description: string
+  skillDir: string
+  rulesDir: string
+  metadataFile: string
+  outputFile: string
+  sectionMap: Record<string, number>
+}
+
+export const SKILLS: Record<string, SkillConfig> = {
+  'react-best-practices': {
+    name: 'react-best-practices',
+    title: 'React Best Practices',
+    description: 'React and Next.js codebases',
+    skillDir: join(SKILLS_DIR, 'react-best-practices'),
+    rulesDir: join(SKILLS_DIR, 'react-best-practices/rules'),
+    metadataFile: join(SKILLS_DIR, 'react-best-practices/metadata.json'),
+    outputFile: join(SKILLS_DIR, 'react-best-practices/AGENTS.md'),
+    sectionMap: {
+      async: 1,
+      bundle: 2,
+      server: 3,
+      client: 4,
+      rerender: 5,
+      rendering: 6,
+      js: 7,
+      advanced: 8,
+    },
+  },
+  'react-native-guidelines': {
+    name: 'react-native-guidelines',
+    title: 'React Native Guidelines',
+    description: 'React Native codebases',
+    skillDir: join(SKILLS_DIR, 'react-native-guidelines'),
+    rulesDir: join(SKILLS_DIR, 'react-native-guidelines/rules'),
+    metadataFile: join(SKILLS_DIR, 'react-native-guidelines/metadata.json'),
+    outputFile: join(SKILLS_DIR, 'react-native-guidelines/AGENTS.md'),
+    sectionMap: {
+      rendering: 1,
+      'list-performance': 2,
+      animation: 3,
+      scroll: 4,
+      'react-state': 5,
+      state: 6,
+      'react-compiler': 7,
+      ui: 8,
+      'design-system': 9,
+      monorepo: 10,
+      imports: 11,
+      js: 12,
+      fonts: 13,
+    },
+  },
+}
+
+// Default skill (for backwards compatibility)
+export const DEFAULT_SKILL = 'react-best-practices'
+
+// Legacy exports for backwards compatibility
+export const SKILL_DIR = SKILLS[DEFAULT_SKILL].skillDir
+export const RULES_DIR = SKILLS[DEFAULT_SKILL].rulesDir
+export const METADATA_FILE = SKILLS[DEFAULT_SKILL].metadataFile
+export const OUTPUT_FILE = SKILLS[DEFAULT_SKILL].outputFile
+
 // Test cases are build artifacts, not part of the skill
 export const TEST_CASES_FILE = join(BUILD_DIR, 'test-cases.json')

@@ -1,16 +1,16 @@
 {
   "version": "1.0.0",
-  "organization": "Vercel Engineering",
+  "organization": "Engineering",
   "date": "January 2026",
-  "abstract": "Comprehensive performance optimization guide for React and Next.js applications, designed for AI agents and LLMs. Contains 40+ rules across 8 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.",
+  "abstract": "Comprehensive performance optimization guide for React Native applications, designed for AI agents and LLMs. Contains 35+ rules across 13 categories, prioritized by impact from critical (core rendering, list performance) to incremental (fonts, imports). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.",
   "references": [
     "https://react.dev",
-    "https://nextjs.org",
-    "https://swr.vercel.app",
-    "https://github.com/shuding/better-all",
-    "https://github.com/isaacs/node-lru-cache",
-    "https://vercel.com/blog/how-we-optimized-package-imports-in-next-js",
-    "https://vercel.com/blog/how-we-made-the-vercel-dashboard-twice-as-fast",
-    "https://vercel.com/blog/how-we-built-the-v0-ios-app"
+    "https://reactnative.dev",
+    "https://docs.swmansion.com/react-native-reanimated",
+    "https://docs.swmansion.com/react-native-gesture-handler",
+    "https://docs.expo.dev",
+    "https://legendapp.com/open-source/legend-list",
+    "https://github.com/nandorojo/galeria",
+    "https://zeego.dev"
   ]
 }

@@ -1,12 +1,12 @@
-# React Best Practices
+# React Native Guidelines
 
 **Version 1.0.0**  
-Vercel Engineering  
+Engineering  
 January 2026
 
 > **Note:**  
 > This document is mainly for agents and LLMs to follow when maintaining,  
-> generating, or refactoring React and Next.js codebases at Vercel. Humans  
+> generating, or refactoring React Native codebases. Humans  
 > may also find it useful, but guidance here is optimized for automation  
 > and consistency by AI-assisted workflows.
 
@@ -14,2921 +14,2716 @@ January 2026
 
 ## Abstract
 
-Comprehensive performance optimization guide for React and Next.js applications, designed for AI agents and LLMs. Contains 40+ rules across 8 categories, prioritized by impact from critical (eliminating waterfalls, reducing bundle size) to incremental (advanced patterns). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for React Native applications, designed for AI agents and LLMs. Contains 35+ rules across 13 categories, prioritized by impact from critical (core rendering, list performance) to incremental (fonts, imports). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 
 ## Table of Contents
 
-1. [Eliminating Waterfalls](#1-eliminating-waterfalls) — **CRITICAL**
-   - 1.1 [Defer Await Until Needed](#11-defer-await-until-needed)
-   - 1.2 [Dependency-Based Parallelization](#12-dependency-based-parallelization)
-   - 1.3 [Prevent Waterfall Chains in API Routes](#13-prevent-waterfall-chains-in-api-routes)
-   - 1.4 [Promise.all() for Independent Operations](#14-promiseall-for-independent-operations)
-   - 1.5 [Strategic Suspense Boundaries](#15-strategic-suspense-boundaries)
-2. [Bundle Size Optimization](#2-bundle-size-optimization) — **CRITICAL**
-   - 2.1 [Avoid Barrel File Imports](#21-avoid-barrel-file-imports)
-   - 2.2 [Conditional Module Loading](#22-conditional-module-loading)
-   - 2.3 [Defer Non-Critical Third-Party Libraries](#23-defer-non-critical-third-party-libraries)
-   - 2.4 [Dynamic Imports for Heavy Components](#24-dynamic-imports-for-heavy-components)
-   - 2.5 [Preload Based on User Intent](#25-preload-based-on-user-intent)
-3. [Server-Side Performance](#3-server-side-performance) — **HIGH**
-   - 3.1 [Authenticate Server Actions Like API Routes](#31-authenticate-server-actions-like-api-routes)
-   - 3.2 [Avoid Duplicate Serialization in RSC Props](#32-avoid-duplicate-serialization-in-rsc-props)
-   - 3.3 [Cross-Request LRU Caching](#33-cross-request-lru-caching)
-   - 3.4 [Minimize Serialization at RSC Boundaries](#34-minimize-serialization-at-rsc-boundaries)
-   - 3.5 [Parallel Data Fetching with Component Composition](#35-parallel-data-fetching-with-component-composition)
-   - 3.6 [Per-Request Deduplication with React.cache()](#36-per-request-deduplication-with-reactcache)
-   - 3.7 [Use after() for Non-Blocking Operations](#37-use-after-for-non-blocking-operations)
-4. [Client-Side Data Fetching](#4-client-side-data-fetching) — **MEDIUM-HIGH**
-   - 4.1 [Deduplicate Global Event Listeners](#41-deduplicate-global-event-listeners)
-   - 4.2 [Use Passive Event Listeners for Scrolling Performance](#42-use-passive-event-listeners-for-scrolling-performance)
-   - 4.3 [Use SWR for Automatic Deduplication](#43-use-swr-for-automatic-deduplication)
-   - 4.4 [Version and Minimize localStorage Data](#44-version-and-minimize-localstorage-data)
-5. [Re-render Optimization](#5-re-render-optimization) — **MEDIUM**
-   - 5.1 [Calculate Derived State During Rendering](#51-calculate-derived-state-during-rendering)
-   - 5.2 [Defer State Reads to Usage Point](#52-defer-state-reads-to-usage-point)
-   - 5.3 [Do not wrap a simple expression with a primitive result type in useMemo](#53-do-not-wrap-a-simple-expression-with-a-primitive-result-type-in-usememo)
-   - 5.4 [Extract Default Non-primitive Parameter Value from Memoized Component to Constant](#54-extract-default-non-primitive-parameter-value-from-memoized-component-to-constant)
-   - 5.5 [Extract to Memoized Components](#55-extract-to-memoized-components)
-   - 5.6 [Narrow Effect Dependencies](#56-narrow-effect-dependencies)
-   - 5.7 [Put Interaction Logic in Event Handlers](#57-put-interaction-logic-in-event-handlers)
-   - 5.8 [Subscribe to Derived State](#58-subscribe-to-derived-state)
-   - 5.9 [Use Functional setState Updates](#59-use-functional-setstate-updates)
-   - 5.10 [Use Lazy State Initialization](#510-use-lazy-state-initialization)
-   - 5.11 [Use Transitions for Non-Urgent Updates](#511-use-transitions-for-non-urgent-updates)
-   - 5.12 [Use useRef for Transient Values](#512-use-useref-for-transient-values)
-6. [Rendering Performance](#6-rendering-performance) — **MEDIUM**
-   - 6.1 [Animate SVG Wrapper Instead of SVG Element](#61-animate-svg-wrapper-instead-of-svg-element)
-   - 6.2 [CSS content-visibility for Long Lists](#62-css-content-visibility-for-long-lists)
-   - 6.3 [Hoist Static JSX Elements](#63-hoist-static-jsx-elements)
-   - 6.4 [Optimize SVG Precision](#64-optimize-svg-precision)
-   - 6.5 [Prevent Hydration Mismatch Without Flickering](#65-prevent-hydration-mismatch-without-flickering)
-   - 6.6 [Suppress Expected Hydration Mismatches](#66-suppress-expected-hydration-mismatches)
-   - 6.7 [Use Activity Component for Show/Hide](#67-use-activity-component-for-showhide)
-   - 6.8 [Use Explicit Conditional Rendering](#68-use-explicit-conditional-rendering)
-   - 6.9 [Use useTransition Over Manual Loading States](#69-use-usetransition-over-manual-loading-states)
-7. [JavaScript Performance](#7-javascript-performance) — **LOW-MEDIUM**
-   - 7.1 [Avoid Layout Thrashing](#71-avoid-layout-thrashing)
-   - 7.2 [Build Index Maps for Repeated Lookups](#72-build-index-maps-for-repeated-lookups)
-   - 7.3 [Cache Property Access in Loops](#73-cache-property-access-in-loops)
-   - 7.4 [Cache Repeated Function Calls](#74-cache-repeated-function-calls)
-   - 7.5 [Cache Storage API Calls](#75-cache-storage-api-calls)
-   - 7.6 [Combine Multiple Array Iterations](#76-combine-multiple-array-iterations)
-   - 7.7 [Early Length Check for Array Comparisons](#77-early-length-check-for-array-comparisons)
-   - 7.8 [Early Return from Functions](#78-early-return-from-functions)
-   - 7.9 [Hoist RegExp Creation](#79-hoist-regexp-creation)
-   - 7.10 [Use Loop for Min/Max Instead of Sort](#710-use-loop-for-minmax-instead-of-sort)
-   - 7.11 [Use Set/Map for O(1) Lookups](#711-use-setmap-for-o1-lookups)
-   - 7.12 [Use toSorted() Instead of sort() for Immutability](#712-use-tosorted-instead-of-sort-for-immutability)
-8. [Advanced Patterns](#8-advanced-patterns) — **LOW**
-   - 8.1 [Initialize App Once, Not Per Mount](#81-initialize-app-once-not-per-mount)
-   - 8.2 [Store Event Handlers in Refs](#82-store-event-handlers-in-refs)
-   - 8.3 [useEffectEvent for Stable Callback Refs](#83-useeffectevent-for-stable-callback-refs)
+0. [Section 0](#0-section-0) — **MEDIUM**
+   - 0.1 [](#01-)
+1. [Core Rendering](#1-core-rendering) — **CRITICAL**
+   - 1.1 [Never Use && with Potentially Falsy Values](#11-never-use--with-potentially-falsy-values)
+   - 1.2 [Wrap Strings in Text Components](#12-wrap-strings-in-text-components)
+2. [List Performance](#2-list-performance) — **HIGH**
+   - 2.1 [Avoid Inline Objects in renderItem](#21-avoid-inline-objects-in-renderitem)
+   - 2.2 [Hoist callbacks to the root of lists](#22-hoist-callbacks-to-the-root-of-lists)
+   - 2.3 [Keep List Items Lightweight](#23-keep-list-items-lightweight)
+   - 2.4 [Optimize List Performance with Stable Object References](#24-optimize-list-performance-with-stable-object-references)
+   - 2.5 [Pass Primitives to List Items for Memoization](#25-pass-primitives-to-list-items-for-memoization)
+   - 2.6 [Use a List Virtualizer for Any List](#26-use-a-list-virtualizer-for-any-list)
+   - 2.7 [Use Compressed Images in Lists](#27-use-compressed-images-in-lists)
+3. [Animation](#3-animation) — **HIGH**
+   - 3.1 [Animate Transform and Opacity Instead of Layout Properties](#31-animate-transform-and-opacity-instead-of-layout-properties)
+   - 3.2 [Prefer useDerivedValue Over useAnimatedReaction](#32-prefer-usederivedvalue-over-useanimatedreaction)
+   - 3.3 [Use GestureDetector for Animated Press States](#33-use-gesturedetector-for-animated-press-states)
+4. [Scroll Performance](#4-scroll-performance) — **HIGH**
+   - 4.1 [Never Track Scroll Position in useState](#41-never-track-scroll-position-in-usestate)
+5. [React State](#5-react-state) — **MEDIUM**
+   - 5.1 [Minimize State Variables and Derive Values](#51-minimize-state-variables-and-derive-values)
+   - 5.2 [Use fallback state instead of initialState](#52-use-fallback-state-instead-of-initialstate)
+   - 5.3 [useState Dispatch updaters for State That Depends on Current Value](#53-usestate-dispatch-updaters-for-state-that-depends-on-current-value)
+6. [State Architecture](#6-state-architecture) — **MEDIUM**
+   - 6.1 [State Must Represent Ground Truth](#61-state-must-represent-ground-truth)
+7. [React Compiler](#7-react-compiler) — **MEDIUM**
+   - 7.1 [Destructure Functions Early in Render (React Compiler)](#71-destructure-functions-early-in-render-react-compiler)
+   - 7.2 [Use .get() and .set() for Reanimated Shared Values (not .value)](#72-use-get-and-set-for-reanimated-shared-values-not-value)
+8. [User Interface](#8-user-interface) — **MEDIUM**
+   - 8.1 [Measuring View Dimensions](#81-measuring-view-dimensions)
+   - 8.2 [Modern React Native Styling Patterns](#82-modern-react-native-styling-patterns)
+   - 8.3 [Use contentInset for Dynamic ScrollView Spacing](#83-use-contentinset-for-dynamic-scrollview-spacing)
+   - 8.4 [Use contentInsetAdjustmentBehavior for Safe Areas](#84-use-contentinsetadjustmentbehavior-for-safe-areas)
+   - 8.5 [Use expo-image for Optimized Images](#85-use-expo-image-for-optimized-images)
+   - 8.6 [Use Galeria for Image Galleries and Lightbox](#86-use-galeria-for-image-galleries-and-lightbox)
+   - 8.7 [Use Native Menus for Dropdowns and Context Menus](#87-use-native-menus-for-dropdowns-and-context-menus)
+   - 8.8 [Use Native Modals Over JS-Based Bottom Sheets](#88-use-native-modals-over-js-based-bottom-sheets)
+   - 8.9 [Use Pressable Instead of Touchable Components](#89-use-pressable-instead-of-touchable-components)
+9. [Design System](#9-design-system) — **MEDIUM**
+   - 9.1 [Use Compound Components Over Polymorphic Children](#91-use-compound-components-over-polymorphic-children)
+10. [Monorepo](#10-monorepo) — **LOW**
+   - 10.1 [Install Native Dependencies in App Directory](#101-install-native-dependencies-in-app-directory)
+   - 10.2 [Use Single Dependency Versions Across Monorepo](#102-use-single-dependency-versions-across-monorepo)
+11. [Third-Party Dependencies](#11-third-party-dependencies) — **LOW**
+   - 11.1 [Import from Design System Folder](#111-import-from-design-system-folder)
+12. [JavaScript](#12-javascript) — **LOW**
+   - 12.1 [Hoist Intl Formatter Creation](#121-hoist-intl-formatter-creation)
+13. [Fonts](#13-fonts) — **LOW**
+   - 13.1 [Load fonts natively at build time](#131-load-fonts-natively-at-build-time)
 
 ---
 
-## 1. Eliminating Waterfalls
+## 0. Section 0
+
+**Impact: MEDIUM**
+
+### 0.1 
+
+**Impact: MEDIUM**
+
+- safe area
+
+- keyboard handling
+
+- list performance
+
+- menus
+
+- image galleries
+
+- image performance
+
+- images in list items
+
+- lists:
+
+  - images: always use compressed images in lists. if needed, use high
+
+    resolution when expanding them (with galeria)
+
+  - hoist callbacks to the root of the list
+
+- text
+
+  - never pass a string as a child of View. strings **must** be have a Text
+
+    component parent. (critical)
+
+  - design system: never create polymorphic children cases for text, such as a
+
+    button accepting a string **or** a view as a child. instead, use compound
+
+    components, like Button (which receives any ReactNode) and ButtonText. This
+
+    lets you also create optional things like <ButtonIcon> instead of an icon
+
+    prop. you need to retain flexible composition options.
+
+- loading fonts
+
+- installing npm packages (native versus js packages)
+
+- monorepos
+
+  - if the package has native dependencies, you must install it in the native
+
+    app's directory directly for autolinking to work properly.
+
+  - configure your metro config
+
+- use the react compiler
+
+  - destructure variables early, and in render scope
+
+    - when passing variables to expensive helper functions in render,
+
+      destructure based on actual object reference before passing to the helper
+
+      function
+
+  - never dot into functions; always destructure them early in render scope
+
+    (never do router.push(), always const { push } in render) critical
+
+- fetching and caching data
+
+- patch packages (yarn patch or npx patch-package)
+
+- measuring views
+
+- derive state
+
+- fallback for useState
+
+  - have a fallback, and always override with user-set values
+
+  - use nullish coalescing with undefined set as the initial state, and
+
+    fallback. this lets you reactively fallback rather than only on the initial
+
+    render
+
+  - don't sync state; derive
+
+- useState:
+
+  - if the state you're setting depends on the current state, prefer dispatch
+
+    updaters over reading the state variable directly in a callback
+
+  - setState(current => current.height !== layout.height ? layout : current)
+
+    instead of if (layout.height != state.height) { setState(layout) } else {
+
+    undefined }
+
+- combine local state with network state
+
+- imports
+
+  - use a design system folder and re-export dependencies from there
+
+  - your app code should always import from the design system folder instead of
+
+    directly from the dependencies
+
+  - create your own components/view, components/text, etc. you can always start
+
+    by simply re-exporting
+
+- composition
+
+  - refactor horrifying components v1: put state into a hook, move it to a
+
+    provider, lift the state, separate the internals into their own components.
+
+- monorepos
+
+  - use a single version of each dependency across your monorepo packages.
+
+    prefer exact versions over ranges
+
+- tracking scroll position
+
+  - never track scroll in useState. always prefer a reanimated value (if it's
+
+    for animations) or a ref (if it's simply for non-reactive tracking)
+
+---
+
+## 1. Core Rendering
 
 **Impact: CRITICAL**
 
-Waterfalls are the #1 performance killer. Each sequential await adds full network latency. Eliminating them yields the largest gains.
+Fundamental React Native rendering rules. Violations cause
+runtime crashes or broken UI.
 
-### 1.1 Defer Await Until Needed
+### 1.1 Never Use && with Potentially Falsy Values
 
-**Impact: HIGH (avoids blocking unused code paths)**
+**Impact: CRITICAL (prevents production crash)**
 
-Move `await` operations into the branches where they're actually used to avoid blocking code paths that don't need them.
+Never use `{value && <Component />}` when `value` could be an empty string or
 
-**Incorrect: blocks both branches**
+`0`. These are falsy but JSX-renderable—React Native will try to render them as
 
-```typescript
-async function handleRequest(userId: string, skipProcessing: boolean) {
-  const userData = await fetchUserData(userId)
-  
-  if (skipProcessing) {
-    // Returns immediately but still waited for userData
-    return { skipped: true }
-  }
-  
-  // Only this branch uses userData
-  return processUserData(userData)
-}
-```
+text outside a `<Text>` component, causing a hard crash in production.
 
-**Correct: only blocks when needed**
-
-```typescript
-async function handleRequest(userId: string, skipProcessing: boolean) {
-  if (skipProcessing) {
-    // Returns immediately without waiting
-    return { skipped: true }
-  }
-  
-  // Fetch only when needed
-  const userData = await fetchUserData(userId)
-  return processUserData(userData)
-}
-```
-
-**Another example: early return optimization**
-
-```typescript
-// Incorrect: always fetches permissions
-async function updateResource(resourceId: string, userId: string) {
-  const permissions = await fetchPermissions(userId)
-  const resource = await getResource(resourceId)
-  
-  if (!resource) {
-    return { error: 'Not found' }
-  }
-  
-  if (!permissions.canEdit) {
-    return { error: 'Forbidden' }
-  }
-  
-  return await updateResourceData(resource, permissions)
-}
-
-// Correct: fetches only when needed
-async function updateResource(resourceId: string, userId: string) {
-  const resource = await getResource(resourceId)
-  
-  if (!resource) {
-    return { error: 'Not found' }
-  }
-  
-  const permissions = await fetchPermissions(userId)
-  
-  if (!permissions.canEdit) {
-    return { error: 'Forbidden' }
-  }
-  
-  return await updateResourceData(resource, permissions)
-}
-```
-
-This optimization is especially valuable when the skipped branch is frequently taken, or when the deferred operation is expensive.
-
-### 1.2 Dependency-Based Parallelization
-
-**Impact: CRITICAL (2-10× improvement)**
-
-For operations with partial dependencies, use `better-all` to maximize parallelism. It automatically starts each task at the earliest possible moment.
-
-**Incorrect: profile waits for config unnecessarily**
-
-```typescript
-const [user, config] = await Promise.all([
-  fetchUser(),
-  fetchConfig()
-])
-const profile = await fetchProfile(user.id)
-```
-
-**Correct: config and profile run in parallel**
-
-```typescript
-import { all } from 'better-all'
-
-const { user, config, profile } = await all({
-  async user() { return fetchUser() },
-  async config() { return fetchConfig() },
-  async profile() {
-    return fetchProfile((await this.$.user).id)
-  }
-})
-```
-
-**Alternative without extra dependencies:**
-
-```typescript
-const userPromise = fetchUser()
-const profilePromise = userPromise.then(user => fetchProfile(user.id))
-
-const [user, config, profile] = await Promise.all([
-  userPromise,
-  fetchConfig(),
-  profilePromise
-])
-```
-
-We can also create all the promises first, and do `Promise.all()` at the end.
-
-Reference: [https://github.com/shuding/better-all](https://github.com/shuding/better-all)
-
-### 1.3 Prevent Waterfall Chains in API Routes
-
-**Impact: CRITICAL (2-10× improvement)**
-
-In API routes and Server Actions, start independent operations immediately, even if you don't await them yet.
-
-**Incorrect: config waits for auth, data waits for both**
-
-```typescript
-export async function GET(request: Request) {
-  const session = await auth()
-  const config = await fetchConfig()
-  const data = await fetchData(session.user.id)
-  return Response.json({ data, config })
-}
-```
-
-**Correct: auth and config start immediately**
-
-```typescript
-export async function GET(request: Request) {
-  const sessionPromise = auth()
-  const configPromise = fetchConfig()
-  const session = await sessionPromise
-  const [config, data] = await Promise.all([
-    configPromise,
-    fetchData(session.user.id)
-  ])
-  return Response.json({ data, config })
-}
-```
-
-For operations with more complex dependency chains, use `better-all` to automatically maximize parallelism (see Dependency-Based Parallelization).
-
-### 1.4 Promise.all() for Independent Operations
-
-**Impact: CRITICAL (2-10× improvement)**
-
-When async operations have no interdependencies, execute them concurrently using `Promise.all()`.
-
-**Incorrect: sequential execution, 3 round trips**
-
-```typescript
-const user = await fetchUser()
-const posts = await fetchPosts()
-const comments = await fetchComments()
-```
-
-**Correct: parallel execution, 1 round trip**
-
-```typescript
-const [user, posts, comments] = await Promise.all([
-  fetchUser(),
-  fetchPosts(),
-  fetchComments()
-])
-```
-
-### 1.5 Strategic Suspense Boundaries
-
-**Impact: HIGH (faster initial paint)**
-
-Instead of awaiting data in async components before returning JSX, use Suspense boundaries to show the wrapper UI faster while data loads.
-
-**Incorrect: wrapper blocked by data fetching**
+**Incorrect: crashes if count is 0 or name is ""**
 
 ```tsx
-async function Page() {
-  const data = await fetchData() // Blocks entire page
-  
+function Profile({ name, count }: { name: string; count: number }) {
   return (
-    <div>
-      <div>Sidebar</div>
-      <div>Header</div>
-      <div>
-        <DataDisplay data={data} />
-      </div>
-      <div>Footer</div>
-    </div>
+    <View>
+      {name && <Text>{name}</Text>}
+      {count && <Text>{count} items</Text>}
+    </View>
+  )
+}
+// If name="" or count=0, renders the falsy value → crash
+```
+
+**Correct: ternary with null**
+
+```tsx
+function Profile({ name, count }: { name: string; count: number }) {
+  return (
+    <View>
+      {name ? <Text>{name}</Text> : null}
+      {count ? <Text>{count} items</Text> : null}
+    </View>
   )
 }
 ```
 
-The entire layout waits for data even though only the middle section needs it.
-
-**Correct: wrapper shows immediately, data streams in**
+**Correct: explicit boolean coercion**
 
 ```tsx
-function Page() {
+function Profile({ name, count }: { name: string; count: number }) {
   return (
-    <div>
-      <div>Sidebar</div>
-      <div>Header</div>
-      <div>
-        <Suspense fallback={<Skeleton />}>
-          <DataDisplay />
-        </Suspense>
-      </div>
-      <div>Footer</div>
-    </div>
+    <View>
+      {!!name && <Text>{name}</Text>}
+      {!!count && <Text>{count} items</Text>}
+    </View>
   )
-}
-
-async function DataDisplay() {
-  const data = await fetchData() // Only blocks this component
-  return <div>{data.content}</div>
 }
 ```
 
-Sidebar, Header, and Footer render immediately. Only DataDisplay waits for data.
-
-**Alternative: share promise across components**
+**Best: early return**
 
 ```tsx
-function Page() {
-  // Start fetch immediately, but don't await
-  const dataPromise = fetchData()
-  
+function Profile({ name, count }: { name: string; count: number }) {
+  if (!name) return null
+
   return (
-    <div>
-      <div>Sidebar</div>
-      <div>Header</div>
-      <Suspense fallback={<Skeleton />}>
-        <DataDisplay dataPromise={dataPromise} />
-        <DataSummary dataPromise={dataPromise} />
-      </Suspense>
-      <div>Footer</div>
-    </div>
+    <View>
+      <Text>{name}</Text>
+      {count > 0 ? <Text>{count} items</Text> : null}
+    </View>
   )
-}
-
-function DataDisplay({ dataPromise }: { dataPromise: Promise<Data> }) {
-  const data = use(dataPromise) // Unwraps the promise
-  return <div>{data.content}</div>
-}
-
-function DataSummary({ dataPromise }: { dataPromise: Promise<Data> }) {
-  const data = use(dataPromise) // Reuses the same promise
-  return <div>{data.summary}</div>
 }
 ```
 
-Both components share the same promise, so only one fetch occurs. Layout renders immediately while both components wait together.
+Early returns are clearest. When using conditionals inline, prefer ternary or
 
-**When NOT to use this pattern:**
+explicit boolean checks.
 
-- Critical data needed for layout decisions (affects positioning)
+**Lint rule:** Enable `react/jsx-no-leaked-render` from
 
-- SEO-critical content above the fold
+[eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/jsx-no-leaked-render.md)
 
-- Small, fast queries where suspense overhead isn't worth it
+to catch this automatically.
 
-- When you want to avoid layout shift (loading → content jump)
+### 1.2 Wrap Strings in Text Components
 
-**Trade-off:** Faster initial paint vs potential layout shift. Choose based on your UX priorities.
+**Impact: CRITICAL (prevents runtime crash)**
+
+Strings must be rendered inside `<Text>`. React Native crashes if a string is a
+
+direct child of `<View>`.
+
+**Incorrect: crashes**
+
+```tsx
+import { View } from 'react-native'
+
+function Greeting({ name }: { name: string }) {
+  return <View>Hello, {name}!</View>
+}
+// Error: Text strings must be rendered within a <Text> component.
+```
+
+**Correct:**
+
+```tsx
+import { View, Text } from 'react-native'
+
+function Greeting({ name }: { name: string }) {
+  return (
+    <View>
+      <Text>Hello, {name}!</Text>
+    </View>
+  )
+}
+```
 
 ---
 
-## 2. Bundle Size Optimization
-
-**Impact: CRITICAL**
-
-Reducing initial bundle size improves Time to Interactive and Largest Contentful Paint.
-
-### 2.1 Avoid Barrel File Imports
-
-**Impact: CRITICAL (200-800ms import cost, slow builds)**
-
-Import directly from source files instead of barrel files to avoid loading thousands of unused modules. **Barrel files** are entry points that re-export multiple modules (e.g., `index.js` that does `export * from './module'`).
-
-Popular icon and component libraries can have **up to 10,000 re-exports** in their entry file. For many React packages, **it takes 200-800ms just to import them**, affecting both development speed and production cold starts.
-
-**Why tree-shaking doesn't help:** When a library is marked as external (not bundled), the bundler can't optimize it. If you bundle it to enable tree-shaking, builds become substantially slower analyzing the entire module graph.
-
-**Incorrect: imports entire library**
-
-```tsx
-import { Check, X, Menu } from 'lucide-react'
-// Loads 1,583 modules, takes ~2.8s extra in dev
-// Runtime cost: 200-800ms on every cold start
-
-import { Button, TextField } from '@mui/material'
-// Loads 2,225 modules, takes ~4.2s extra in dev
-```
-
-**Correct: imports only what you need**
-
-```tsx
-import Check from 'lucide-react/dist/esm/icons/check'
-import X from 'lucide-react/dist/esm/icons/x'
-import Menu from 'lucide-react/dist/esm/icons/menu'
-// Loads only 3 modules (~2KB vs ~1MB)
-
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-// Loads only what you use
-```
-
-**Alternative: Next.js 13.5+**
-
-```js
-// next.config.js - use optimizePackageImports
-module.exports = {
-  experimental: {
-    optimizePackageImports: ['lucide-react', '@mui/material']
-  }
-}
-
-// Then you can keep the ergonomic barrel imports:
-import { Check, X, Menu } from 'lucide-react'
-// Automatically transformed to direct imports at build time
-```
-
-Direct imports provide 15-70% faster dev boot, 28% faster builds, 40% faster cold starts, and significantly faster HMR.
-
-Libraries commonly affected: `lucide-react`, `@mui/material`, `@mui/icons-material`, `@tabler/icons-react`, `react-icons`, `@headlessui/react`, `@radix-ui/react-*`, `lodash`, `ramda`, `date-fns`, `rxjs`, `react-use`.
-
-Reference: [https://vercel.com/blog/how-we-optimized-package-imports-in-next-js](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js)
-
-### 2.2 Conditional Module Loading
-
-**Impact: HIGH (loads large data only when needed)**
-
-Load large data or modules only when a feature is activated.
-
-**Example: lazy-load animation frames**
-
-```tsx
-function AnimationPlayer({ enabled, setEnabled }: { enabled: boolean; setEnabled: React.Dispatch<React.SetStateAction<boolean>> }) {
-  const [frames, setFrames] = useState<Frame[] | null>(null)
-
-  useEffect(() => {
-    if (enabled && !frames && typeof window !== 'undefined') {
-      import('./animation-frames.js')
-        .then(mod => setFrames(mod.frames))
-        .catch(() => setEnabled(false))
-    }
-  }, [enabled, frames, setEnabled])
-
-  if (!frames) return <Skeleton />
-  return <Canvas frames={frames} />
-}
-```
-
-The `typeof window !== 'undefined'` check prevents bundling this module for SSR, optimizing server bundle size and build speed.
-
-### 2.3 Defer Non-Critical Third-Party Libraries
-
-**Impact: MEDIUM (loads after hydration)**
-
-Analytics, logging, and error tracking don't block user interaction. Load them after hydration.
-
-**Incorrect: blocks initial bundle**
-
-```tsx
-import { Analytics } from '@vercel/analytics/react'
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  )
-}
-```
-
-**Correct: loads after hydration**
-
-```tsx
-import dynamic from 'next/dynamic'
-
-const Analytics = dynamic(
-  () => import('@vercel/analytics/react').then(m => m.Analytics),
-  { ssr: false }
-)
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  )
-}
-```
-
-### 2.4 Dynamic Imports for Heavy Components
-
-**Impact: CRITICAL (directly affects TTI and LCP)**
-
-Use `next/dynamic` to lazy-load large components not needed on initial render.
-
-**Incorrect: Monaco bundles with main chunk ~300KB**
-
-```tsx
-import { MonacoEditor } from './monaco-editor'
-
-function CodePanel({ code }: { code: string }) {
-  return <MonacoEditor value={code} />
-}
-```
-
-**Correct: Monaco loads on demand**
-
-```tsx
-import dynamic from 'next/dynamic'
-
-const MonacoEditor = dynamic(
-  () => import('./monaco-editor').then(m => m.MonacoEditor),
-  { ssr: false }
-)
-
-function CodePanel({ code }: { code: string }) {
-  return <MonacoEditor value={code} />
-}
-```
-
-### 2.5 Preload Based on User Intent
-
-**Impact: MEDIUM (reduces perceived latency)**
-
-Preload heavy bundles before they're needed to reduce perceived latency.
-
-**Example: preload on hover/focus**
-
-```tsx
-function EditorButton({ onClick }: { onClick: () => void }) {
-  const preload = () => {
-    if (typeof window !== 'undefined') {
-      void import('./monaco-editor')
-    }
-  }
-
-  return (
-    <button
-      onMouseEnter={preload}
-      onFocus={preload}
-      onClick={onClick}
-    >
-      Open Editor
-    </button>
-  )
-}
-```
-
-**Example: preload when feature flag is enabled**
-
-```tsx
-function FlagsProvider({ children, flags }: Props) {
-  useEffect(() => {
-    if (flags.editorEnabled && typeof window !== 'undefined') {
-      void import('./monaco-editor').then(mod => mod.init())
-    }
-  }, [flags.editorEnabled])
-
-  return <FlagsContext.Provider value={flags}>
-    {children}
-  </FlagsContext.Provider>
-}
-```
-
-The `typeof window !== 'undefined'` check prevents bundling preloaded modules for SSR, optimizing server bundle size and build speed.
-
----
-
-## 3. Server-Side Performance
+## 2. List Performance
 
 **Impact: HIGH**
 
-Optimizing server-side rendering and data fetching eliminates server-side waterfalls and reduces response times.
+Optimizing virtualized lists (FlatList, LegendList, FlashList)
+for smooth scrolling and fast updates.
 
-### 3.1 Authenticate Server Actions Like API Routes
+### 2.1 Avoid Inline Objects in renderItem
 
-**Impact: CRITICAL (prevents unauthorized access to server mutations)**
+**Impact: HIGH (prevents unnecessary re-renders of memoized list items)**
 
-Server Actions (functions with `"use server"`) are exposed as public endpoints, just like API routes. Always verify authentication and authorization **inside** each Server Action—do not rely solely on middleware, layout guards, or page-level checks, as Server Actions can be invoked directly.
+Don't create new objects inside `renderItem` to pass as props. Inline objects
 
-Next.js documentation explicitly states: "Treat Server Actions with the same security considerations as public-facing API endpoints, and verify if the user is allowed to perform a mutation."
+create new references on every render, breaking memoization. Pass primitive
 
-**Incorrect: no authentication check**
+values directly from `item` instead.
 
-```typescript
-'use server'
-
-export async function deleteUser(userId: string) {
-  // Anyone can call this! No auth check
-  await db.user.delete({ where: { id: userId } })
-  return { success: true }
-}
-```
-
-**Correct: authentication inside the action**
-
-```typescript
-'use server'
-
-import { verifySession } from '@/lib/auth'
-import { unauthorized } from '@/lib/errors'
-
-export async function deleteUser(userId: string) {
-  // Always check auth inside the action
-  const session = await verifySession()
-  
-  if (!session) {
-    throw unauthorized('Must be logged in')
-  }
-  
-  // Check authorization too
-  if (session.user.role !== 'admin' && session.user.id !== userId) {
-    throw unauthorized('Cannot delete other users')
-  }
-  
-  await db.user.delete({ where: { id: userId } })
-  return { success: true }
-}
-```
-
-**With input validation:**
-
-```typescript
-'use server'
-
-import { verifySession } from '@/lib/auth'
-import { z } from 'zod'
-
-const updateProfileSchema = z.object({
-  userId: z.string().uuid(),
-  name: z.string().min(1).max(100),
-  email: z.string().email()
-})
-
-export async function updateProfile(data: unknown) {
-  // Validate input first
-  const validated = updateProfileSchema.parse(data)
-  
-  // Then authenticate
-  const session = await verifySession()
-  if (!session) {
-    throw new Error('Unauthorized')
-  }
-  
-  // Then authorize
-  if (session.user.id !== validated.userId) {
-    throw new Error('Can only update own profile')
-  }
-  
-  // Finally perform the mutation
-  await db.user.update({
-    where: { id: validated.userId },
-    data: {
-      name: validated.name,
-      email: validated.email
-    }
-  })
-  
-  return { success: true }
-}
-```
-
-Reference: [https://nextjs.org/docs/app/guides/authentication](https://nextjs.org/docs/app/guides/authentication)
-
-### 3.2 Avoid Duplicate Serialization in RSC Props
-
-**Impact: LOW (reduces network payload by avoiding duplicate serialization)**
-
-RSC→client serialization deduplicates by object reference, not value. Same reference = serialized once; new reference = serialized again. Do transformations (`.toSorted()`, `.filter()`, `.map()`) in client, not server.
-
-**Incorrect: duplicates array**
+**Incorrect: inline object breaks memoization**
 
 ```tsx
-// RSC: sends 6 strings (2 arrays × 3 items)
-<ClientList usernames={usernames} usernamesOrdered={usernames.toSorted()} />
-```
-
-**Correct: sends 3 strings**
-
-```tsx
-// RSC: send once
-<ClientList usernames={usernames} />
-
-// Client: transform there
-'use client'
-const sorted = useMemo(() => [...usernames].sort(), [usernames])
-```
-
-**Nested deduplication behavior:**
-
-```tsx
-// string[] - duplicates everything
-usernames={['a','b']} sorted={usernames.toSorted()} // sends 4 strings
-
-// object[] - duplicates array structure only
-users={[{id:1},{id:2}]} sorted={users.toSorted()} // sends 2 arrays + 2 unique objects (not 4)
-```
-
-Deduplication works recursively. Impact varies by data type:
-
-- `string[]`, `number[]`, `boolean[]`: **HIGH impact** - array + all primitives fully duplicated
-
-- `object[]`: **LOW impact** - array duplicated, but nested objects deduplicated by reference
-
-**Operations breaking deduplication: create new references**
-
-- Arrays: `.toSorted()`, `.filter()`, `.map()`, `.slice()`, `[...arr]`
-
-- Objects: `{...obj}`, `Object.assign()`, `structuredClone()`, `JSON.parse(JSON.stringify())`
-
-**More examples:**
-
-```tsx
-// ❌ Bad
-<C users={users} active={users.filter(u => u.active)} />
-<C product={product} productName={product.name} />
-
-// ✅ Good
-<C users={users} />
-<C product={product} />
-// Do filtering/destructuring in client
-```
-
-**Exception:** Pass derived data when transformation is expensive or client doesn't need original.
-
-### 3.3 Cross-Request LRU Caching
-
-**Impact: HIGH (caches across requests)**
-
-`React.cache()` only works within one request. For data shared across sequential requests (user clicks button A then button B), use an LRU cache.
-
-**Implementation:**
-
-```typescript
-import { LRUCache } from 'lru-cache'
-
-const cache = new LRUCache<string, any>({
-  max: 1000,
-  ttl: 5 * 60 * 1000  // 5 minutes
-})
-
-export async function getUser(id: string) {
-  const cached = cache.get(id)
-  if (cached) return cached
-
-  const user = await db.user.findUnique({ where: { id } })
-  cache.set(id, user)
-  return user
-}
-
-// Request 1: DB query, result cached
-// Request 2: cache hit, no DB query
-```
-
-Use when sequential user actions hit multiple endpoints needing the same data within seconds.
-
-**With Vercel's [Fluid Compute](https://vercel.com/docs/fluid-compute):** LRU caching is especially effective because multiple concurrent requests can share the same function instance and cache. This means the cache persists across requests without needing external storage like Redis.
-
-**In traditional serverless:** Each invocation runs in isolation, so consider Redis for cross-process caching.
-
-Reference: [https://github.com/isaacs/node-lru-cache](https://github.com/isaacs/node-lru-cache)
-
-### 3.4 Minimize Serialization at RSC Boundaries
-
-**Impact: HIGH (reduces data transfer size)**
-
-The React Server/Client boundary serializes all object properties into strings and embeds them in the HTML response and subsequent RSC requests. This serialized data directly impacts page weight and load time, so **size matters a lot**. Only pass fields that the client actually uses.
-
-**Incorrect: serializes all 50 fields**
-
-```tsx
-async function Page() {
-  const user = await fetchUser()  // 50 fields
-  return <Profile user={user} />
-}
-
-'use client'
-function Profile({ user }: { user: User }) {
-  return <div>{user.name}</div>  // uses 1 field
-}
-```
-
-**Correct: serializes only 1 field**
-
-```tsx
-async function Page() {
-  const user = await fetchUser()
-  return <Profile name={user.name} />
-}
-
-'use client'
-function Profile({ name }: { name: string }) {
-  return <div>{name}</div>
-}
-```
-
-### 3.5 Parallel Data Fetching with Component Composition
-
-**Impact: CRITICAL (eliminates server-side waterfalls)**
-
-React Server Components execute sequentially within a tree. Restructure with composition to parallelize data fetching.
-
-**Incorrect: Sidebar waits for Page's fetch to complete**
-
-```tsx
-export default async function Page() {
-  const header = await fetchHeader()
+function UserList({ users }: { users: User[] }) {
   return (
-    <div>
-      <div>{header}</div>
-      <Sidebar />
-    </div>
-  )
-}
-
-async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
-}
-```
-
-**Correct: both fetch simultaneously**
-
-```tsx
-async function Header() {
-  const data = await fetchHeader()
-  return <div>{data}</div>
-}
-
-async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
-}
-
-export default function Page() {
-  return (
-    <div>
-      <Header />
-      <Sidebar />
-    </div>
-  )
-}
-```
-
-**Alternative with children prop:**
-
-```tsx
-async function Header() {
-  const data = await fetchHeader()
-  return <div>{data}</div>
-}
-
-async function Sidebar() {
-  const items = await fetchSidebarItems()
-  return <nav>{items.map(renderItem)}</nav>
-}
-
-function Layout({ children }: { children: ReactNode }) {
-  return (
-    <div>
-      <Header />
-      {children}
-    </div>
-  )
-}
-
-export default function Page() {
-  return (
-    <Layout>
-      <Sidebar />
-    </Layout>
-  )
-}
-```
-
-### 3.6 Per-Request Deduplication with React.cache()
-
-**Impact: MEDIUM (deduplicates within request)**
-
-Use `React.cache()` for server-side request deduplication. Authentication and database queries benefit most.
-
-**Usage:**
-
-```typescript
-import { cache } from 'react'
-
-export const getCurrentUser = cache(async () => {
-  const session = await auth()
-  if (!session?.user?.id) return null
-  return await db.user.findUnique({
-    where: { id: session.user.id }
-  })
-})
-```
-
-Within a single request, multiple calls to `getCurrentUser()` execute the query only once.
-
-**Avoid inline objects as arguments:**
-
-`React.cache()` uses shallow equality (`Object.is`) to determine cache hits. Inline objects create new references each call, preventing cache hits.
-
-**Incorrect: always cache miss**
-
-```typescript
-const getUser = cache(async (params: { uid: number }) => {
-  return await db.user.findUnique({ where: { id: params.uid } })
-})
-
-// Each call creates new object, never hits cache
-getUser({ uid: 1 })
-getUser({ uid: 1 })  // Cache miss, runs query again
-```
-
-**Correct: cache hit**
-
-```typescript
-const params = { uid: 1 }
-getUser(params)  // Query runs
-getUser(params)  // Cache hit (same reference)
-```
-
-If you must pass objects, pass the same reference:
-
-**Next.js-Specific Note:**
-
-In Next.js, the `fetch` API is automatically extended with request memoization. Requests with the same URL and options are automatically deduplicated within a single request, so you don't need `React.cache()` for `fetch` calls. However, `React.cache()` is still essential for other async tasks:
-
-- Database queries (Prisma, Drizzle, etc.)
-
-- Heavy computations
-
-- Authentication checks
-
-- File system operations
-
-- Any non-fetch async work
-
-Use `React.cache()` to deduplicate these operations across your component tree.
-
-Reference: [https://react.dev/reference/react/cache](https://react.dev/reference/react/cache)
-
-### 3.7 Use after() for Non-Blocking Operations
-
-**Impact: MEDIUM (faster response times)**
-
-Use Next.js's `after()` to schedule work that should execute after a response is sent. This prevents logging, analytics, and other side effects from blocking the response.
-
-**Incorrect: blocks response**
-
-```tsx
-import { logUserAction } from '@/app/utils'
-
-export async function POST(request: Request) {
-  // Perform mutation
-  await updateDatabase(request)
-  
-  // Logging blocks the response
-  const userAgent = request.headers.get('user-agent') || 'unknown'
-  await logUserAction({ userAgent })
-  
-  return new Response(JSON.stringify({ status: 'success' }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  })
-}
-```
-
-**Correct: non-blocking**
-
-```tsx
-import { after } from 'next/server'
-import { headers, cookies } from 'next/headers'
-import { logUserAction } from '@/app/utils'
-
-export async function POST(request: Request) {
-  // Perform mutation
-  await updateDatabase(request)
-  
-  // Log after response is sent
-  after(async () => {
-    const userAgent = (await headers()).get('user-agent') || 'unknown'
-    const sessionCookie = (await cookies()).get('session-id')?.value || 'anonymous'
-    
-    logUserAction({ sessionCookie, userAgent })
-  })
-  
-  return new Response(JSON.stringify({ status: 'success' }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  })
-}
-```
-
-The response is sent immediately while logging happens in the background.
-
-**Common use cases:**
-
-- Analytics tracking
-
-- Audit logging
-
-- Sending notifications
-
-- Cache invalidation
-
-- Cleanup tasks
-
-**Important notes:**
-
-- `after()` runs even if the response fails or redirects
-
-- Works in Server Actions, Route Handlers, and Server Components
-
-Reference: [https://nextjs.org/docs/app/api-reference/functions/after](https://nextjs.org/docs/app/api-reference/functions/after)
-
----
-
-## 4. Client-Side Data Fetching
-
-**Impact: MEDIUM-HIGH**
-
-Automatic deduplication and efficient data fetching patterns reduce redundant network requests.
-
-### 4.1 Deduplicate Global Event Listeners
-
-**Impact: LOW (single listener for N components)**
-
-Use `useSWRSubscription()` to share global event listeners across component instances.
-
-**Incorrect: N instances = N listeners**
-
-```tsx
-function useKeyboardShortcut(key: string, callback: () => void) {
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.metaKey && e.key === key) {
-        callback()
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [key, callback])
-}
-```
-
-When using the `useKeyboardShortcut` hook multiple times, each instance will register a new listener.
-
-**Correct: N instances = 1 listener**
-
-```tsx
-import useSWRSubscription from 'swr/subscription'
-
-// Module-level Map to track callbacks per key
-const keyCallbacks = new Map<string, Set<() => void>>()
-
-function useKeyboardShortcut(key: string, callback: () => void) {
-  // Register this callback in the Map
-  useEffect(() => {
-    if (!keyCallbacks.has(key)) {
-      keyCallbacks.set(key, new Set())
-    }
-    keyCallbacks.get(key)!.add(callback)
-
-    return () => {
-      const set = keyCallbacks.get(key)
-      if (set) {
-        set.delete(callback)
-        if (set.size === 0) {
-          keyCallbacks.delete(key)
-        }
-      }
-    }
-  }, [key, callback])
-
-  useSWRSubscription('global-keydown', () => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.metaKey && keyCallbacks.has(e.key)) {
-        keyCallbacks.get(e.key)!.forEach(cb => cb())
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  })
-}
-
-function Profile() {
-  // Multiple shortcuts will share the same listener
-  useKeyboardShortcut('p', () => { /* ... */ }) 
-  useKeyboardShortcut('k', () => { /* ... */ })
-  // ...
-}
-```
-
-### 4.2 Use Passive Event Listeners for Scrolling Performance
-
-**Impact: MEDIUM (eliminates scroll delay caused by event listeners)**
-
-Add `{ passive: true }` to touch and wheel event listeners to enable immediate scrolling. Browsers normally wait for listeners to finish to check if `preventDefault()` is called, causing scroll delay.
-
-**Incorrect:**
-
-```typescript
-useEffect(() => {
-  const handleTouch = (e: TouchEvent) => console.log(e.touches[0].clientX)
-  const handleWheel = (e: WheelEvent) => console.log(e.deltaY)
-  
-  document.addEventListener('touchstart', handleTouch)
-  document.addEventListener('wheel', handleWheel)
-  
-  return () => {
-    document.removeEventListener('touchstart', handleTouch)
-    document.removeEventListener('wheel', handleWheel)
-  }
-}, [])
-```
-
-**Correct:**
-
-```typescript
-useEffect(() => {
-  const handleTouch = (e: TouchEvent) => console.log(e.touches[0].clientX)
-  const handleWheel = (e: WheelEvent) => console.log(e.deltaY)
-  
-  document.addEventListener('touchstart', handleTouch, { passive: true })
-  document.addEventListener('wheel', handleWheel, { passive: true })
-  
-  return () => {
-    document.removeEventListener('touchstart', handleTouch)
-    document.removeEventListener('wheel', handleWheel)
-  }
-}, [])
-```
-
-**Use passive when:** tracking/analytics, logging, any listener that doesn't call `preventDefault()`.
-
-**Don't use passive when:** implementing custom swipe gestures, custom zoom controls, or any listener that needs `preventDefault()`.
-
-### 4.3 Use SWR for Automatic Deduplication
-
-**Impact: MEDIUM-HIGH (automatic deduplication)**
-
-SWR enables request deduplication, caching, and revalidation across component instances.
-
-**Incorrect: no deduplication, each instance fetches**
-
-```tsx
-function UserList() {
-  const [users, setUsers] = useState([])
-  useEffect(() => {
-    fetch('/api/users')
-      .then(r => r.json())
-      .then(setUsers)
-  }, [])
-}
-```
-
-**Correct: multiple instances share one request**
-
-```tsx
-import useSWR from 'swr'
-
-function UserList() {
-  const { data: users } = useSWR('/api/users', fetcher)
-}
-```
-
-**For immutable data:**
-
-```tsx
-import { useImmutableSWR } from '@/lib/swr'
-
-function StaticContent() {
-  const { data } = useImmutableSWR('/api/config', fetcher)
-}
-```
-
-**For mutations:**
-
-```tsx
-import { useSWRMutation } from 'swr/mutation'
-
-function UpdateButton() {
-  const { trigger } = useSWRMutation('/api/user', updateUser)
-  return <button onClick={() => trigger()}>Update</button>
-}
-```
-
-Reference: [https://swr.vercel.app](https://swr.vercel.app)
-
-### 4.4 Version and Minimize localStorage Data
-
-**Impact: MEDIUM (prevents schema conflicts, reduces storage size)**
-
-Add version prefix to keys and store only needed fields. Prevents schema conflicts and accidental storage of sensitive data.
-
-**Incorrect:**
-
-```typescript
-// No version, stores everything, no error handling
-localStorage.setItem('userConfig', JSON.stringify(fullUserObject))
-const data = localStorage.getItem('userConfig')
-```
-
-**Correct:**
-
-```typescript
-const VERSION = 'v2'
-
-function saveConfig(config: { theme: string; language: string }) {
-  try {
-    localStorage.setItem(`userConfig:${VERSION}`, JSON.stringify(config))
-  } catch {
-    // Throws in incognito/private browsing, quota exceeded, or disabled
-  }
-}
-
-function loadConfig() {
-  try {
-    const data = localStorage.getItem(`userConfig:${VERSION}`)
-    return data ? JSON.parse(data) : null
-  } catch {
-    return null
-  }
-}
-
-// Migration from v1 to v2
-function migrate() {
-  try {
-    const v1 = localStorage.getItem('userConfig:v1')
-    if (v1) {
-      const old = JSON.parse(v1)
-      saveConfig({ theme: old.darkMode ? 'dark' : 'light', language: old.lang })
-      localStorage.removeItem('userConfig:v1')
-    }
-  } catch {}
-}
-```
-
-**Store minimal fields from server responses:**
-
-```typescript
-// User object has 20+ fields, only store what UI needs
-function cachePrefs(user: FullUser) {
-  try {
-    localStorage.setItem('prefs:v1', JSON.stringify({
-      theme: user.preferences.theme,
-      notifications: user.preferences.notifications
-    }))
-  } catch {}
-}
-```
-
-**Always wrap in try-catch:** `getItem()` and `setItem()` throw in incognito/private browsing (Safari, Firefox), when quota exceeded, or when disabled.
-
-**Benefits:** Schema evolution via versioning, reduced storage size, prevents storing tokens/PII/internal flags.
-
----
-
-## 5. Re-render Optimization
-
-**Impact: MEDIUM**
-
-Reducing unnecessary re-renders minimizes wasted computation and improves UI responsiveness.
-
-### 5.1 Calculate Derived State During Rendering
-
-**Impact: MEDIUM (avoids redundant renders and state drift)**
-
-If a value can be computed from current props/state, do not store it in state or update it in an effect. Derive it during render to avoid extra renders and state drift. Do not set state in effects solely in response to prop changes; prefer derived values or keyed resets instead.
-
-**Incorrect: redundant state and effect**
-
-```tsx
-function Form() {
-  const [firstName, setFirstName] = useState('First')
-  const [lastName, setLastName] = useState('Last')
-  const [fullName, setFullName] = useState('')
-
-  useEffect(() => {
-    setFullName(firstName + ' ' + lastName)
-  }, [firstName, lastName])
-
-  return <p>{fullName}</p>
-}
-```
-
-**Correct: derive during render**
-
-```tsx
-function Form() {
-  const [firstName, setFirstName] = useState('First')
-  const [lastName, setLastName] = useState('Last')
-  const fullName = firstName + ' ' + lastName
-
-  return <p>{fullName}</p>
-}
-```
-
-Reference: [https://react.dev/learn/you-might-not-need-an-effect](https://react.dev/learn/you-might-not-need-an-effect)
-
-### 5.2 Defer State Reads to Usage Point
-
-**Impact: MEDIUM (avoids unnecessary subscriptions)**
-
-Don't subscribe to dynamic state (searchParams, localStorage) if you only read it inside callbacks.
-
-**Incorrect: subscribes to all searchParams changes**
-
-```tsx
-function ShareButton({ chatId }: { chatId: string }) {
-  const searchParams = useSearchParams()
-
-  const handleShare = () => {
-    const ref = searchParams.get('ref')
-    shareChat(chatId, { ref })
-  }
-
-  return <button onClick={handleShare}>Share</button>
-}
-```
-
-**Correct: reads on demand, no subscription**
-
-```tsx
-function ShareButton({ chatId }: { chatId: string }) {
-  const handleShare = () => {
-    const params = new URLSearchParams(window.location.search)
-    const ref = params.get('ref')
-    shareChat(chatId, { ref })
-  }
-
-  return <button onClick={handleShare}>Share</button>
-}
-```
-
-### 5.3 Do not wrap a simple expression with a primitive result type in useMemo
-
-**Impact: LOW-MEDIUM (wasted computation on every render)**
-
-When an expression is simple (few logical or arithmetical operators) and has a primitive result type (boolean, number, string), do not wrap it in `useMemo`.
-
-Calling `useMemo` and comparing hook dependencies may consume more resources than the expression itself.
-
-**Incorrect:**
-
-```tsx
-function Header({ user, notifications }: Props) {
-  const isLoading = useMemo(() => {
-    return user.isLoading || notifications.isLoading
-  }, [user.isLoading, notifications.isLoading])
-
-  if (isLoading) return <Skeleton />
-  // return some markup
-}
-```
-
-**Correct:**
-
-```tsx
-function Header({ user, notifications }: Props) {
-  const isLoading = user.isLoading || notifications.isLoading
-
-  if (isLoading) return <Skeleton />
-  // return some markup
-}
-```
-
-### 5.4 Extract Default Non-primitive Parameter Value from Memoized Component to Constant
-
-**Impact: MEDIUM (restores memoization by using a constant for default value)**
-
-When memoized component has a default value for some non-primitive optional parameter, such as an array, function, or object, calling the component without that parameter results in broken memoization. This is because new value instances are created on every rerender, and they do not pass strict equality comparison in `memo()`.
-
-To address this issue, extract the default value into a constant.
-
-**Incorrect: `onClick` has different values on every rerender**
-
-```tsx
-const UserAvatar = memo(function UserAvatar({ onClick = () => {} }: { onClick?: () => void }) {
-  // ...
-})
-
-// Used without optional onClick
-<UserAvatar />
-```
-
-**Correct: stable default value**
-
-```tsx
-const NOOP = () => {};
-
-const UserAvatar = memo(function UserAvatar({ onClick = NOOP }: { onClick?: () => void }) {
-  // ...
-})
-
-// Used without optional onClick
-<UserAvatar />
-```
-
-### 5.5 Extract to Memoized Components
-
-**Impact: MEDIUM (enables early returns)**
-
-Extract expensive work into memoized components to enable early returns before computation.
-
-**Incorrect: computes avatar even when loading**
-
-```tsx
-function Profile({ user, loading }: Props) {
-  const avatar = useMemo(() => {
-    const id = computeAvatarId(user)
-    return <Avatar id={id} />
-  }, [user])
-
-  if (loading) return <Skeleton />
-  return <div>{avatar}</div>
-}
-```
-
-**Correct: skips computation when loading**
-
-```tsx
-const UserAvatar = memo(function UserAvatar({ user }: { user: User }) {
-  const id = useMemo(() => computeAvatarId(user), [user])
-  return <Avatar id={id} />
-})
-
-function Profile({ user, loading }: Props) {
-  if (loading) return <Skeleton />
-  return (
-    <div>
-      <UserAvatar user={user} />
-    </div>
-  )
-}
-```
-
-**Note:** If your project has [React Compiler](https://react.dev/learn/react-compiler) enabled, manual memoization with `memo()` and `useMemo()` is not necessary. The compiler automatically optimizes re-renders.
-
-### 5.6 Narrow Effect Dependencies
-
-**Impact: LOW (minimizes effect re-runs)**
-
-Specify primitive dependencies instead of objects to minimize effect re-runs.
-
-**Incorrect: re-runs on any user field change**
-
-```tsx
-useEffect(() => {
-  console.log(user.id)
-}, [user])
-```
-
-**Correct: re-runs only when id changes**
-
-```tsx
-useEffect(() => {
-  console.log(user.id)
-}, [user.id])
-```
-
-**For derived state, compute outside effect:**
-
-```tsx
-// Incorrect: runs on width=767, 766, 765...
-useEffect(() => {
-  if (width < 768) {
-    enableMobileMode()
-  }
-}, [width])
-
-// Correct: runs only on boolean transition
-const isMobile = width < 768
-useEffect(() => {
-  if (isMobile) {
-    enableMobileMode()
-  }
-}, [isMobile])
-```
-
-### 5.7 Put Interaction Logic in Event Handlers
-
-**Impact: MEDIUM (avoids effect re-runs and duplicate side effects)**
-
-If a side effect is triggered by a specific user action (submit, click, drag), run it in that event handler. Do not model the action as state + effect; it makes effects re-run on unrelated changes and can duplicate the action.
-
-**Incorrect: event modeled as state + effect**
-
-```tsx
-function Form() {
-  const [submitted, setSubmitted] = useState(false)
-  const theme = useContext(ThemeContext)
-
-  useEffect(() => {
-    if (submitted) {
-      post('/api/register')
-      showToast('Registered', theme)
-    }
-  }, [submitted, theme])
-
-  return <button onClick={() => setSubmitted(true)}>Submit</button>
-}
-```
-
-**Correct: do it in the handler**
-
-```tsx
-function Form() {
-  const theme = useContext(ThemeContext)
-
-  function handleSubmit() {
-    post('/api/register')
-    showToast('Registered', theme)
-  }
-
-  return <button onClick={handleSubmit}>Submit</button>
-}
-```
-
-Reference: [https://react.dev/learn/removing-effect-dependencies#should-this-code-move-to-an-event-handler](https://react.dev/learn/removing-effect-dependencies#should-this-code-move-to-an-event-handler)
-
-### 5.8 Subscribe to Derived State
-
-**Impact: MEDIUM (reduces re-render frequency)**
-
-Subscribe to derived boolean state instead of continuous values to reduce re-render frequency.
-
-**Incorrect: re-renders on every pixel change**
-
-```tsx
-function Sidebar() {
-  const width = useWindowWidth()  // updates continuously
-  const isMobile = width < 768
-  return <nav className={isMobile ? 'mobile' : 'desktop'} />
-}
-```
-
-**Correct: re-renders only when boolean changes**
-
-```tsx
-function Sidebar() {
-  const isMobile = useMediaQuery('(max-width: 767px)')
-  return <nav className={isMobile ? 'mobile' : 'desktop'} />
-}
-```
-
-### 5.9 Use Functional setState Updates
-
-**Impact: MEDIUM (prevents stale closures and unnecessary callback recreations)**
-
-When updating state based on the current state value, use the functional update form of setState instead of directly referencing the state variable. This prevents stale closures, eliminates unnecessary dependencies, and creates stable callback references.
-
-**Incorrect: requires state as dependency**
-
-```tsx
-function TodoList() {
-  const [items, setItems] = useState(initialItems)
-  
-  // Callback must depend on items, recreated on every items change
-  const addItems = useCallback((newItems: Item[]) => {
-    setItems([...items, ...newItems])
-  }, [items])  // ❌ items dependency causes recreations
-  
-  // Risk of stale closure if dependency is forgotten
-  const removeItem = useCallback((id: string) => {
-    setItems(items.filter(item => item.id !== id))
-  }, [])  // ❌ Missing items dependency - will use stale items!
-  
-  return <ItemsEditor items={items} onAdd={addItems} onRemove={removeItem} />
-}
-```
-
-The first callback is recreated every time `items` changes, which can cause child components to re-render unnecessarily. The second callback has a stale closure bug—it will always reference the initial `items` value.
-
-**Correct: stable callbacks, no stale closures**
-
-```tsx
-function TodoList() {
-  const [items, setItems] = useState(initialItems)
-  
-  // Stable callback, never recreated
-  const addItems = useCallback((newItems: Item[]) => {
-    setItems(curr => [...curr, ...newItems])
-  }, [])  // ✅ No dependencies needed
-  
-  // Always uses latest state, no stale closure risk
-  const removeItem = useCallback((id: string) => {
-    setItems(curr => curr.filter(item => item.id !== id))
-  }, [])  // ✅ Safe and stable
-  
-  return <ItemsEditor items={items} onAdd={addItems} onRemove={removeItem} />
-}
-```
-
-**Benefits:**
-
-1. **Stable callback references** - Callbacks don't need to be recreated when state changes
-
-2. **No stale closures** - Always operates on the latest state value
-
-3. **Fewer dependencies** - Simplifies dependency arrays and reduces memory leaks
-
-4. **Prevents bugs** - Eliminates the most common source of React closure bugs
-
-**When to use functional updates:**
-
-- Any setState that depends on the current state value
-
-- Inside useCallback/useMemo when state is needed
-
-- Event handlers that reference state
-
-- Async operations that update state
-
-**When direct updates are fine:**
-
-- Setting state to a static value: `setCount(0)`
-
-- Setting state from props/arguments only: `setName(newName)`
-
-- State doesn't depend on previous value
-
-**Note:** If your project has [React Compiler](https://react.dev/learn/react-compiler) enabled, the compiler can automatically optimize some cases, but functional updates are still recommended for correctness and to prevent stale closure bugs.
-
-### 5.10 Use Lazy State Initialization
-
-**Impact: MEDIUM (wasted computation on every render)**
-
-Pass a function to `useState` for expensive initial values. Without the function form, the initializer runs on every render even though the value is only used once.
-
-**Incorrect: runs on every render**
-
-```tsx
-function FilteredList({ items }: { items: Item[] }) {
-  // buildSearchIndex() runs on EVERY render, even after initialization
-  const [searchIndex, setSearchIndex] = useState(buildSearchIndex(items))
-  const [query, setQuery] = useState('')
-  
-  // When query changes, buildSearchIndex runs again unnecessarily
-  return <SearchResults index={searchIndex} query={query} />
-}
-
-function UserProfile() {
-  // JSON.parse runs on every render
-  const [settings, setSettings] = useState(
-    JSON.parse(localStorage.getItem('settings') || '{}')
-  )
-  
-  return <SettingsForm settings={settings} onChange={setSettings} />
-}
-```
-
-**Correct: runs only once**
-
-```tsx
-function FilteredList({ items }: { items: Item[] }) {
-  // buildSearchIndex() runs ONLY on initial render
-  const [searchIndex, setSearchIndex] = useState(() => buildSearchIndex(items))
-  const [query, setQuery] = useState('')
-  
-  return <SearchResults index={searchIndex} query={query} />
-}
-
-function UserProfile() {
-  // JSON.parse runs only on initial render
-  const [settings, setSettings] = useState(() => {
-    const stored = localStorage.getItem('settings')
-    return stored ? JSON.parse(stored) : {}
-  })
-  
-  return <SettingsForm settings={settings} onChange={setSettings} />
-}
-```
-
-Use lazy initialization when computing initial values from localStorage/sessionStorage, building data structures (indexes, maps), reading from the DOM, or performing heavy transformations.
-
-For simple primitives (`useState(0)`), direct references (`useState(props.value)`), or cheap literals (`useState({})`), the function form is unnecessary.
-
-### 5.11 Use Transitions for Non-Urgent Updates
-
-**Impact: MEDIUM (maintains UI responsiveness)**
-
-Mark frequent, non-urgent state updates as transitions to maintain UI responsiveness.
-
-**Incorrect: blocks UI on every scroll**
-
-```tsx
-function ScrollTracker() {
-  const [scrollY, setScrollY] = useState(0)
-  useEffect(() => {
-    const handler = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', handler, { passive: true })
-    return () => window.removeEventListener('scroll', handler)
-  }, [])
-}
-```
-
-**Correct: non-blocking updates**
-
-```tsx
-import { startTransition } from 'react'
-
-function ScrollTracker() {
-  const [scrollY, setScrollY] = useState(0)
-  useEffect(() => {
-    const handler = () => {
-      startTransition(() => setScrollY(window.scrollY))
-    }
-    window.addEventListener('scroll', handler, { passive: true })
-    return () => window.removeEventListener('scroll', handler)
-  }, [])
-}
-```
-
-### 5.12 Use useRef for Transient Values
-
-**Impact: MEDIUM (avoids unnecessary re-renders on frequent updates)**
-
-When a value changes frequently and you don't want a re-render on every update (e.g., mouse trackers, intervals, transient flags), store it in `useRef` instead of `useState`. Keep component state for UI; use refs for temporary DOM-adjacent values. Updating a ref does not trigger a re-render.
-
-**Incorrect: renders every update**
-
-```tsx
-function Tracker() {
-  const [lastX, setLastX] = useState(0)
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => setLastX(e.clientX)
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
-  }, [])
-
-  return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: lastX,
-        width: 8,
-        height: 8,
-        background: 'black',
-      }}
+    <LegendList
+      data={users}
+      renderItem={({ item }) => (
+        <UserRow
+          // Bad: new object on every render
+          user={{ id: item.id, name: item.name, avatar: item.avatar }}
+        />
+      )}
     />
   )
 }
 ```
 
-**Correct: no re-render for tracking**
+**Incorrect: inline style object**
 
 ```tsx
-function Tracker() {
-  const lastXRef = useRef(0)
-  const dotRef = useRef<HTMLDivElement>(null)
+renderItem={({ item }) => (
+  <UserRow
+    name={item.name}
+    // Bad: new style object on every render
+    style={{ backgroundColor: item.isActive ? 'green' : 'gray' }}
+  />
+)}
+```
 
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      lastXRef.current = e.clientX
-      const node = dotRef.current
-      if (node) {
-        node.style.transform = `translateX(${e.clientX}px)`
-      }
-    }
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
-  }, [])
+**Correct: pass item directly or primitives**
 
+```tsx
+function UserList({ users }: { users: User[] }) {
   return (
-    <div
-      ref={dotRef}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: 8,
-        height: 8,
-        background: 'black',
-        transform: 'translateX(0px)',
-      }}
+    <LegendList
+      data={users}
+      renderItem={({ item }) => (
+        // Good: pass the item directly
+        <UserRow user={item} />
+      )}
     />
   )
 }
 ```
 
----
-
-## 6. Rendering Performance
-
-**Impact: MEDIUM**
-
-Optimizing the rendering process reduces the work the browser needs to do.
-
-### 6.1 Animate SVG Wrapper Instead of SVG Element
-
-**Impact: LOW (enables hardware acceleration)**
-
-Many browsers don't have hardware acceleration for CSS3 animations on SVG elements. Wrap SVG in a `<div>` and animate the wrapper instead.
-
-**Incorrect: animating SVG directly - no hardware acceleration**
+**Correct: pass primitives, derive inside child**
 
 ```tsx
-function LoadingSpinner() {
-  return (
-    <svg 
-      className="animate-spin"
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24"
-    >
-      <circle cx="12" cy="12" r="10" stroke="currentColor" />
-    </svg>
-  )
-}
+renderItem={({ item }) => (
+  <UserRow
+    id={item.id}
+    name={item.name}
+    isActive={item.isActive}
+  />
+)}
+
+const UserRow = memo(function UserRow({ id, name, isActive }: Props) {
+  // Good: derive style inside memoized component
+  const backgroundColor = isActive ? 'green' : 'gray'
+  return <View style={[styles.row, { backgroundColor }]}>{/* ... */}</View>
+})
 ```
 
-**Correct: animating wrapper div - hardware accelerated**
+**Correct: hoist static styles in module scope**
 
 ```tsx
-function LoadingSpinner() {
-  return (
-    <div className="animate-spin">
-      <svg 
-        width="24" 
-        height="24" 
-        viewBox="0 0 24 24"
-      >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" />
-      </svg>
-    </div>
-  )
-}
+const activeStyle = { backgroundColor: 'green' }
+const inactiveStyle = { backgroundColor: 'gray' }
+
+renderItem={({ item }) => (
+  <UserRow
+    name={item.name}
+    // Good: stable references
+    style={item.isActive ? activeStyle : inactiveStyle}
+  />
+)}
 ```
 
-This applies to all CSS transforms and transitions (`transform`, `opacity`, `translate`, `scale`, `rotate`). The wrapper div allows browsers to use GPU acceleration for smoother animations.
+Passing primitives or stable references allows `memo()` to skip re-renders when
 
-### 6.2 CSS content-visibility for Long Lists
+the actual values haven't changed.
 
-**Impact: HIGH (faster initial render)**
+**Note:** If you have the React Compiler enabled, it handles memoization
 
-Apply `content-visibility: auto` to defer off-screen rendering.
+automatically and these manual optimizations become less critical.
 
-**CSS:**
+### 2.2 Hoist callbacks to the root of lists
 
-```css
-.message-item {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 80px;
-}
-```
+**Impact: MEDIUM (Fewer re-renders and faster lists)**
 
-**Example:**
+When passing callback functions to list items, create a single instance of the
 
-```tsx
-function MessageList({ messages }: { messages: Message[] }) {
-  return (
-    <div className="overflow-y-auto h-screen">
-      {messages.map(msg => (
-        <div key={msg.id} className="message-item">
-          <Avatar user={msg.author} />
-          <div>{msg.content}</div>
-        </div>
-      ))}
-    </div>
-  )
-}
-```
+callback at the root of the list. Items should then call it with a unique
 
-For 1000 messages, browser skips layout/paint for ~990 off-screen items (10× faster initial render).
+identifier.
 
-### 6.3 Hoist Static JSX Elements
+**Incorrect: creates a new callback on each render**
 
-**Impact: LOW (avoids re-creation)**
-
-Extract static JSX outside components to avoid re-creation.
-
-**Incorrect: recreates element every render**
-
-```tsx
-function LoadingSkeleton() {
-  return <div className="animate-pulse h-20 bg-gray-200" />
-}
-
-function Container() {
-  return (
-    <div>
-      {loading && <LoadingSkeleton />}
-    </div>
-  )
-}
-```
-
-**Correct: reuses same element**
-
-```tsx
-const loadingSkeleton = (
-  <div className="animate-pulse h-20 bg-gray-200" />
+```typescript
+return (
+  <LegendList
+    renderItem={({ item }) => {
+      // bad: creates a new callback on each render
+      const onPress = () => handlePress(item.id)
+      return <Item key={item.id} item={item} onPress={onPress} />
+    }}
+  />
 )
+```
 
-function Container() {
+**Correct: a single function instance passed to each item**
+
+```typescript
+const onPress = useCallback(() => handlePress(item.id), [handlePress, item.id])
+
+return (
+  <LegendList
+    renderItem={({ item }) => (
+      <Item key={item.id} item={item} onPress={onPress} />
+    )}
+  />
+)
+```
+
+Reference: [https://example.com](https://example.com)
+
+### 2.3 Keep List Items Lightweight
+
+**Impact: HIGH (reduces render time for visible items during scroll)**
+
+List items should be as inexpensive as possible to render. Minimize hooks, avoid
+
+queries, and limit React Context access. Virtualized lists render many items
+
+during scroll—expensive items cause jank.
+
+**Incorrect: heavy list item**
+
+```tsx
+function ProductRow({ id }: { id: string }) {
+  // Bad: query inside list item
+  const { data: product } = useQuery(['product', id], () => fetchProduct(id))
+  // Bad: multiple context accesses
+  const theme = useContext(ThemeContext)
+  const user = useContext(UserContext)
+  const cart = useContext(CartContext)
+  // Bad: expensive computation
+  const recommendations = useMemo(
+    () => computeRecommendations(product),
+    [product]
+  )
+
+  return <View>{/* ... */}</View>
+}
+```
+
+**Correct: lightweight list item**
+
+```tsx
+function ProductRow({ name, price, imageUrl }: Props) {
+  // Good: receives only primitives, minimal hooks
   return (
-    <div>
-      {loading && loadingSkeleton}
-    </div>
+    <View>
+      <Image source={{ uri: imageUrl }} />
+      <Text>{name}</Text>
+      <Text>{price}</Text>
+    </View>
   )
 }
 ```
 
-This is especially helpful for large and static SVG nodes, which can be expensive to recreate on every render.
-
-**Note:** If your project has [React Compiler](https://react.dev/learn/react-compiler) enabled, the compiler automatically hoists static JSX elements and optimizes component re-renders, making manual hoisting unnecessary.
-
-### 6.4 Optimize SVG Precision
-
-**Impact: LOW (reduces file size)**
-
-Reduce SVG coordinate precision to decrease file size. The optimal precision depends on the viewBox size, but in general reducing precision should be considered.
-
-**Incorrect: excessive precision**
-
-```svg
-<path d="M 10.293847 20.847362 L 30.938472 40.192837" />
-```
-
-**Correct: 1 decimal place**
-
-```svg
-<path d="M 10.3 20.8 L 30.9 40.2" />
-```
-
-**Automate with SVGO:**
-
-```bash
-npx svgo --precision=1 --multipass icon.svg
-```
-
-### 6.5 Prevent Hydration Mismatch Without Flickering
-
-**Impact: MEDIUM (avoids visual flicker and hydration errors)**
-
-When rendering content that depends on client-side storage (localStorage, cookies), avoid both SSR breakage and post-hydration flickering by injecting a synchronous script that updates the DOM before React hydrates.
-
-**Incorrect: breaks SSR**
+**Move data fetching to parent:**
 
 ```tsx
-function ThemeWrapper({ children }: { children: ReactNode }) {
-  // localStorage is not available on server - throws error
-  const theme = localStorage.getItem('theme') || 'light'
-  
+// Parent fetches all data once
+function ProductList() {
+  const { data: products } = useQuery(['products'], fetchProducts)
+
   return (
-    <div className={theme}>
-      {children}
-    </div>
+    <LegendList
+      data={products}
+      renderItem={({ item }) => (
+        <ProductRow name={item.name} price={item.price} imageUrl={item.image} />
+      )}
+    />
   )
 }
 ```
 
-Server-side rendering will fail because `localStorage` is undefined.
-
-**Incorrect: visual flickering**
+**For shared values, use Zustand selectors instead of Context:**
 
 ```tsx
-function ThemeWrapper({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState('light')
-  
-  useEffect(() => {
-    // Runs after hydration - causes visible flash
-    const stored = localStorage.getItem('theme')
-    if (stored) {
-      setTheme(stored)
-    }
-  }, [])
-  
-  return (
-    <div className={theme}>
-      {children}
-    </div>
-  )
+// Incorrect: Context causes re-render when any cart value changes
+function ProductRow({ id, name }: Props) {
+  const { items } = useContext(CartContext)
+  const inCart = items.includes(id)
+  // ...
+}
+
+// Correct: Zustand selector only re-renders when this specific value changes
+function ProductRow({ id, name }: Props) {
+  // use Set.has (created once at the root) instead of Array.includes()
+  const inCart = useCartStore((s) => s.items.has(id))
+  // ...
 }
 ```
 
-Component first renders with default value (`light`), then updates after hydration, causing a visible flash of incorrect content.
+**Guidelines for list items:**
 
-**Correct: no flicker, no hydration mismatch**
+- No queries or data fetching
+
+- No expensive computations (move to parent or memoize at parent level)
+
+- Prefer Zustand selectors over React Context
+
+- Minimize useState/useEffect hooks
+
+- Pass pre-computed values as props
+
+The goal: list items should be simple rendering functions that take props and
+
+return JSX.
+
+### 2.4 Optimize List Performance with Stable Object References
+
+**Impact: CRITICAL (virtualization relies on reference stability)**
+
+Don't map or filter data before passing to virtualized lists. Virtualization
+
+relies on object reference stability to know what changed—new references cause
+
+full re-renders of all visible items. Attempt to prevent frequent renders at the
+
+list-parent level.
+
+Where needed, use context selectors within list items.
+
+**Incorrect: creates new object references on every keystroke**
 
 ```tsx
-function ThemeWrapper({ children }: { children: ReactNode }) {
+function DomainSearch() {
+  const { keyword, setKeyword } = useKeywordZustandState()
+  const { data: tlds } = useTlds()
+
+  // Bad: creates new objects on every render, reparenting the entire list on every keystroke
+  const domains = tlds.map((tld) => ({
+    domain: `${keyword}.${tld.name}`,
+    tld: tld.name,
+    price: tld.price,
+  }))
+
   return (
     <>
-      <div id="theme-wrapper">
-        {children}
-      </div>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              try {
-                var theme = localStorage.getItem('theme') || 'light';
-                var el = document.getElementById('theme-wrapper');
-                if (el) el.className = theme;
-              } catch (e) {}
-            })();
-          `,
-        }}
+      <TextInput value={keyword} onChangeText={setKeyword} />
+      <LegendList
+        data={domains}
+        renderItem={({ item }) => <DomainItem item={item} keyword={keyword} />}
       />
     </>
   )
 }
 ```
 
-The inline script executes synchronously before showing the element, ensuring the DOM already has the correct value. No flickering, no hydration mismatch.
-
-This pattern is especially useful for theme toggles, user preferences, authentication states, and any client-only data that should render immediately without flashing default values.
-
-### 6.6 Suppress Expected Hydration Mismatches
-
-**Impact: LOW-MEDIUM (avoids noisy hydration warnings for known differences)**
-
-In SSR frameworks (e.g., Next.js), some values are intentionally different on server vs client (random IDs, dates, locale/timezone formatting). For these *expected* mismatches, wrap the dynamic text in an element with `suppressHydrationWarning` to prevent noisy warnings. Do not use this to hide real bugs. Don’t overuse it.
-
-**Incorrect: known mismatch warnings**
+**Correct: stable references, transform inside items**
 
 ```tsx
-function Timestamp() {
-  return <span>{new Date().toLocaleString()}</span>
+const renderItem = ({ item }) => <DomainItem tld={item} />
+
+function DomainSearch() {
+  const { data: tlds } = useTlds()
+
+  return (
+    <LegendList
+      // good: as long as the data is stable, LegendList will not re-render the entire list
+      data={tlds}
+      renderItem={renderItem}
+    />
+  )
+}
+
+function DomainItem({ tld }: { tld: Tld }) {
+  // good: transform within items, and don't pass the dynamic data as a prop
+  // good: use a selector function from zustand to receive a stable string back
+  const domain = useKeywordZustandState((s) => s.keyword + '.' + tld.name)
+  return <Text>{domain}</Text>
 }
 ```
 
-**Correct: suppress expected mismatch only**
+**Updating parent array reference:**
 
 ```tsx
-function Timestamp() {
+// good: creates a new array instance without mutating the inner objects
+// good: parent array reference is unaffected by typing and updating "keyword"
+const sortedTlds = tlds.toSorted((a, b) => a.name.localeCompare(b.name))
+
+return <LegendList data={sortedTlds} renderItem={renderItem} />
+```
+
+Creating a new array instance can be okay, as long as its inner object
+
+references are stable. For instance, if you sort a list of objects:
+
+Even though this creates a new array instance `sortedTlds`, the inner object
+
+references are stable.
+
+**With zustand for dynamic data: avoids parent re-renders**
+
+```tsx
+function DomainItemFavoriteButton({ tld }: { tld: Tld }) {
+  const isFavorited = useFavoritesStore((s) => s.favorites.has(tld.id))
+  return <TldFavoriteButton isFavorited={isFavorited} />
+}
+```
+
+Virtualization can now skip items that haven't changed when typing. Only visible
+
+items (~20) re-render on keystroke, rather than the parent.
+
+**Deriving state within list items based on parent data (avoids parent
+
+re-renders):**
+
+For components where the data is conditional based on the parent state, this
+
+pattern is even more important. For example, if you are checking if an item is
+
+favorited, toggling favorites only re-renders one component if the item itself
+
+is in charge of accessing the state rather than the parent:
+
+Note: if you're using the React Compiler, you can read React Context values
+
+directly within list items. Although this is slightly slower than using a
+
+Zustand selector in most cases, the effect may be negligible.
+
+### 2.5 Pass Primitives to List Items for Memoization
+
+**Impact: HIGH (enables effective memo() comparison)**
+
+When possible, pass only primitive values (strings, numbers, booleans) as props
+
+to list item components. Primitives enable shallow comparison in `memo()` to
+
+work correctly, skipping re-renders when values haven't changed.
+
+**Incorrect: object prop requires deep comparison**
+
+```tsx
+type User = { id: string; name: string; email: string; avatar: string }
+
+const UserRow = memo(function UserRow({ user }: { user: User }) {
+  // memo() compares user by reference, not value
+  // If parent creates new user object, this re-renders even if data is same
+  return <Text>{user.name}</Text>
+})
+
+renderItem={({ item }) => <UserRow user={item} />}
+```
+
+This can still be optimized, but it is harder to memoize properly.
+
+**Correct: primitive props enable shallow comparison**
+
+```tsx
+const UserRow = memo(function UserRow({
+  id,
+  name,
+  email,
+}: {
+  id: string
+  name: string
+  email: string
+}) {
+  // memo() compares each primitive directly
+  // Re-renders only if id, name, or email actually changed
+  return <Text>{name}</Text>
+})
+
+renderItem={({ item }) => (
+  <UserRow id={item.id} name={item.name} email={item.email} />
+)}
+```
+
+**Pass only what you need:**
+
+```tsx
+// Incorrect: passing entire item when you only need name
+<UserRow user={item} />
+
+// Correct: pass only the fields the component uses
+<UserRow name={item.name} avatarUrl={item.avatar} />
+```
+
+**For callbacks, hoist or use item ID:**
+
+```tsx
+// Incorrect: inline function creates new reference
+<UserRow name={item.name} onPress={() => handlePress(item.id)} />
+
+// Correct: pass ID, handle in child
+<UserRow id={item.id} name={item.name} />
+
+const UserRow = memo(function UserRow({ id, name }: Props) {
+  const handlePress = useCallback(() => {
+    // use id here
+  }, [id])
+  return <Pressable onPress={handlePress}><Text>{name}</Text></Pressable>
+})
+```
+
+Primitive props make memoization predictable and effective.
+
+**Note:** If you have the React Compiler enabled, you do not need to use
+
+`memo()` or `useCallback()`, but the object references still apply.
+
+### 2.6 Use a List Virtualizer for Any List
+
+**Impact: HIGH (reduced memory, faster mounts)**
+
+Use a list virtualizer like LegendList or FlashList instead of ScrollView with
+
+mapped children—even for short lists. Virtualizers only render visible items,
+
+reducing memory usage and mount time. ScrollView renders all children upfront,
+
+which gets expensive quickly.
+
+**Incorrect: ScrollView renders all items at once**
+
+```tsx
+function Feed({ items }: { items: Item[] }) {
   return (
-    <span suppressHydrationWarning>
-      {new Date().toLocaleString()}
-    </span>
+    <ScrollView>
+      {items.map((item) => (
+        <ItemCard key={item.id} item={item} />
+      ))}
+    </ScrollView>
+  )
+}
+// 50 items = 50 components mounted, even if only 10 visible
+```
+
+**Correct: virtualizer renders only visible items**
+
+```tsx
+import { LegendList } from '@legendapp/list'
+
+function Feed({ items }: { items: Item[] }) {
+  return (
+    <LegendList
+      data={items}
+      // if you aren't using React Compiler, wrap these with useCallback
+      renderItem={({ item }) => <ItemCard item={item} />}
+      keyExtractor={(item) => item.id}
+      estimatedItemSize={80}
+    />
+  )
+}
+// Only ~10-15 visible items mounted at a time
+```
+
+**Alternative: FlashList**
+
+```tsx
+import { FlashList } from '@shopify/flash-list'
+
+function Feed({ items }: { items: Item[] }) {
+  return (
+    <FlashList
+      data={items}
+      // if you aren't using React Compiler, wrap these with useCallback
+      renderItem={({ item }) => <ItemCard item={item} />}
+      keyExtractor={(item) => item.id}
+    />
   )
 }
 ```
 
-### 6.7 Use Activity Component for Show/Hide
+Benefits apply to any screen with scrollable content—profiles, settings, feeds,
 
-**Impact: MEDIUM (preserves state/DOM)**
+search results. Default to virtualization.
 
-Use React's `<Activity>` to preserve state/DOM for expensive components that frequently toggle visibility.
+### 2.7 Use Compressed Images in Lists
 
-**Usage:**
+**Impact: HIGH (faster load times, less memory)**
+
+Always load compressed, appropriately-sized images in lists. Full-resolution
+
+images consume excessive memory and cause scroll jank. Request thumbnails from
+
+your server or use an image CDN with resize parameters.
+
+**Incorrect: full-resolution images**
 
 ```tsx
-import { Activity } from 'react'
-
-function Dropdown({ isOpen }: Props) {
+function ProductItem({ product }: { product: Product }) {
   return (
-    <Activity mode={isOpen ? 'visible' : 'hidden'}>
-      <ExpensiveMenu />
-    </Activity>
+    <View>
+      {/* 4000x3000 image loaded for a 100x100 thumbnail */}
+      <Image
+        source={{ uri: product.imageUrl }}
+        style={{ width: 100, height: 100 }}
+      />
+      <Text>{product.name}</Text>
+    </View>
   )
 }
 ```
 
-Avoids expensive re-renders and state loss.
-
-### 6.8 Use Explicit Conditional Rendering
-
-**Impact: LOW (prevents rendering 0 or NaN)**
-
-Use explicit ternary operators (`? :`) instead of `&&` for conditional rendering when the condition can be `0`, `NaN`, or other falsy values that render.
-
-**Incorrect: renders "0" when count is 0**
+**Correct: request appropriately-sized image**
 
 ```tsx
-function Badge({ count }: { count: number }) {
+function ProductItem({ product }: { product: Product }) {
+  // Request a 200x200 image (2x for retina)
+  const thumbnailUrl = `${product.imageUrl}?w=200&h=200&fit=cover`
+
   return (
-    <div>
-      {count && <span className="badge">{count}</span>}
-    </div>
+    <View>
+      <Image
+        source={{ uri: thumbnailUrl }}
+        style={{ width: 100, height: 100 }}
+        contentFit='cover'
+      />
+      <Text>{product.name}</Text>
+    </View>
   )
 }
-
-// When count = 0, renders: <div>0</div>
-// When count = 5, renders: <div><span class="badge">5</span></div>
 ```
 
-**Correct: renders nothing when count is 0**
+Use an optimized image component with built-in caching and placeholder support,
+
+such as `expo-image` or `SolitoImage` (which uses `expo-image` under the hood).
+
+Request images at 2x the display size for retina screens.
+
+---
+
+## 3. Animation
+
+**Impact: HIGH**
+
+GPU-accelerated animations, Reanimated patterns, and avoiding
+render thrashing during gestures.
+
+### 3.1 Animate Transform and Opacity Instead of Layout Properties
+
+**Impact: HIGH (GPU-accelerated animations, no layout recalculation)**
+
+Avoid animating `width`, `height`, `top`, `left`, `margin`, or `padding`. These trigger layout recalculation on every frame. Instead, use `transform` (scale, translate) and `opacity` which run on the GPU without triggering layout.
+
+**Incorrect: animates height, triggers layout every frame**
 
 ```tsx
-function Badge({ count }: { count: number }) {
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
+
+function CollapsiblePanel({ expanded }: { expanded: boolean }) {
+  const animatedStyle = useAnimatedStyle(() => ({
+    height: withTiming(expanded ? 200 : 0), // triggers layout on every frame
+    overflow: 'hidden',
+  }))
+
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>
+}
+```
+
+**Correct: animates scaleY, GPU-accelerated**
+
+```tsx
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
+
+function CollapsiblePanel({ expanded }: { expanded: boolean }) {
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scaleY: withTiming(expanded ? 1 : 0) },
+    ],
+    opacity: withTiming(expanded ? 1 : 0),
+  }))
+
   return (
-    <div>
-      {count > 0 ? <span className="badge">{count}</span> : null}
-    </div>
+    <Animated.View style={[{ height: 200, transformOrigin: 'top' }, animatedStyle]}>
+      {children}
+    </Animated.View>
   )
 }
-
-// When count = 0, renders: <div></div>
-// When count = 5, renders: <div><span class="badge">5</span></div>
 ```
 
-### 6.9 Use useTransition Over Manual Loading States
-
-**Impact: LOW (reduces re-renders and improves code clarity)**
-
-Use `useTransition` instead of manual `useState` for loading states. This provides built-in `isPending` state and automatically manages transitions.
-
-**Incorrect: manual loading state**
+**Correct: animates translateY for slide animations**
 
 ```tsx
-function SearchResults() {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 
-  const handleSearch = async (value: string) => {
-    setIsLoading(true)
-    setQuery(value)
-    const data = await fetchResults(value)
-    setResults(data)
-    setIsLoading(false)
+function SlideIn({ visible }: { visible: boolean }) {
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: withTiming(visible ? 0 : 100) },
+    ],
+    opacity: withTiming(visible ? 1 : 0),
+  }))
+
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>
+}
+```
+
+GPU-accelerated properties: `transform` (translate, scale, rotate), `opacity`. Everything else triggers layout.
+
+### 3.2 Prefer useDerivedValue Over useAnimatedReaction
+
+**Impact: MEDIUM (cleaner code, automatic dependency tracking)**
+
+When deriving a shared value from another, use `useDerivedValue` instead of
+
+`useAnimatedReaction`. Derived values are declarative, automatically track
+
+dependencies, and return a value you can use directly. Animated reactions are
+
+for side effects, not derivations.
+
+[Reanimated useDerivedValue](https://docs.swmansion.com/react-native-reanimated/docs/core/useDerivedValue)
+
+**Incorrect: useAnimatedReaction for derivation**
+
+```tsx
+import { useSharedValue, useAnimatedReaction } from 'react-native-reanimated'
+
+function MyComponent() {
+  const progress = useSharedValue(0)
+  const opacity = useSharedValue(1)
+
+  useAnimatedReaction(
+    () => progress.value,
+    (current) => {
+      opacity.value = 1 - current
+    }
+  )
+
+  // ...
+}
+```
+
+**Correct: useDerivedValue**
+
+```tsx
+import { useSharedValue, useDerivedValue } from 'react-native-reanimated'
+
+function MyComponent() {
+  const progress = useSharedValue(0)
+
+  const opacity = useDerivedValue(() => 1 - progress.get())
+
+  // ...
+}
+```
+
+Use `useAnimatedReaction` only for side effects that don't produce a value
+
+(e.g., triggering haptics, logging, calling `runOnJS`).
+
+### 3.3 Use GestureDetector for Animated Press States
+
+**Impact: MEDIUM (UI thread animations, smoother press feedback)**
+
+For animated press states (scale, opacity on press), use `GestureDetector` with
+
+`Gesture.Tap()` and shared values instead of Pressable's
+
+`onPressIn`/`onPressOut`. Gesture callbacks run on the UI thread as worklets—no
+
+JS thread round-trip for press animations.
+
+[Gesture Handler Tap Gesture](https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/tap-gesture)
+
+**Incorrect: Pressable with JS thread callbacks**
+
+```tsx
+import { Pressable } from 'react-native'
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated'
+
+function AnimatedButton({ onPress }: { onPress: () => void }) {
+  const scale = useSharedValue(1)
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }))
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onPressIn={() => (scale.value = withTiming(0.95))}
+      onPressOut={() => (scale.value = withTiming(1))}
+    >
+      <Animated.View style={animatedStyle}>
+        <Text>Press me</Text>
+      </Animated.View>
+    </Pressable>
+  )
+}
+```
+
+**Correct: GestureDetector with UI thread worklets**
+
+```tsx
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  interpolate,
+  runOnJS,
+} from 'react-native-reanimated'
+
+function AnimatedButton({ onPress }: { onPress: () => void }) {
+  // Store the press STATE (0 = not pressed, 1 = pressed)
+  const pressed = useSharedValue(0)
+
+  const tap = Gesture.Tap()
+    .onBegin(() => {
+      pressed.set(withTiming(1))
+    })
+    .onFinalize(() => {
+      pressed.set(withTiming(0))
+    })
+    .onEnd(() => {
+      runOnJS(onPress)()
+    })
+
+  // Derive visual values from the state
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { scale: interpolate(withTiming(pressed.get()), [0, 1], [1, 0.95]) },
+    ],
+  }))
+
+  return (
+    <GestureDetector gesture={tap}>
+      <Animated.View style={animatedStyle}>
+        <Text>Press me</Text>
+      </Animated.View>
+    </GestureDetector>
+  )
+}
+```
+
+Store the press **state** (0 or 1), then derive the scale via `interpolate`.
+
+This keeps the shared value as ground truth. Use `runOnJS` to call JS functions
+
+from worklets. Use `.set()` and `.get()` for React Compiler compatibility.
+
+---
+
+## 4. Scroll Performance
+
+**Impact: HIGH**
+
+Tracking scroll position without causing render thrashing.
+
+### 4.1 Never Track Scroll Position in useState
+
+**Impact: HIGH (prevents render thrashing during scroll)**
+
+Never store scroll position in `useState`. Scroll events fire rapidly—state
+
+updates cause render thrashing and dropped frames. Use a Reanimated shared value
+
+for animations or a ref for non-reactive tracking.
+
+**Incorrect: useState causes jank**
+
+```tsx
+import { useState } from 'react'
+import {
+  ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from 'react-native'
+
+function Feed() {
+  const [scrollY, setScrollY] = useState(0)
+
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setScrollY(e.nativeEvent.contentOffset.y) // re-renders on every frame
+  }
+
+  return <ScrollView onScroll={onScroll} scrollEventThrottle={16} />
+}
+```
+
+**Correct: Reanimated for animations**
+
+```tsx
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+} from 'react-native-reanimated'
+
+function Feed() {
+  const scrollY = useSharedValue(0)
+
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (e) => {
+      scrollY.value = e.contentOffset.y // runs on UI thread, no re-render
+    },
+  })
+
+  return (
+    <Animated.ScrollView
+      onScroll={onScroll}
+      // higher number has better performance, but it fires less often.
+      // unset this if you need higher precision over performance.
+      scrollEventThrottle={16}
+    />
+  )
+}
+```
+
+**Correct: ref for non-reactive tracking**
+
+```tsx
+import { useRef } from 'react'
+import {
+  ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from 'react-native'
+
+function Feed() {
+  const scrollY = useRef(0)
+
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrollY.current = e.nativeEvent.contentOffset.y // no re-render
+  }
+
+  return <ScrollView onScroll={onScroll} scrollEventThrottle={16} />
+}
+```
+
+---
+
+## 5. React State
+
+**Impact: MEDIUM**
+
+Patterns for managing React state to avoid stale closures and
+unnecessary re-renders.
+
+### 5.1 Minimize State Variables and Derive Values
+
+**Impact: MEDIUM (fewer re-renders, less state drift)**
+
+Use the fewest state variables possible. If a value can be computed from existing state or props, derive it during render instead of storing it in state. Redundant state causes unnecessary re-renders and can drift out of sync.
+
+**Incorrect: redundant state**
+
+```tsx
+function Cart({ items }: { items: Item[] }) {
+  const [total, setTotal] = useState(0)
+  const [itemCount, setItemCount] = useState(0)
+
+  useEffect(() => {
+    setTotal(items.reduce((sum, item) => sum + item.price, 0))
+    setItemCount(items.length)
+  }, [items])
+
+  return (
+    <View>
+      <Text>{itemCount} items</Text>
+      <Text>Total: ${total}</Text>
+    </View>
+  )
+}
+```
+
+**Correct: derived values**
+
+```tsx
+function Cart({ items }: { items: Item[] }) {
+  const total = items.reduce((sum, item) => sum + item.price, 0)
+  const itemCount = items.length
+
+  return (
+    <View>
+      <Text>{itemCount} items</Text>
+      <Text>Total: ${total}</Text>
+    </View>
+  )
+}
+```
+
+**Another example:**
+
+```tsx
+// Incorrect: storing both firstName, lastName, AND fullName
+const [firstName, setFirstName] = useState('')
+const [lastName, setLastName] = useState('')
+const [fullName, setFullName] = useState('')
+
+// Correct: derive fullName
+const [firstName, setFirstName] = useState('')
+const [lastName, setLastName] = useState('')
+const fullName = `${firstName} ${lastName}`
+```
+
+State should be the minimal source of truth. Everything else is derived.
+
+Reference: [https://react.dev/learn/choosing-the-state-structure](https://react.dev/learn/choosing-the-state-structure)
+
+### 5.2 Use fallback state instead of initialState
+
+**Impact: MEDIUM (reactive fallbacks without syncing)**
+
+Use `undefined` as initial state and nullish coalescing (`??`) to fall back to
+
+parent or server values. State represents user intent only—`undefined` means
+
+"user hasn't chosen yet." This enables reactive fallbacks that update when the
+
+source changes, not just on initial render.
+
+**Incorrect: syncs state, loses reactivity**
+
+```tsx
+type Props = { fallbackEnabled: boolean }
+
+function Toggle({ fallbackEnabled }: Props) {
+  const [enabled, setEnabled] = useState(defaultEnabled)
+  // If fallbackEnabled changes, state is stale
+  // State mixes user intent with default value
+
+  return <Switch value={enabled} onValueChange={setEnabled} />
+}
+```
+
+**Correct: state is user intent, reactive fallback**
+
+```tsx
+type Props = { fallbackEnabled: boolean }
+
+function Toggle({ fallbackEnabled }: Props) {
+  const [_enabled, setEnabled] = useState<boolean | undefined>(undefined)
+  const enabled = _enabled ?? defaultEnabled
+  // undefined = user hasn't touched it, falls back to prop
+  // If defaultEnabled changes, component reflects it
+  // Once user interacts, their choice persists
+
+  return <Switch value={enabled} onValueChange={setEnabled} />
+}
+```
+
+**With server data:**
+
+```tsx
+function ProfileForm({ data }: { data: User }) {
+  const [_theme, setTheme] = useState<string | undefined>(undefined)
+  const theme = _theme ?? data.theme
+  // Shows server value until user overrides
+  // Server refetch updates the fallback automatically
+
+  return <ThemePicker value={theme} onChange={setTheme} />
+}
+```
+
+### 5.3 useState Dispatch updaters for State That Depends on Current Value
+
+**Impact: MEDIUM (avoids stale closures, prevents unnecessary re-renders)**
+
+When the next state depends on the current state, use a dispatch updater
+
+(`setState(prev => ...)`) instead of reading the state variable directly in a
+
+callback. This avoids stale closures and ensures you're comparing against the
+
+latest value.
+
+**Incorrect: reads state directly**
+
+```tsx
+const [size, setSize] = useState<Size | undefined>(undefined)
+
+const onLayout = (e: LayoutChangeEvent) => {
+  const { width, height } = e.nativeEvent.layout
+  // size may be stale in this closure
+  if (size?.width !== width || size?.height !== height) {
+    setSize({ width, height })
+  }
+}
+```
+
+**Correct: dispatch updater**
+
+```tsx
+const [size, setSize] = useState<Size | undefined>(undefined)
+
+const onLayout = (e: LayoutChangeEvent) => {
+  const { width, height } = e.nativeEvent.layout
+  setSize((prev) => {
+    if (prev?.width === width && prev?.height === height) return prev
+    return { width, height }
+  })
+}
+```
+
+Returning the previous value from the updater skips the re-render.
+
+For primitive states, you don't need to compare values before firing a
+
+re-render.
+
+**Incorrect: unnecessary comparison for primitive state**
+
+```tsx
+const [size, setSize] = useState<Size | undefined>(undefined)
+
+const onLayout = (e: LayoutChangeEvent) => {
+  const { width, height } = e.nativeEvent.layout
+  setSize((prev) => (prev === width ? prev : width))
+}
+```
+
+**Correct: sets primitive state directly**
+
+```tsx
+const [size, setSize] = useState<Size | undefined>(undefined)
+
+const onLayout = (e: LayoutChangeEvent) => {
+  const { width, height } = e.nativeEvent.layout
+  setSize(width)
+}
+```
+
+However, if the next state depends on the current state, you should still use a
+
+dispatch updater.
+
+**Incorrect: reads state directly from the callback**
+
+```tsx
+const [count, setCount] = useState(0)
+
+const onTap = () => {
+  setCount(count + 1)
+}
+```
+
+**Correct: dispatch updater**
+
+```tsx
+const [count, setCount] = useState(0)
+
+const onTap = () => {
+  setCount((prev) => prev + 1)
+}
+```
+
+---
+
+## 6. State Architecture
+
+**Impact: MEDIUM**
+
+Ground truth principles for state variables and derived values.
+
+### 6.1 State Must Represent Ground Truth
+
+**Impact: HIGH (cleaner logic, easier debugging, single source of truth)**
+
+State variables—both React `useState` and Reanimated shared values—should
+
+represent the actual state of something (e.g., `pressed`, `progress`, `isOpen`),
+
+not derived visual values (e.g., `scale`, `opacity`, `translateY`). Derive
+
+visual values from state using computation or interpolation.
+
+**Incorrect: storing the visual output**
+
+```tsx
+const scale = useSharedValue(1)
+
+const tap = Gesture.Tap()
+  .onBegin(() => {
+    scale.set(withTiming(0.95))
+  })
+  .onFinalize(() => {
+    scale.set(withTiming(1))
+  })
+
+const animatedStyle = useAnimatedStyle(() => ({
+  transform: [{ scale: scale.get() }],
+}))
+```
+
+**Correct: storing the state, deriving the visual**
+
+```tsx
+const pressed = useSharedValue(0) // 0 = not pressed, 1 = pressed
+
+const tap = Gesture.Tap()
+  .onBegin(() => {
+    pressed.set(withTiming(1))
+  })
+  .onFinalize(() => {
+    pressed.set(withTiming(0))
+  })
+
+const animatedStyle = useAnimatedStyle(() => ({
+  transform: [{ scale: interpolate(pressed.get(), [0, 1], [1, 0.95]) }],
+}))
+```
+
+**Why this matters:**
+
+State variables should represent real "state", not necessarily a desired end
+
+result.
+
+1. **Single source of truth** — The state (`pressed`) describes what's
+
+   happening; visuals are derived
+
+2. **Easier to extend** — Adding opacity, rotation, or other effects just
+
+   requires more interpolations from the same state
+
+3. **Debugging** — Inspecting `pressed = 1` is clearer than `scale = 0.95`
+
+4. **Reusable logic** — The same `pressed` value can drive multiple visual
+
+   properties
+
+**Same principle for React state:**
+
+```tsx
+// Incorrect: storing derived values
+const [isExpanded, setIsExpanded] = useState(false)
+const [height, setHeight] = useState(0)
+
+useEffect(() => {
+  setHeight(isExpanded ? 200 : 0)
+}, [isExpanded])
+
+// Correct: derive from state
+const [isExpanded, setIsExpanded] = useState(false)
+const height = isExpanded ? 200 : 0
+```
+
+State is the minimal truth. Everything else is derived.
+
+---
+
+## 7. React Compiler
+
+**Impact: MEDIUM**
+
+Compatibility patterns for React Compiler with React Native and
+Reanimated.
+
+### 7.1 Destructure Functions Early in Render (React Compiler)
+
+**Impact: HIGH (stable references, fewer re-renders)**
+
+This rule is only applicable if you are using the React Compiler.
+
+Destructure functions from hooks at the top of render scope. Never dot into
+
+objects to call functions. Destructured functions are stable references; dotting
+
+creates new references and breaks memoization.
+
+**Incorrect: dotting into object**
+
+```tsx
+import { useRouter } from 'expo-router'
+
+function SaveButton(props) {
+  const router = useRouter()
+
+  // bad: react-compiler will key the cache on "props" and "router", which are objects that change each render
+  const handlePress = () => {
+    props.onSave()
+    router.push('/success') // unstable reference
+  }
+
+  return <Button onPress={handlePress}>Save</Button>
+}
+```
+
+**Correct: destructure early**
+
+```tsx
+import { useRouter } from 'expo-router'
+
+function SaveButton({ onSave }) {
+  const { push } = useRouter()
+
+  // good: react-compiler will key on push and onSave
+  const handlePress = () => {
+    onSave()
+    push('/success') // stable reference
+  }
+
+  return <Button onPress={handlePress}>Save</Button>
+}
+```
+
+### 7.2 Use .get() and .set() for Reanimated Shared Values (not .value)
+
+**Impact: LOW (required for React Compiler compatibility)**
+
+With React Compiler enabled, use `.get()` and `.set()` instead of reading or
+
+writing `.value` directly on Reanimated shared values. The compiler can't track
+
+property access—explicit methods ensure correct behavior.
+
+**Incorrect: breaks with React Compiler**
+
+```tsx
+import { useSharedValue } from 'react-native-reanimated'
+
+function Counter() {
+  const count = useSharedValue(0)
+
+  const increment = () => {
+    count.value = count.value + 1 // opts out of react compiler
+  }
+
+  return <Button onPress={increment} title={`Count: ${count.value}`} />
+}
+```
+
+**Correct: React Compiler compatible**
+
+```tsx
+import { useSharedValue } from 'react-native-reanimated'
+
+function Counter() {
+  const count = useSharedValue(0)
+
+  const increment = () => {
+    count.set(count.get() + 1)
+  }
+
+  return <Button onPress={increment} title={`Count: ${count.get()}`} />
+}
+```
+
+See the
+
+[Reanimated docs](https://docs.swmansion.com/react-native-reanimated/docs/core/useSharedValue/#react-compiler-support)
+
+for more.
+
+---
+
+## 8. User Interface
+
+**Impact: MEDIUM**
+
+Native UI patterns for images, menus, modals, styling, and
+platform-consistent interfaces.
+
+### 8.1 Measuring View Dimensions
+
+**Impact: MEDIUM (synchronous measurement, avoid unnecessary re-renders)**
+
+Use both `useLayoutEffect` (synchronous) and `onLayout` (for updates). The sync
+
+measurement gives you the initial size immediately; `onLayout` keeps it current
+
+when the view changes. For non-primitive states, use a dispatch updater to
+
+compare values and avoid unnecessary re-renders.
+
+**Height only:**
+
+```tsx
+import { useLayoutEffect, useRef, useState } from 'react'
+import { View, LayoutChangeEvent } from 'react-native'
+
+function MeasuredBox({ children }: { children: React.ReactNode }) {
+  const ref = useRef<View>(null)
+  const [height, setHeight] = useState<number | undefined>(undefined)
+
+  useLayoutEffect(() => {
+    // Sync measurement on mount (RN 0.82+)
+    const rect = ref.current?.getBoundingClientRect()
+    if (rect) setHeight(rect.height)
+    // Pre-0.82: ref.current?.measure((x, y, w, h) => setHeight(h))
+  }, [])
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    setHeight(e.nativeEvent.layout.height)
   }
 
   return (
-    <>
-      <input onChange={(e) => handleSearch(e.target.value)} />
-      {isLoading && <Spinner />}
-      <ResultsList results={results} />
-    </>
+    <View ref={ref} onLayout={onLayout}>
+      {children}
+    </View>
   )
 }
 ```
 
-**Correct: useTransition with built-in pending state**
+**Both dimensions:**
 
 ```tsx
-import { useTransition, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { View, LayoutChangeEvent } from 'react-native'
 
-function SearchResults() {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState([])
-  const [isPending, startTransition] = useTransition()
+type Size = { width: number; height: number }
 
-  const handleSearch = (value: string) => {
-    setQuery(value) // Update input immediately
-    
-    startTransition(async () => {
-      // Fetch and update results
-      const data = await fetchResults(value)
-      setResults(data)
+function MeasuredBox({ children }: { children: React.ReactNode }) {
+  const ref = useRef<View>(null)
+  const [size, setSize] = useState<Size | undefined>(undefined)
+
+  useLayoutEffect(() => {
+    const rect = ref.current?.getBoundingClientRect()
+    if (rect) setSize({ width: rect.width, height: rect.height })
+  }, [])
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout
+    setSize((prev) => {
+      // for non-primitive states, compare values before firing a re-render
+      if (prev?.width === width && prev?.height === height) return prev
+      return { width, height }
     })
   }
 
   return (
+    <View ref={ref} onLayout={onLayout}>
+      {children}
+    </View>
+  )
+}
+```
+
+Use functional setState to compare—don't read state directly in the callback.
+
+### 8.2 Modern React Native Styling Patterns
+
+**Impact: MEDIUM (consistent design, smoother borders, cleaner layouts)**
+
+Follow these styling patterns for cleaner, more consistent React Native code.
+
+**Always use `borderCurve: 'continuous'` with `borderRadius`:**
+
+**Use `gap` instead of margin for spacing between elements:**
+
+```tsx
+// Incorrect – margin on children
+<View>
+  <Text style={{ marginBottom: 8 }}>Title</Text>
+  <Text style={{ marginBottom: 8 }}>Subtitle</Text>
+</View>
+
+// Correct – gap on parent
+<View style={{ gap: 8 }}>
+  <Text>Title</Text>
+  <Text>Subtitle</Text>
+</View>
+```
+
+**Use `padding` for space within, `gap` for space between:**
+
+```tsx
+<View style={{ padding: 16, gap: 12 }}>
+  <Text>First</Text>
+  <Text>Second</Text>
+</View>
+```
+
+**Use `experimental_backgroundImage` for linear gradients:**
+
+```tsx
+// Incorrect – third-party gradient library
+<LinearGradient colors={['#000', '#fff']} />
+
+// Correct – native CSS gradient syntax
+<View
+  style={{
+    experimental_backgroundImage: 'linear-gradient(to bottom, #000, #fff)',
+  }}
+/>
+```
+
+**Use CSS `boxShadow` string syntax for shadows:**
+
+```tsx
+// Incorrect – legacy shadow objects or elevation
+{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1 }
+{ elevation: 4 }
+
+// Correct – CSS box-shadow syntax
+{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }
+```
+
+**Avoid multiple font sizes – use weight and color for emphasis:**
+
+```tsx
+// Incorrect – varying font sizes for hierarchy
+<Text style={{ fontSize: 18 }}>Title</Text>
+<Text style={{ fontSize: 14 }}>Subtitle</Text>
+<Text style={{ fontSize: 12 }}>Caption</Text>
+
+// Correct – consistent size, vary weight and color
+<Text style={{ fontWeight: '600' }}>Title</Text>
+<Text style={{ color: '#666' }}>Subtitle</Text>
+<Text style={{ color: '#999' }}>Caption</Text>
+```
+
+Limiting font sizes creates visual consistency. Use `fontWeight` (bold/semibold)
+
+and grayscale colors for hierarchy instead.
+
+### 8.3 Use contentInset for Dynamic ScrollView Spacing
+
+**Impact: LOW (smoother updates, no layout recalculation)**
+
+When adding space to the top or bottom of a ScrollView that may change
+
+(keyboard, toolbars, dynamic content), use `contentInset` instead of padding.
+
+Changing `contentInset` doesn't trigger layout recalculation—it adjusts the
+
+scroll area without re-rendering content.
+
+**Incorrect: padding causes layout recalculation**
+
+```tsx
+function Feed({ bottomOffset }: { bottomOffset: number }) {
+  return (
+    <ScrollView contentContainerStyle={{ paddingBottom: bottomOffset }}>
+      {children}
+    </ScrollView>
+  )
+}
+// Changing bottomOffset triggers full layout recalculation
+```
+
+**Correct: contentInset for dynamic spacing**
+
+```tsx
+function Feed({ bottomOffset }: { bottomOffset: number }) {
+  return (
+    <ScrollView
+      contentInset={{ bottom: bottomOffset }}
+      scrollIndicatorInsets={{ bottom: bottomOffset }}
+    >
+      {children}
+    </ScrollView>
+  )
+}
+// Changing bottomOffset only adjusts scroll bounds
+```
+
+Use `scrollIndicatorInsets` alongside `contentInset` to keep the scroll
+
+indicator aligned. For static spacing that never changes, padding is fine.
+
+### 8.4 Use contentInsetAdjustmentBehavior for Safe Areas
+
+**Impact: MEDIUM (native safe area handling, no layout shifts)**
+
+Use `contentInsetAdjustmentBehavior="automatic"` on the root ScrollView instead of wrapping content in SafeAreaView or manual padding. This lets iOS handle safe area insets natively with proper scroll behavior.
+
+**Incorrect: SafeAreaView wrapper**
+
+```tsx
+import { SafeAreaView, ScrollView, View, Text } from 'react-native'
+
+function MyScreen() {
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView>
+        <View>
+          <Text>Content</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  )
+}
+```
+
+**Incorrect: manual safe area padding**
+
+```tsx
+import { ScrollView, View, Text } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+function MyScreen() {
+  const insets = useSafeAreaInsets()
+
+  return (
+    <ScrollView contentContainerStyle={{ paddingTop: insets.top }}>
+      <View>
+        <Text>Content</Text>
+      </View>
+    </ScrollView>
+  )
+}
+```
+
+**Correct: native content inset adjustment**
+
+```tsx
+import { ScrollView, View, Text } from 'react-native'
+
+function MyScreen() {
+  return (
+    <ScrollView contentInsetAdjustmentBehavior='automatic'>
+      <View>
+        <Text>Content</Text>
+      </View>
+    </ScrollView>
+  )
+}
+```
+
+The native approach handles dynamic safe areas (keyboard, toolbars) and allows content to scroll behind the status bar naturally.
+
+### 8.5 Use expo-image for Optimized Images
+
+**Impact: HIGH (memory efficiency, caching, blurhash placeholders, progressive loading)**
+
+Use `expo-image` instead of React Native's `Image`. It provides memory-efficient caching, blurhash placeholders, progressive loading, and better performance for lists.
+
+**Incorrect: React Native Image**
+
+```tsx
+import { Image } from 'react-native'
+
+function Avatar({ url }: { url: string }) {
+  return <Image source={{ uri: url }} style={styles.avatar} />
+}
+```
+
+**Correct: expo-image**
+
+```tsx
+import { Image } from 'expo-image'
+
+function Avatar({ url }: { url: string }) {
+  return <Image source={{ uri: url }} style={styles.avatar} />
+}
+```
+
+**With blurhash placeholder:**
+
+```tsx
+<Image
+  source={{ uri: url }}
+  placeholder={{ blurhash: 'LGF5]+Yk^6#M@-5c,1J5@[or[Q6.' }}
+  contentFit="cover"
+  transition={200}
+  style={styles.image}
+/>
+```
+
+**With priority and caching:**
+
+```tsx
+<Image
+  source={{ uri: url }}
+  priority="high"
+  cachePolicy="memory-disk"
+  style={styles.hero}
+/>
+```
+
+**Key props:**
+
+- `placeholder` — Blurhash or thumbnail while loading
+
+- `contentFit` — `cover`, `contain`, `fill`, `scale-down`
+
+- `transition` — Fade-in duration (ms)
+
+- `priority` — `low`, `normal`, `high`
+
+- `cachePolicy` — `memory`, `disk`, `memory-disk`, `none`
+
+- `recyclingKey` — Unique key for list recycling
+
+For cross-platform (web + native), use `SolitoImage` from `solito/image` which uses `expo-image` under the hood.
+
+Reference: [https://docs.expo.dev/versions/latest/sdk/image/](https://docs.expo.dev/versions/latest/sdk/image/)
+
+### 8.6 Use Galeria for Image Galleries and Lightbox
+
+**Impact: MEDIUM**
+
+For image galleries with lightbox (tap to fullscreen), use `@nandorojo/galeria`.
+
+It provides native shared element transitions with pinch-to-zoom, double-tap
+
+zoom, and pan-to-close. Works with any image component including `expo-image`.
+
+**Incorrect: custom modal implementation**
+
+```tsx
+function ImageGallery({ urls }: { urls: string[] }) {
+  const [selected, setSelected] = useState<string | null>(null)
+
+  return (
     <>
-      <input onChange={(e) => handleSearch(e.target.value)} />
-      {isPending && <Spinner />}
-      <ResultsList results={results} />
+      {urls.map((url) => (
+        <Pressable key={url} onPress={() => setSelected(url)}>
+          <Image source={{ uri: url }} style={styles.thumbnail} />
+        </Pressable>
+      ))}
+      <Modal visible={!!selected} onRequestClose={() => setSelected(null)}>
+        <Image source={{ uri: selected! }} style={styles.fullscreen} />
+      </Modal>
     </>
   )
 }
 ```
 
-**Benefits:**
+**Correct: Galeria with expo-image**
 
-- **Automatic pending state**: No need to manually manage `setIsLoading(true/false)`
+```tsx
+import { Galeria } from '@nandorojo/galeria'
+import { Image } from 'expo-image'
 
-- **Error resilience**: Pending state correctly resets even if the transition throws
+function ImageGallery({ urls }: { urls: string[] }) {
+  return (
+    <Galeria urls={urls}>
+      {urls.map((url, index) => (
+        <Galeria.Image index={index} key={url}>
+          <Image source={{ uri: url }} style={styles.thumbnail} />
+        </Galeria.Image>
+      ))}
+    </Galeria>
+  )
+}
+```
 
-- **Better responsiveness**: Keeps the UI responsive during updates
+**Single image:**
 
-- **Interrupt handling**: New transitions automatically cancel pending ones
+```tsx
+import { Galeria } from '@nandorojo/galeria'
+import { Image } from 'expo-image'
 
-Reference: [https://react.dev/reference/react/useTransition](https://react.dev/reference/react/useTransition)
+function Avatar({ url }: { url: string }) {
+  return (
+    <Galeria urls={[url]}>
+      <Galeria.Image>
+        <Image source={{ uri: url }} style={styles.avatar} />
+      </Galeria.Image>
+    </Galeria>
+  )
+}
+```
+
+**With low-res thumbnails and high-res fullscreen:**
+
+```tsx
+<Galeria urls={highResUrls}>
+  {lowResUrls.map((url, index) => (
+    <Galeria.Image index={index} key={url}>
+      <Image source={{ uri: url }} style={styles.thumbnail} />
+    </Galeria.Image>
+  ))}
+</Galeria>
+```
+
+**With FlashList:**
+
+```tsx
+<Galeria urls={urls}>
+  <FlashList
+    data={urls}
+    renderItem={({ item, index }) => (
+      <Galeria.Image index={index}>
+        <Image source={{ uri: item }} style={styles.thumbnail} />
+      </Galeria.Image>
+    )}
+    numColumns={3}
+    estimatedItemSize={100}
+  />
+</Galeria>
+```
+
+Works with `expo-image`, `SolitoImage`, `react-native` Image, or any image
+
+component.
+
+Reference: [https://github.com/nandorojo/galeria](https://github.com/nandorojo/galeria)
+
+### 8.7 Use Native Menus for Dropdowns and Context Menus
+
+**Impact: HIGH (native accessibility, platform-consistent UX)**
+
+Use native platform menus instead of custom JS implementations. Native menus
+
+provide built-in accessibility, consistent platform UX, and better performance.
+
+Use [zeego](https://zeego.dev) for cross-platform native menus.
+
+**Incorrect: custom JS menu**
+
+```tsx
+import { useState } from 'react'
+import { View, Pressable, Text } from 'react-native'
+
+function MyMenu() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <View>
+      <Pressable onPress={() => setOpen(!open)}>
+        <Text>Open Menu</Text>
+      </Pressable>
+      {open && (
+        <View style={{ position: 'absolute', top: 40 }}>
+          <Pressable onPress={() => console.log('edit')}>
+            <Text>Edit</Text>
+          </Pressable>
+          <Pressable onPress={() => console.log('delete')}>
+            <Text>Delete</Text>
+          </Pressable>
+        </View>
+      )}
+    </View>
+  )
+}
+```
+
+**Correct: native menu with zeego**
+
+```tsx
+import * as DropdownMenu from 'zeego/dropdown-menu'
+
+function MyMenu() {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        <Pressable>
+          <Text>Open Menu</Text>
+        </Pressable>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Content>
+        <DropdownMenu.Item key='edit' onSelect={() => console.log('edit')}>
+          <DropdownMenu.ItemTitle>Edit</DropdownMenu.ItemTitle>
+        </DropdownMenu.Item>
+
+        <DropdownMenu.Item
+          key='delete'
+          destructive
+          onSelect={() => console.log('delete')}
+        >
+          <DropdownMenu.ItemTitle>Delete</DropdownMenu.ItemTitle>
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  )
+}
+```
+
+**Context menu: long-press**
+
+```tsx
+import * as ContextMenu from 'zeego/context-menu'
+
+function MyContextMenu() {
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger>
+        <View style={{ padding: 20 }}>
+          <Text>Long press me</Text>
+        </View>
+      </ContextMenu.Trigger>
+
+      <ContextMenu.Content>
+        <ContextMenu.Item key='copy' onSelect={() => console.log('copy')}>
+          <ContextMenu.ItemTitle>Copy</ContextMenu.ItemTitle>
+        </ContextMenu.Item>
+
+        <ContextMenu.Item key='paste' onSelect={() => console.log('paste')}>
+          <ContextMenu.ItemTitle>Paste</ContextMenu.ItemTitle>
+        </ContextMenu.Item>
+      </ContextMenu.Content>
+    </ContextMenu.Root>
+  )
+}
+```
+
+**Checkbox items:**
+
+```tsx
+import * as DropdownMenu from 'zeego/dropdown-menu'
+
+function SettingsMenu() {
+  const [notifications, setNotifications] = useState(true)
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        <Pressable>
+          <Text>Settings</Text>
+        </Pressable>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Content>
+        <DropdownMenu.CheckboxItem
+          key='notifications'
+          value={notifications}
+          onValueChange={() => setNotifications((prev) => !prev)}
+        >
+          <DropdownMenu.ItemIndicator />
+          <DropdownMenu.ItemTitle>Notifications</DropdownMenu.ItemTitle>
+        </DropdownMenu.CheckboxItem>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  )
+}
+```
+
+**Submenus:**
+
+```tsx
+import * as DropdownMenu from 'zeego/dropdown-menu'
+
+function MenuWithSubmenu() {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        <Pressable>
+          <Text>Options</Text>
+        </Pressable>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Content>
+        <DropdownMenu.Item key='home' onSelect={() => console.log('home')}>
+          <DropdownMenu.ItemTitle>Home</DropdownMenu.ItemTitle>
+        </DropdownMenu.Item>
+
+        <DropdownMenu.Sub>
+          <DropdownMenu.SubTrigger key='more'>
+            <DropdownMenu.ItemTitle>More Options</DropdownMenu.ItemTitle>
+          </DropdownMenu.SubTrigger>
+
+          <DropdownMenu.SubContent>
+            <DropdownMenu.Item key='settings'>
+              <DropdownMenu.ItemTitle>Settings</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+
+            <DropdownMenu.Item key='help'>
+              <DropdownMenu.ItemTitle>Help</DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
+          </DropdownMenu.SubContent>
+        </DropdownMenu.Sub>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  )
+}
+```
+
+Reference: [https://zeego.dev/components/dropdown-menu](https://zeego.dev/components/dropdown-menu)
+
+### 8.8 Use Native Modals Over JS-Based Bottom Sheets
+
+**Impact: HIGH (native performance, gestures, accessibility)**
+
+Use native `<Modal>` with `presentationStyle="formSheet"` or React Navigation
+
+v7's native form sheet instead of JS-based bottom sheet libraries. Native modals
+
+have built-in gestures, accessibility, and better performance. Rely on native UI
+
+for low-level primitives.
+
+**Incorrect: JS-based bottom sheet**
+
+```tsx
+import BottomSheet from 'custom-js-bottom-sheet'
+
+function MyScreen() {
+  const sheetRef = useRef<BottomSheet>(null)
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Button onPress={() => sheetRef.current?.expand()} title='Open' />
+      <BottomSheet ref={sheetRef} snapPoints={['50%', '90%']}>
+        <View>
+          <Text>Sheet content</Text>
+        </View>
+      </BottomSheet>
+    </View>
+  )
+}
+```
+
+**Correct: native Modal with formSheet**
+
+```tsx
+import { Modal, View, Text, Button } from 'react-native'
+
+function MyScreen() {
+  const [visible, setVisible] = useState(false)
+
+  return (
+    <View style={{ flex: 1 }}>
+      <Button onPress={() => setVisible(true)} title='Open' />
+      <Modal
+        visible={visible}
+        presentationStyle='formSheet'
+        animationType='slide'
+        onRequestClose={() => setVisible(false)}
+      >
+        <View>
+          <Text>Sheet content</Text>
+        </View>
+      </Modal>
+    </View>
+  )
+}
+```
+
+**Correct: React Navigation v7 native form sheet**
+
+```tsx
+// In your navigator
+<Stack.Screen
+  name='Details'
+  component={DetailsScreen}
+  options={{
+    presentation: 'formSheet',
+    sheetAllowedDetents: 'fitToContents',
+  }}
+/>
+```
+
+Native modals provide swipe-to-dismiss, proper keyboard avoidance, and
+
+accessibility out of the box.
+
+### 8.9 Use Pressable Instead of Touchable Components
+
+**Impact: LOW (modern API, more flexible)**
+
+Never use `TouchableOpacity` or `TouchableHighlight`. Use `Pressable` from
+
+`react-native` or `react-native-gesture-handler` instead. Pressable is the
+
+modern API with more flexibility for styling press states.
+
+**Incorrect: legacy Touchable components**
+
+```tsx
+import { TouchableOpacity } from 'react-native'
+
+function MyButton({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <Text>Press me</Text>
+    </TouchableOpacity>
+  )
+}
+```
+
+**Correct: Pressable with style function**
+
+```tsx
+import { Pressable } from 'react-native'
+
+function MyButton({ onPress }: { onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+    >
+      <Text>Press me</Text>
+    </Pressable>
+  )
+}
+```
+
+**Correct: Pressable from gesture handler for lists**
+
+```tsx
+import { Pressable } from 'react-native-gesture-handler'
+
+function ListItem({ onPress }: { onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress}>
+      <Text>Item</Text>
+    </Pressable>
+  )
+}
+```
+
+Use `react-native-gesture-handler` Pressable inside scrollable lists for better
+
+gesture coordination, as long as you are using the ScrollView from
+
+`react-native-gesture-handler` as well.
 
 ---
 
-## 7. JavaScript Performance
+## 9. Design System
 
-**Impact: LOW-MEDIUM**
+**Impact: MEDIUM**
 
-Micro-optimizations for hot paths can add up to meaningful improvements.
+Architecture patterns for building maintainable component
+libraries.
 
-### 7.1 Avoid Layout Thrashing
+### 9.1 Use Compound Components Over Polymorphic Children
 
-**Impact: MEDIUM (prevents forced synchronous layouts and reduces performance bottlenecks)**
+**Impact: MEDIUM (flexible composition, clearer API)**
 
-Avoid interleaving style writes with layout reads. When you read a layout property (like `offsetWidth`, `getBoundingClientRect()`, or `getComputedStyle()`) between style changes, the browser is forced to trigger a synchronous reflow.
+Don't create components that can accept a string if they aren't a text node. If
 
-**This is OK: browser batches style changes**
+a component can receive a string child, it must be a dedicated `*Text`
 
-```typescript
-function updateElementStyles(element: HTMLElement) {
-  // Each line invalidates style, but browser batches the recalculation
-  element.style.width = '100px'
-  element.style.height = '200px'
-  element.style.backgroundColor = 'blue'
-  element.style.border = '1px solid black'
-}
-```
+component. For components like buttons, which can have both a View (or
 
-**Incorrect: interleaved reads and writes force reflows**
+Pressable) together with text, use compound components, such a `Button`,
 
-```typescript
-function layoutThrashing(element: HTMLElement) {
-  element.style.width = '100px'
-  const width = element.offsetWidth  // Forces reflow
-  element.style.height = '200px'
-  const height = element.offsetHeight  // Forces another reflow
-}
-```
+`ButtonText`, and `ButtonIcon`.
 
-**Correct: batch writes, then read once**
-
-```typescript
-function updateElementStyles(element: HTMLElement) {
-  // Batch all writes together
-  element.style.width = '100px'
-  element.style.height = '200px'
-  element.style.backgroundColor = 'blue'
-  element.style.border = '1px solid black'
-  
-  // Read after all writes are done (single reflow)
-  const { width, height } = element.getBoundingClientRect()
-}
-```
-
-**Correct: batch reads, then writes**
-
-```typescript
-function updateElementStyles(element: HTMLElement) {
-  element.classList.add('highlighted-box')
-  
-  const { width, height } = element.getBoundingClientRect()
-}
-```
-
-**Better: use CSS classes**
-
-**React example:**
+**Incorrect: polymorphic children**
 
 ```tsx
-// Incorrect: interleaving style changes with layout queries
-function Box({ isHighlighted }: { isHighlighted: boolean }) {
-  const ref = useRef<HTMLDivElement>(null)
-  
-  useEffect(() => {
-    if (ref.current && isHighlighted) {
-      ref.current.style.width = '100px'
-      const width = ref.current.offsetWidth // Forces layout
-      ref.current.style.height = '200px'
-    }
-  }, [isHighlighted])
-  
-  return <div ref={ref}>Content</div>
+import { Pressable, Text } from 'react-native'
+
+type ButtonProps = {
+  children: string | React.ReactNode
+  icon?: React.ReactNode
 }
 
-// Correct: toggle class
-function Box({ isHighlighted }: { isHighlighted: boolean }) {
+function Button({ children, icon }: ButtonProps) {
   return (
-    <div className={isHighlighted ? 'highlighted-box' : ''}>
-      Content
-    </div>
+    <Pressable>
+      {icon}
+      {typeof children === 'string' ? <Text>{children}</Text> : children}
+    </Pressable>
   )
 }
+
+// Usage is ambiguous
+<Button icon={<Icon />}>Save</Button>
+<Button><CustomText>Save</CustomText></Button>
 ```
 
-Prefer CSS classes over inline styles when possible. CSS files are cached by the browser, and classes provide better separation of concerns and are easier to maintain.
-
-See [this gist](https://gist.github.com/paulirish/5d52fb081b3570c81e3a) and [CSS Triggers](https://csstriggers.com/) for more information on layout-forcing operations.
-
-### 7.2 Build Index Maps for Repeated Lookups
-
-**Impact: LOW-MEDIUM (1M ops to 2K ops)**
-
-Multiple `.find()` calls by the same key should use a Map.
-
-**Incorrect (O(n) per lookup):**
-
-```typescript
-function processOrders(orders: Order[], users: User[]) {
-  return orders.map(order => ({
-    ...order,
-    user: users.find(u => u.id === order.userId)
-  }))
-}
-```
-
-**Correct (O(1) per lookup):**
-
-```typescript
-function processOrders(orders: Order[], users: User[]) {
-  const userById = new Map(users.map(u => [u.id, u]))
-
-  return orders.map(order => ({
-    ...order,
-    user: userById.get(order.userId)
-  }))
-}
-```
-
-Build map once (O(n)), then all lookups are O(1).
-
-For 1000 orders × 1000 users: 1M ops → 2K ops.
-
-### 7.3 Cache Property Access in Loops
-
-**Impact: LOW-MEDIUM (reduces lookups)**
-
-Cache object property lookups in hot paths.
-
-**Incorrect: 3 lookups × N iterations**
-
-```typescript
-for (let i = 0; i < arr.length; i++) {
-  process(obj.config.settings.value)
-}
-```
-
-**Correct: 1 lookup total**
-
-```typescript
-const value = obj.config.settings.value
-const len = arr.length
-for (let i = 0; i < len; i++) {
-  process(value)
-}
-```
-
-### 7.4 Cache Repeated Function Calls
-
-**Impact: MEDIUM (avoid redundant computation)**
-
-Use a module-level Map to cache function results when the same function is called repeatedly with the same inputs during render.
-
-**Incorrect: redundant computation**
-
-```typescript
-function ProjectList({ projects }: { projects: Project[] }) {
-  return (
-    <div>
-      {projects.map(project => {
-        // slugify() called 100+ times for same project names
-        const slug = slugify(project.name)
-        
-        return <ProjectCard key={project.id} slug={slug} />
-      })}
-    </div>
-  )
-}
-```
-
-**Correct: cached results**
-
-```typescript
-// Module-level cache
-const slugifyCache = new Map<string, string>()
-
-function cachedSlugify(text: string): string {
-  if (slugifyCache.has(text)) {
-    return slugifyCache.get(text)!
-  }
-  const result = slugify(text)
-  slugifyCache.set(text, result)
-  return result
-}
-
-function ProjectList({ projects }: { projects: Project[] }) {
-  return (
-    <div>
-      {projects.map(project => {
-        // Computed only once per unique project name
-        const slug = cachedSlugify(project.name)
-        
-        return <ProjectCard key={project.id} slug={slug} />
-      })}
-    </div>
-  )
-}
-```
-
-**Simpler pattern for single-value functions:**
-
-```typescript
-let isLoggedInCache: boolean | null = null
-
-function isLoggedIn(): boolean {
-  if (isLoggedInCache !== null) {
-    return isLoggedInCache
-  }
-  
-  isLoggedInCache = document.cookie.includes('auth=')
-  return isLoggedInCache
-}
-
-// Clear cache when auth changes
-function onAuthChange() {
-  isLoggedInCache = null
-}
-```
-
-Use a Map (not a hook) so it works everywhere: utilities, event handlers, not just React components.
-
-Reference: [https://vercel.com/blog/how-we-made-the-vercel-dashboard-twice-as-fast](https://vercel.com/blog/how-we-made-the-vercel-dashboard-twice-as-fast)
-
-### 7.5 Cache Storage API Calls
-
-**Impact: LOW-MEDIUM (reduces expensive I/O)**
-
-`localStorage`, `sessionStorage`, and `document.cookie` are synchronous and expensive. Cache reads in memory.
-
-**Incorrect: reads storage on every call**
-
-```typescript
-function getTheme() {
-  return localStorage.getItem('theme') ?? 'light'
-}
-// Called 10 times = 10 storage reads
-```
-
-**Correct: Map cache**
-
-```typescript
-const storageCache = new Map<string, string | null>()
-
-function getLocalStorage(key: string) {
-  if (!storageCache.has(key)) {
-    storageCache.set(key, localStorage.getItem(key))
-  }
-  return storageCache.get(key)
-}
-
-function setLocalStorage(key: string, value: string) {
-  localStorage.setItem(key, value)
-  storageCache.set(key, value)  // keep cache in sync
-}
-```
-
-Use a Map (not a hook) so it works everywhere: utilities, event handlers, not just React components.
-
-**Cookie caching:**
-
-```typescript
-let cookieCache: Record<string, string> | null = null
-
-function getCookie(name: string) {
-  if (!cookieCache) {
-    cookieCache = Object.fromEntries(
-      document.cookie.split('; ').map(c => c.split('='))
-    )
-  }
-  return cookieCache[name]
-}
-```
-
-**Important: invalidate on external changes**
-
-```typescript
-window.addEventListener('storage', (e) => {
-  if (e.key) storageCache.delete(e.key)
-})
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    storageCache.clear()
-  }
-})
-```
-
-If storage can change externally (another tab, server-set cookies), invalidate cache:
-
-### 7.6 Combine Multiple Array Iterations
-
-**Impact: LOW-MEDIUM (reduces iterations)**
-
-Multiple `.filter()` or `.map()` calls iterate the array multiple times. Combine into one loop.
-
-**Incorrect: 3 iterations**
-
-```typescript
-const admins = users.filter(u => u.isAdmin)
-const testers = users.filter(u => u.isTester)
-const inactive = users.filter(u => !u.isActive)
-```
-
-**Correct: 1 iteration**
-
-```typescript
-const admins: User[] = []
-const testers: User[] = []
-const inactive: User[] = []
-
-for (const user of users) {
-  if (user.isAdmin) admins.push(user)
-  if (user.isTester) testers.push(user)
-  if (!user.isActive) inactive.push(user)
-}
-```
-
-### 7.7 Early Length Check for Array Comparisons
-
-**Impact: MEDIUM-HIGH (avoids expensive operations when lengths differ)**
-
-When comparing arrays with expensive operations (sorting, deep equality, serialization), check lengths first. If lengths differ, the arrays cannot be equal.
-
-In real-world applications, this optimization is especially valuable when the comparison runs in hot paths (event handlers, render loops).
-
-**Incorrect: always runs expensive comparison**
-
-```typescript
-function hasChanges(current: string[], original: string[]) {
-  // Always sorts and joins, even when lengths differ
-  return current.sort().join() !== original.sort().join()
-}
-```
-
-Two O(n log n) sorts run even when `current.length` is 5 and `original.length` is 100. There is also overhead of joining the arrays and comparing the strings.
-
-**Correct (O(1) length check first):**
-
-```typescript
-function hasChanges(current: string[], original: string[]) {
-  // Early return if lengths differ
-  if (current.length !== original.length) {
-    return true
-  }
-  // Only sort when lengths match
-  const currentSorted = current.toSorted()
-  const originalSorted = original.toSorted()
-  for (let i = 0; i < currentSorted.length; i++) {
-    if (currentSorted[i] !== originalSorted[i]) {
-      return true
-    }
-  }
-  return false
-}
-```
-
-This new approach is more efficient because:
-
-- It avoids the overhead of sorting and joining the arrays when lengths differ
-
-- It avoids consuming memory for the joined strings (especially important for large arrays)
-
-- It avoids mutating the original arrays
-
-- It returns early when a difference is found
-
-### 7.8 Early Return from Functions
-
-**Impact: LOW-MEDIUM (avoids unnecessary computation)**
-
-Return early when result is determined to skip unnecessary processing.
-
-**Incorrect: processes all items even after finding answer**
-
-```typescript
-function validateUsers(users: User[]) {
-  let hasError = false
-  let errorMessage = ''
-  
-  for (const user of users) {
-    if (!user.email) {
-      hasError = true
-      errorMessage = 'Email required'
-    }
-    if (!user.name) {
-      hasError = true
-      errorMessage = 'Name required'
-    }
-    // Continues checking all users even after error found
-  }
-  
-  return hasError ? { valid: false, error: errorMessage } : { valid: true }
-}
-```
-
-**Correct: returns immediately on first error**
-
-```typescript
-function validateUsers(users: User[]) {
-  for (const user of users) {
-    if (!user.email) {
-      return { valid: false, error: 'Email required' }
-    }
-    if (!user.name) {
-      return { valid: false, error: 'Name required' }
-    }
-  }
-
-  return { valid: true }
-}
-```
-
-### 7.9 Hoist RegExp Creation
-
-**Impact: LOW-MEDIUM (avoids recreation)**
-
-Don't create RegExp inside render. Hoist to module scope or memoize with `useMemo()`.
-
-**Incorrect: new RegExp every render**
+**Correct: compound components**
 
 ```tsx
-function Highlighter({ text, query }: Props) {
-  const regex = new RegExp(`(${query})`, 'gi')
-  const parts = text.split(regex)
-  return <>{parts.map((part, i) => ...)}</>
-}
-```
+import { Pressable, Text } from 'react-native'
 
-**Correct: memoize or hoist**
-
-```tsx
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-function Highlighter({ text, query }: Props) {
-  const regex = useMemo(
-    () => new RegExp(`(${escapeRegex(query)})`, 'gi'),
-    [query]
-  )
-  const parts = text.split(regex)
-  return <>{parts.map((part, i) => ...)}</>
-}
-```
-
-**Warning: global regex has mutable state**
-
-```typescript
-const regex = /foo/g
-regex.test('foo')  // true, lastIndex = 3
-regex.test('foo')  // false, lastIndex = 0
-```
-
-Global regex (`/g`) has mutable `lastIndex` state:
-
-### 7.10 Use Loop for Min/Max Instead of Sort
-
-**Impact: LOW (O(n) instead of O(n log n))**
-
-Finding the smallest or largest element only requires a single pass through the array. Sorting is wasteful and slower.
-
-**Incorrect (O(n log n) - sort to find latest):**
-
-```typescript
-interface Project {
-  id: string
-  name: string
-  updatedAt: number
+function Button({ children }: { children: React.ReactNode }) {
+  return <Pressable>{children}</Pressable>
 }
 
-function getLatestProject(projects: Project[]) {
-  const sorted = [...projects].sort((a, b) => b.updatedAt - a.updatedAt)
-  return sorted[0]
-}
-```
-
-Sorts the entire array just to find the maximum value.
-
-**Incorrect (O(n log n) - sort for oldest and newest):**
-
-```typescript
-function getOldestAndNewest(projects: Project[]) {
-  const sorted = [...projects].sort((a, b) => a.updatedAt - b.updatedAt)
-  return { oldest: sorted[0], newest: sorted[sorted.length - 1] }
-}
-```
-
-Still sorts unnecessarily when only min/max are needed.
-
-**Correct (O(n) - single loop):**
-
-```typescript
-function getLatestProject(projects: Project[]) {
-  if (projects.length === 0) return null
-  
-  let latest = projects[0]
-  
-  for (let i = 1; i < projects.length; i++) {
-    if (projects[i].updatedAt > latest.updatedAt) {
-      latest = projects[i]
-    }
-  }
-  
-  return latest
+function ButtonText({ children }: { children: React.ReactNode }) {
+  return <Text>{children}</Text>
 }
 
-function getOldestAndNewest(projects: Project[]) {
-  if (projects.length === 0) return { oldest: null, newest: null }
-  
-  let oldest = projects[0]
-  let newest = projects[0]
-  
-  for (let i = 1; i < projects.length; i++) {
-    if (projects[i].updatedAt < oldest.updatedAt) oldest = projects[i]
-    if (projects[i].updatedAt > newest.updatedAt) newest = projects[i]
-  }
-  
-  return { oldest, newest }
+function ButtonIcon({ children }: { children: React.ReactNode }) {
+  return <>{children}</>
 }
+
+// Usage is explicit and composable
+<Button>
+  <ButtonIcon><SaveIcon /></ButtonIcon>
+  <ButtonText>Save</ButtonText>
+</Button>
+
+<Button>
+  <ButtonText>Cancel</ButtonText>
+</Button>
 ```
-
-Single pass through the array, no copying, no sorting.
-
-**Alternative: Math.min/Math.max for small arrays**
-
-```typescript
-const numbers = [5, 2, 8, 1, 9]
-const min = Math.min(...numbers)
-const max = Math.max(...numbers)
-```
-
-This works for small arrays, but can be slower or just throw an error for very large arrays due to spread operator limitations. Maximal array length is approximately 124000 in Chrome 143 and 638000 in Safari 18; exact numbers may vary - see [the fiddle](https://jsfiddle.net/qw1jabsx/4/). Use the loop approach for reliability.
-
-### 7.11 Use Set/Map for O(1) Lookups
-
-**Impact: LOW-MEDIUM (O(n) to O(1))**
-
-Convert arrays to Set/Map for repeated membership checks.
-
-**Incorrect (O(n) per check):**
-
-```typescript
-const allowedIds = ['a', 'b', 'c', ...]
-items.filter(item => allowedIds.includes(item.id))
-```
-
-**Correct (O(1) per check):**
-
-```typescript
-const allowedIds = new Set(['a', 'b', 'c', ...])
-items.filter(item => allowedIds.has(item.id))
-```
-
-### 7.12 Use toSorted() Instead of sort() for Immutability
-
-**Impact: MEDIUM-HIGH (prevents mutation bugs in React state)**
-
-`.sort()` mutates the array in place, which can cause bugs with React state and props. Use `.toSorted()` to create a new sorted array without mutation.
-
-**Incorrect: mutates original array**
-
-```typescript
-function UserList({ users }: { users: User[] }) {
-  // Mutates the users prop array!
-  const sorted = useMemo(
-    () => users.sort((a, b) => a.name.localeCompare(b.name)),
-    [users]
-  )
-  return <div>{sorted.map(renderUser)}</div>
-}
-```
-
-**Correct: creates new array**
-
-```typescript
-function UserList({ users }: { users: User[] }) {
-  // Creates new sorted array, original unchanged
-  const sorted = useMemo(
-    () => users.toSorted((a, b) => a.name.localeCompare(b.name)),
-    [users]
-  )
-  return <div>{sorted.map(renderUser)}</div>
-}
-```
-
-**Why this matters in React:**
-
-1. Props/state mutations break React's immutability model - React expects props and state to be treated as read-only
-
-2. Causes stale closure bugs - Mutating arrays inside closures (callbacks, effects) can lead to unexpected behavior
-
-**Browser support: fallback for older browsers**
-
-```typescript
-// Fallback for older browsers
-const sorted = [...items].sort((a, b) => a.value - b.value)
-```
-
-`.toSorted()` is available in all modern browsers (Chrome 110+, Safari 16+, Firefox 115+, Node.js 20+). For older environments, use spread operator:
-
-**Other immutable array methods:**
-
-- `.toSorted()` - immutable sort
-
-- `.toReversed()` - immutable reverse
-
-- `.toSpliced()` - immutable splice
-
-- `.with()` - immutable element replacement
 
 ---
 
-## 8. Advanced Patterns
+## 10. Monorepo
 
 **Impact: LOW**
 
-Advanced patterns for specific cases that require careful implementation.
+Dependency management and native module configuration in
+monorepos.
 
-### 8.1 Initialize App Once, Not Per Mount
+### 10.1 Install Native Dependencies in App Directory
 
-**Impact: LOW-MEDIUM (avoids duplicate init in development)**
+**Impact: CRITICAL (required for autolinking to work)**
 
-Do not put app-wide initialization that must run once per app load inside `useEffect([])` of a component. Components can remount and effects will re-run. Use a module-level guard or top-level init in the entry module instead.
+In a monorepo, packages with native code must be installed in the native app's
 
-**Incorrect: runs twice in dev, re-runs on remount**
+directory directly. Autolinking only scans the app's `node_modules`—it won't
 
-```tsx
-function Comp() {
-  useEffect(() => {
-    loadFromStorage()
-    checkAuthToken()
-  }, [])
+find native dependencies installed in other packages.
 
-  // ...
+**Incorrect: native dep in shared package only**
+
+```typescript
+packages/
+  ui/
+    package.json  # has react-native-reanimated
+  app/
+    package.json  # missing react-native-reanimated
+```
+
+Autolinking fails—native code not linked.
+
+**Correct: native dep in app directory**
+
+```json
+// packages/app/package.json
+{
+  "dependencies": {
+    "react-native-reanimated": "3.16.1"
+  }
 }
 ```
 
-**Correct: once per app load**
+Even if the shared package uses the native dependency, the app must also list it
 
-```tsx
-let didInit = false
+for autolinking to detect and link the native code.
 
-function Comp() {
-  useEffect(() => {
-    if (didInit) return
-    didInit = true
-    loadFromStorage()
-    checkAuthToken()
-  }, [])
+### 10.2 Use Single Dependency Versions Across Monorepo
 
-  // ...
+**Impact: MEDIUM (avoids duplicate bundles, version conflicts)**
+
+Use a single version of each dependency across all packages in your monorepo.
+
+Prefer exact versions over ranges. Multiple versions cause duplicate code in
+
+bundles, runtime conflicts, and inconsistent behavior across packages.
+
+Use a tool like syncpack to enforce this. As a last resort, use yarn resolutions
+
+or npm overrides.
+
+**Incorrect: version ranges, multiple versions**
+
+```json
+// packages/app/package.json
+{
+  "dependencies": {
+    "react-native-reanimated": "^3.0.0"
+  }
+}
+
+// packages/ui/package.json
+{
+  "dependencies": {
+    "react-native-reanimated": "^3.5.0"
+  }
 }
 ```
 
-Reference: [https://react.dev/learn/you-might-not-need-an-effect#initializing-the-application](https://react.dev/learn/you-might-not-need-an-effect#initializing-the-application)
+**Correct: exact versions, single source of truth**
 
-### 8.2 Store Event Handlers in Refs
+```json
+// package.json (root)
+{
+  "pnpm": {
+    "overrides": {
+      "react-native-reanimated": "3.16.1"
+    }
+  }
+}
 
-**Impact: LOW (stable subscriptions)**
+// packages/app/package.json
+{
+  "dependencies": {
+    "react-native-reanimated": "3.16.1"
+  }
+}
 
-Store callbacks in refs when used in effects that shouldn't re-subscribe on callback changes.
-
-**Incorrect: re-subscribes on every render**
-
-```tsx
-function useWindowEvent(event: string, handler: (e) => void) {
-  useEffect(() => {
-    window.addEventListener(event, handler)
-    return () => window.removeEventListener(event, handler)
-  }, [event, handler])
+// packages/ui/package.json
+{
+  "dependencies": {
+    "react-native-reanimated": "3.16.1"
+  }
 }
 ```
 
-**Correct: stable subscription**
+Use your package manager's override/resolution feature to enforce versions at
+
+the root. When adding dependencies, specify exact versions without `^` or `~`.
+
+---
+
+## 11. Third-Party Dependencies
+
+**Impact: LOW**
+
+Wrapping and re-exporting third-party dependencies for
+maintainability.
+
+### 11.1 Import from Design System Folder
+
+**Impact: LOW (enables global changes and easy refactoring)**
+
+Re-export dependencies from a design system folder. App code imports from there,
+
+not directly from packages. This enables global changes and easy refactoring.
+
+**Incorrect: imports directly from package**
 
 ```tsx
-import { useEffectEvent } from 'react'
+import { View, Text } from 'react-native'
+import { Button } from '@ui/button'
 
-function useWindowEvent(event: string, handler: (e) => void) {
-  const onEvent = useEffectEvent(handler)
-
-  useEffect(() => {
-    window.addEventListener(event, onEvent)
-    return () => window.removeEventListener(event, onEvent)
-  }, [event])
+function Profile() {
+  return (
+    <View>
+      <Text>Hello</Text>
+      <Button>Save</Button>
+    </View>
+  )
 }
 ```
 
-**Alternative: use `useEffectEvent` if you're on latest React:**
-
-`useEffectEvent` provides a cleaner API for the same pattern: it creates a stable function reference that always calls the latest version of the handler.
-
-### 8.3 useEffectEvent for Stable Callback Refs
-
-**Impact: LOW (prevents effect re-runs)**
-
-Access latest values in callbacks without adding them to dependency arrays. Prevents effect re-runs while avoiding stale closures.
-
-**Incorrect: effect re-runs on every callback change**
+**Correct: imports from design system**
 
 ```tsx
-function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
-  const [query, setQuery] = useState('')
+import { View } from '@/components/view'
+import { Text } from '@/components/text'
+import { Button } from '@/components/button'
 
-  useEffect(() => {
-    const timeout = setTimeout(() => onSearch(query), 300)
-    return () => clearTimeout(timeout)
-  }, [query, onSearch])
+function Profile() {
+  return (
+    <View>
+      <Text>Hello</Text>
+      <Button>Save</Button>
+    </View>
+  )
 }
 ```
 
-**Correct: using React's useEffectEvent**
+Start by simply re-exporting. Customize later without changing app code.
+
+---
+
+## 12. JavaScript
+
+**Impact: LOW**
+
+Micro-optimizations like hoisting expensive object creation.
+
+### 12.1 Hoist Intl Formatter Creation
+
+**Impact: LOW-MEDIUM (avoids expensive object recreation)**
+
+Don't create `Intl.DateTimeFormat`, `Intl.NumberFormat`, or
+
+`Intl.RelativeTimeFormat` inside render or loops. These are expensive to
+
+instantiate. Hoist to module scope when the locale/options are static.
+
+**Incorrect: new formatter every render**
 
 ```tsx
-import { useEffectEvent } from 'react';
-
-function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
-  const [query, setQuery] = useState('')
-  const onSearchEvent = useEffectEvent(onSearch)
-
-  useEffect(() => {
-    const timeout = setTimeout(() => onSearchEvent(query), 300)
-    return () => clearTimeout(timeout)
-  }, [query])
+function Price({ amount }: { amount: number }) {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  })
+  return <Text>{formatter.format(amount)}</Text>
 }
 ```
+
+**Correct: hoisted to module scope**
+
+```tsx
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+})
+
+function Price({ amount }: { amount: number }) {
+  return <Text>{currencyFormatter.format(amount)}</Text>
+}
+```
+
+**For dynamic locales, memoize:**
+
+```tsx
+const dateFormatter = useMemo(
+  () => new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }),
+  [locale]
+)
+```
+
+**Common formatters to hoist:**
+
+```tsx
+// Module-level formatters
+const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' })
+const timeFormatter = new Intl.DateTimeFormat('en-US', { timeStyle: 'short' })
+const percentFormatter = new Intl.NumberFormat('en-US', { style: 'percent' })
+const relativeFormatter = new Intl.RelativeTimeFormat('en-US', {
+  numeric: 'auto',
+})
+```
+
+Creating `Intl` objects is significantly more expensive than `RegExp` or plain
+
+objects—each instantiation parses locale data and builds internal lookup tables.
+
+---
+
+## 13. Fonts
+
+**Impact: LOW**
+
+Native font loading for improved performance.
+
+### 13.1 Load fonts natively at build time
+
+**Impact: LOW (fonts available at launch, no async loading)**
+
+Use the `expo-font` config plugin to embed fonts at build time instead of
+
+`useFonts` or `Font.loadAsync`. Embedded fonts are more efficient.
+
+[Expo Font Documentation](https://docs.expo.dev/versions/latest/sdk/font/)
+
+**Incorrect: async font loading**
+
+```tsx
+import { useFonts } from 'expo-font'
+import { Text, View } from 'react-native'
+
+function App() {
+  const [fontsLoaded] = useFonts({
+    'Geist-Bold': require('./assets/fonts/Geist-Bold.otf'),
+  })
+
+  if (!fontsLoaded) {
+    return null
+  }
+
+  return (
+    <View>
+      <Text style={{ fontFamily: 'Geist-Bold' }}>Hello</Text>
+    </View>
+  )
+}
+```
+
+**Correct: config plugin, fonts embedded at build**
+
+```tsx
+import { Text, View } from 'react-native'
+
+function App() {
+  // No loading state needed—font is already available
+  return (
+    <View>
+      <Text style={{ fontFamily: 'Geist-Bold' }}>Hello</Text>
+    </View>
+  )
+}
+```
+
+After adding fonts to the config plugin, run `npx expo prebuild` and rebuild the
+
+native app.
 
 ---
 
 ## References
 
 1. [https://react.dev](https://react.dev)
-2. [https://nextjs.org](https://nextjs.org)
-3. [https://swr.vercel.app](https://swr.vercel.app)
-4. [https://github.com/shuding/better-all](https://github.com/shuding/better-all)
-5. [https://github.com/isaacs/node-lru-cache](https://github.com/isaacs/node-lru-cache)
-6. [https://vercel.com/blog/how-we-optimized-package-imports-in-next-js](https://vercel.com/blog/how-we-optimized-package-imports-in-next-js)
-7. [https://vercel.com/blog/how-we-made-the-vercel-dashboard-twice-as-fast](https://vercel.com/blog/how-we-made-the-vercel-dashboard-twice-as-fast)
+2. [https://reactnative.dev](https://reactnative.dev)
+3. [https://docs.swmansion.com/react-native-reanimated](https://docs.swmansion.com/react-native-reanimated)
+4. [https://docs.swmansion.com/react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler)
+5. [https://docs.expo.dev](https://docs.expo.dev)
+6. [https://legendapp.com/open-source/legend-list](https://legendapp.com/open-source/legend-list)
+7. [https://github.com/nandorojo/galeria](https://github.com/nandorojo/galeria)
+8. [https://zeego.dev](https://zeego.dev)
