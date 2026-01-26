@@ -1,4 +1,4 @@
-# Composition Patterns
+# React Composition Patterns
 
 **Version 1.0.0**  
 Engineering  

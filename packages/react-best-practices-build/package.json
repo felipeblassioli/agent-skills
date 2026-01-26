@@ -8,7 +8,7 @@
     "build-agents": "tsx src/build.ts",
     "build-all": "tsx src/build.ts --all",
     "build-react": "tsx src/build.ts --skill=react-best-practices",
-    "build-rn": "tsx src/build.ts --skill=react-native-guidelines",
+    "build-rn": "tsx src/build.ts --skill=react-native-skills",
     "build-composition": "tsx src/build.ts --skill=composition-patterns",
     "validate": "tsx src/validate.ts",
     "extract-tests": "tsx src/extract-tests.ts",

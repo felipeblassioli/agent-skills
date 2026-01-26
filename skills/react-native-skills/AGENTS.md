@@ -1,4 +1,4 @@
-# React Native Guidelines
+# React Native Skills
 
 **Version 1.0.0**  
 Engineering  

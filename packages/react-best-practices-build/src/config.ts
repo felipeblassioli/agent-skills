@@ -43,14 +43,14 @@ export const SKILLS: Record<string, SkillConfig> = {
       advanced: 8,
     },
   },
-  'react-native-guidelines': {
-    name: 'react-native-guidelines',
-    title: 'React Native Guidelines',
+  'react-native-skills': {
+    name: 'react-native-skills',
+    title: 'React Native Skills',
     description: 'React Native codebases',
-    skillDir: join(SKILLS_DIR, 'react-native-guidelines'),
-    rulesDir: join(SKILLS_DIR, 'react-native-guidelines/rules'),
-    metadataFile: join(SKILLS_DIR, 'react-native-guidelines/metadata.json'),
-    outputFile: join(SKILLS_DIR, 'react-native-guidelines/AGENTS.md'),
+    skillDir: join(SKILLS_DIR, 'react-native-skills'),
+    rulesDir: join(SKILLS_DIR, 'react-native-skills/rules'),
+    metadataFile: join(SKILLS_DIR, 'react-native-skills/metadata.json'),
+    outputFile: join(SKILLS_DIR, 'react-native-skills/AGENTS.md'),
     sectionMap: {
       rendering: 1,
       'list-performance': 2,
@@ -69,7 +69,7 @@ export const SKILLS: Record<string, SkillConfig> = {
   },
   'composition-patterns': {
     name: 'composition-patterns',
-    title: 'Composition Patterns',
+    title: 'React Composition Patterns',
     description: 'React codebases using composition',
     skillDir: join(SKILLS_DIR, 'composition-patterns'),
     rulesDir: join(SKILLS_DIR, 'composition-patterns/rules'),
