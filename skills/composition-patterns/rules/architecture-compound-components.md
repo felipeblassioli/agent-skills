@@ -62,11 +62,11 @@ function ComposerInput() {
   const {
     state,
     actions: { update },
-    meta,
+    meta: { inputRef },
   } = use(ComposerContext)
   return (
     <TextInput
-      ref={meta.inputRef}
+      ref={inputRef}
       value={state.input}
       onChangeText={(text) => update((s) => ({ ...s, input: text }))}
     />

@@ -33,17 +33,19 @@ function Composer({
   )
 }
 
-// Usage is awkward
-;<Composer
-  renderHeader={() => <CustomHeader />}
-  renderFooter={() => (
-    <>
-      <Formatting />
-      <Emojis />
-    </>
-  )}
-  renderActions={() => <SubmitButton />}
-/>
+// Usage is awkward and inflexible
+return (
+  <Composer
+    renderHeader={() => <CustomHeader />}
+    renderFooter={() => (
+      <>
+        <Formatting />
+        <Emojis />
+      </>
+    )}
+    renderActions={() => <SubmitButton />}
+  />
+)
 ```
 
 **Correct (compound components with children):**
@@ -54,7 +56,7 @@ function ComposerFrame({ children }: { children: React.ReactNode }) {
 }
 
 function ComposerFooter({ children }: { children: React.ReactNode }) {
-  return <div className='footer'>{children}</div>
+  return <footer className='flex'>{children}</div>
 }
 
 // Usage is flexible

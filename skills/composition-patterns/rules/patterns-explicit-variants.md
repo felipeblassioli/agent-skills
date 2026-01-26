@@ -7,7 +7,9 @@ tags: composition, variants, architecture
 
 ## Create Explicit Component Variants
 
-Instead of one component with many boolean props, create explicit variant components. Each variant composes the pieces it needs. The code documents itself.
+Instead of one component with many boolean props, create explicit variant
+components. Each variant composes the pieces it needs. The code documents
+itself.
 
 **Incorrect (one component, many modes):**
 
@@ -16,7 +18,7 @@ Instead of one component with many boolean props, create explicit variant compon
 <Composer
   isThread
   isEditing={false}
-  channelId="abc"
+  channelId='abc'
   showAttachments
   showFormatting={false}
 />
@@ -34,6 +36,9 @@ Instead of one component with many boolean props, create explicit variant compon
 // Or
 <ForwardMessageComposer />
 ```
+
+Each implementation is unique, explicit and self-contained. Yet they can each
+use shared parts.
 
 **Implementation:**
 
@@ -85,6 +90,7 @@ function ForwardMessageComposer() {
 ```
 
 Each variant is explicit about:
+
 - What provider/state it uses
 - What UI elements it includes
 - What actions are available

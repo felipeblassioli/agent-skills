@@ -200,11 +200,11 @@ function ComposerInput() {
   const {
     state,
     actions: { update },
-    meta,
+    meta: { inputRef },
   } = use(ComposerContext)
   return (
     <TextInput
-      ref={meta.inputRef}
+      ref={inputRef}
       value={state.input}
       onChangeText={(text) => update((s) => ({ ...s, input: text }))}
     />
@@ -553,11 +553,21 @@ function MessagePreview() {
 }
 ```
 
-The provider boundary is what matters—not the visual nesting. Components that need shared state don't have to be inside the `Composer.Frame`. They just need to be within the provider.
+The provider boundary is what matters—not the visual nesting. Components that
 
-The `ForwardButton` and `MessagePreview` are not visually inside the composer box, but they can still access its state and actions. This is the power of lifting state into providers.
+need shared state don't have to be inside the `Composer.Frame`. They just need
 
-The UI is reusable bits you compose together. The state is dependency-injected by the provider. Swap the provider, keep the UI.
+to be within the provider.
+
+The `ForwardButton` and `MessagePreview` are not visually inside the composer
+
+box, but they can still access its state and actions. This is the power of
+
+lifting state into providers.
+
+The UI is reusable bits you compose together. The state is dependency-injected
+
+by the provider. Swap the provider, keep the UI.
 
 ### 2.3 Lift State into Provider Components
 
@@ -590,6 +600,55 @@ function ForwardMessageDialog() {
         <CancelButton />
         <ForwardButton /> {/* Needs to call submit */}
       </DialogActions>
+    </Dialog>
+  )
+}
+```
+
+**Incorrect: useEffect to sync state up**
+
+```tsx
+function ForwardMessageDialog() {
+  const [input, setInput] = useState('')
+  return (
+    <Dialog>
+      <ForwardMessageComposer onInputChange={setInput} />
+      <MessagePreview input={input} />
+    </Dialog>
+  )
+}
+
+function ForwardMessageComposer({ onInputChange }) {
+  const [state, setState] = useState(initialState)
+  useEffect(() => {
+    onInputChange(state.input) // Sync on every change 😬
+  }, [state.input])
+}
+```
+
+**Incorrect: useImperativeHandle with refs**
+
+```tsx
+function ForwardMessageDialog() {
+  const composerRef = useRef(null)
+  return (
+    <Dialog>
+      <ForwardMessageComposer ref={composerRef} />
+      <ForwardButton onPress={() => composerRef.current?.submit()} />
+    </Dialog>
+  )
+}
+```
+
+**Incorrect: reading state from ref on submit**
+
+```tsx
+function ForwardMessageDialog() {
+  const stateRef = useRef(null)
+  return (
+    <Dialog>
+      <ForwardMessageComposer stateRef={stateRef} />
+      <ForwardButton onPress={() => submit(stateRef.current)} />
     </Dialog>
   )
 }
@@ -652,7 +711,11 @@ context providers.
 
 **Impact: MEDIUM (self-documenting code, no hidden conditionals)**
 
-Instead of one component with many boolean props, create explicit variant components. Each variant composes the pieces it needs. The code documents itself.
+Instead of one component with many boolean props, create explicit variant
+
+components. Each variant composes the pieces it needs. The code documents
+
+itself.
 
 **Incorrect: one component, many modes**
 
@@ -661,7 +724,7 @@ Instead of one component with many boolean props, create explicit variant compon
 <Composer
   isThread
   isEditing={false}
-  channelId="abc"
+  channelId='abc'
   showAttachments
   showFormatting={false}
 />
@@ -679,6 +742,10 @@ Instead of one component with many boolean props, create explicit variant compon
 // Or
 <ForwardMessageComposer />
 ```
+
+Each implementation is unique, explicit and self-contained. Yet they can each
+
+use shared parts.
 
 **Implementation:**
 
@@ -771,17 +838,19 @@ function Composer({
   )
 }
 
-// Usage is awkward
-;<Composer
-  renderHeader={() => <CustomHeader />}
-  renderFooter={() => (
-    <>
-      <Formatting />
-      <Emojis />
-    </>
-  )}
-  renderActions={() => <SubmitButton />}
-/>
+// Usage is awkward and inflexible
+return (
+  <Composer
+    renderHeader={() => <CustomHeader />}
+    renderFooter={() => (
+      <>
+        <Formatting />
+        <Emojis />
+      </>
+    )}
+    renderActions={() => <SubmitButton />}
+  />
+)
 ```
 
 **Correct: compound components with children**
@@ -792,7 +861,7 @@ function ComposerFrame({ children }: { children: React.ReactNode }) {
 }
 
 function ComposerFooter({ children }: { children: React.ReactNode }) {
-  return <div className='footer'>{children}</div>
+  return <footer className='flex'>{children}</div>
 }
 
 // Usage is flexible
