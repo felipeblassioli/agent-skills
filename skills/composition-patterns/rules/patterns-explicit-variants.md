@@ -34,7 +34,7 @@ itself.
 <EditMessageComposer messageId="xyz" />
 
 // Or
-<ForwardMessageComposer />
+<ForwardMessageComposer messageId="123" />
 ```
 
 Each implementation is unique, explicit and self-contained. Yet they can each
@@ -75,16 +75,18 @@ function EditMessageComposer({ messageId }: { messageId: string }) {
   )
 }
 
-function ForwardMessageComposer() {
+function ForwardMessageComposer({ messageId }: { messageId: string }) {
   return (
-    <Composer.Frame>
-      <Composer.Input placeholder="Add a message, if you'd like." />
-      <Composer.Footer>
-        <Composer.Formatting />
-        <Composer.Emojis />
-        <Composer.Mentions />
-      </Composer.Footer>
-    </Composer.Frame>
+    <ForwardMessageProvider messageId={messageId}>
+      <Composer.Frame>
+        <Composer.Input placeholder="Add a message, if you'd like." />
+        <Composer.Footer>
+          <Composer.Formatting />
+          <Composer.Emojis />
+          <Composer.Mentions />
+        </Composer.Footer>
+      </Composer.Frame>
+    </ForwardMessageProvider>
   )
 }
 ```
