@@ -29,6 +29,7 @@ optimized for agents and LLMs.
 - `list-performance-item-memo.md` - Pass primitives for memoization
 - `list-performance-item-expensive.md` - Keep list items lightweight
 - `list-performance-images.md` - Use compressed images in lists
+- `list-performance-item-types.md` - Use item types for heterogeneous lists
 
 ### Animation (HIGH)
 

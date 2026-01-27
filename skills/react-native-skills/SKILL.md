@@ -52,6 +52,7 @@ Reference these guidelines when:
 - `list-performance-function-references` - Extract functions outside render
 - `list-performance-images` - Optimize images in lists
 - `list-performance-item-expensive` - Move expensive work outside items
+- `list-performance-item-types` - Use item types for heterogeneous lists
 
 ### 2. Animation (HIGH)
 

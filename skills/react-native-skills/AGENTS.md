@@ -31,6 +31,7 @@ Comprehensive performance optimization guide for React Native applications, desi
    - 2.5 [Pass Primitives to List Items for Memoization](#25-pass-primitives-to-list-items-for-memoization)
    - 2.6 [Use a List Virtualizer for Any List](#26-use-a-list-virtualizer-for-any-list)
    - 2.7 [Use Compressed Images in Lists](#27-use-compressed-images-in-lists)
+   - 2.8 [Use Item Types for Heterogeneous Lists](#28-use-item-types-for-heterogeneous-lists)
 3. [Animation](#3-animation) — **HIGH**
    - 3.1 [Animate Transform and Opacity Instead of Layout Properties](#31-animate-transform-and-opacity-instead-of-layout-properties)
    - 3.2 [Prefer useDerivedValue Over useAnimatedReaction](#32-prefer-usederivedvalue-over-useanimatedreaction)
@@ -744,6 +745,97 @@ Use an optimized image component with built-in caching and placeholder support,
 such as `expo-image` or `SolitoImage` (which uses `expo-image` under the hood).
 
 Request images at 2x the display size for retina screens.
+
+### 2.8 Use Item Types for Heterogeneous Lists
+
+**Impact: HIGH (efficient recycling, less layout thrashing)**
+
+When a list has different item layouts (messages, images, headers, etc.), use
+a `type` field on each item and provide `getItemType` to the list. This puts
+items into separate recycling pools so a message component never gets recycled
+into an image component.
+
+**Incorrect (single component with conditionals):**
+
+```tsx
+type Item = { id: string; text?: string; imageUrl?: string; isHeader?: boolean }
+
+function ListItem({ item }: { item: Item }) {
+  if (item.isHeader) {
+    return <HeaderItem title={item.text} />
+  }
+  if (item.imageUrl) {
+    return <ImageItem url={item.imageUrl} />
+  }
+  return <MessageItem text={item.text} />
+}
+
+function Feed({ items }: { items: Item[] }) {
+  return (
+    <LegendList
+      data={items}
+      renderItem={({ item }) => <ListItem item={item} />}
+      recycleItems
+    />
+  )
+}
+```
+
+**Correct (typed items with separate components):**
+
+```tsx
+type HeaderItem = { id: string; type: 'header'; title: string }
+type MessageItem = { id: string; type: 'message'; text: string }
+type ImageItem = { id: string; type: 'image'; url: string }
+type FeedItem = HeaderItem | MessageItem | ImageItem
+
+function Feed({ items }: { items: FeedItem[] }) {
+  return (
+    <LegendList
+      data={items}
+      getItemType={(item) => item.type}
+      renderItem={({ item }) => {
+        switch (item.type) {
+          case 'header':
+            return <SectionHeader title={item.title} />
+          case 'message':
+            return <MessageRow text={item.text} />
+          case 'image':
+            return <ImageRow url={item.url} />
+        }
+      }}
+      recycleItems
+    />
+  )
+}
+```
+
+**Why this matters:**
+
+- **Recycling efficiency**: Items with the same type share a recycling pool
+- **No layout thrashing**: A header never recycles into an image cell
+- **Type safety**: TypeScript can narrow the item type in each branch
+- **Better size estimation**: Use `getEstimatedItemSize` with `itemType` for accurate estimates per type
+
+```tsx
+<LegendList
+  data={items}
+  getItemType={(item) => item.type}
+  getEstimatedItemSize={(index, item, itemType) => {
+    switch (itemType) {
+      case 'header': return 48
+      case 'message': return 72
+      case 'image': return 300
+      default: return 72
+    }
+  }}
+  renderItem={({ item }) => { /* ... */ }}
+  recycleItems
+/>
+```
+
+Reference:
+[LegendList getItemType](https://legendapp.com/open-source/list/api/props/#getitemtype-v2)
 
 ---
 
