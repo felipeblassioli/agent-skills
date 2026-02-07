@@ -28,6 +28,17 @@ Reference these guidelines when:
 - Fixing "Cannot find module", ESM, or build errors
 - Reviewing PRs for architectural compliance
 
+## When NOT to Apply
+
+Do NOT reference these guidelines when:
+
+- The workspace does NOT use Nx as the monorepo tool
+- The project uses CommonJS (no `"type": "module"` in package.json)
+- The workspace uses yarn workspaces or pnpm workspaces (linking rules differ)
+- The project is a single-package repo (not a monorepo)
+- The framework is not TypeScript-first (e.g., plain JavaScript projects)
+- You are working in this skills repository itself (these rules target the consumer monorepo)
+
 ## Stack Summary
 
 | Concern | Tool / Config | Key File |
@@ -112,6 +123,18 @@ Reference these guidelines when:
 - [observability-otel](references/rules/observability-otel.md) — OpenTelemetry is standard for tracing and metrics
 - [observability-pii-redaction](references/rules/observability-pii-redaction.md) — Secrets and tokens must be redacted from logs
 
+## Common Errors Quick Lookup
+
+| Error / Symptom | Start Here |
+|-----------------|------------|
+| `ERR_MODULE_NOT_FOUND` / missing `.js` extension | [esm-import-extensions](references/rules/esm-import-extensions.md) |
+| `ERR_REQUIRE_ESM` / CJS/ESM conflict | [esm-no-require](references/rules/esm-no-require.md), [esm-type-module](references/rules/esm-type-module.md) |
+| `Cannot find module '@turbi/...'` | [linking-consumer-deps](references/rules/linking-consumer-deps.md), [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) §4 |
+| `File is not under 'rootDir'` | [build-rootdir-separation](references/rules/build-rootdir-separation.md) |
+| `Referenced project must have composite: true` | [build-composite-tsconfig](references/rules/build-composite-tsconfig.md) |
+| `ReferenceError: __dirname is not defined` | [esm-import-meta-url](references/rules/esm-import-meta-url.md) |
+| 0 tests found / tests not discovered | [testing-vitest-workspace-root](references/rules/testing-vitest-workspace-root.md), [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) §1 |
+
 ## How to Use
 
 **For a specific topic** — read the relevant rule from the Quick Reference
@@ -119,14 +142,23 @@ above. Each file is self-contained with incorrect/correct examples.
 
 **For a comprehensive workspace-wide review** — load
 [compiled-rules.md](references/compiled-rules.md) (all 33 rules in one
-document). Do NOT load this for single-topic lookups.
+document, ~2100 lines). Do NOT load this for single-topic lookups. This file is
+**generated** — if missing, run `bash scripts/compile-rules.sh` first.
 
 **Vitest workspaceRoot depth formula:** count directory segments from workspace
 root to the `vitest.config.ts` file. Use that many `..` segments.
 Example: `libs/guard/ingestion/domain/` = 4 segments →
 `path.resolve(__dirname, '../../../..')`.
 
+**Important:** Do NOT apply changes derived from these rules without explicit
+user confirmation. Present proposed changes as diffs and wait for approval.
+
 ## Additional Resources
 
 - For detailed error troubleshooting, see [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md)
 - To regenerate the compiled document: `bash scripts/compile-rules.sh`
+
+### Authoring
+
+- Rule template: [assets/authoring/rule-template.md](assets/authoring/rule-template.md)
+- Section definitions: [assets/authoring/sections.md](assets/authoring/sections.md)
