@@ -1,22 +1,48 @@
-# Scripts — Anti-Leak Guardrail
+# Scripts
 
-This skill (`tdd-classicist`) is **language-agnostic doctrine**. It does not
-contain executable scripts, templates, or framework-specific code.
+Automated checks that produce compact JSON output for agent consumption.
 
-## Where to Find Scripts
+## Usage
 
-For language-specific audit scripts and enforcement tooling, see the
-corresponding language organization skill:
+```bash
+bash scripts/audit-test-doubles.sh [PROJECT_ROOT]
+```
 
-| Language | Skill | Scripts |
-|----------|-------|---------|
-| TypeScript / JavaScript | `typescript-testing-organization` | `audit-test-doubles.sh`, `audit-test-layout.sh`, `audit-test-import-boundaries.sh` |
-| Go | (future) `go-testing-organization` | TBD |
+Defaults `PROJECT_ROOT` to the current working directory.
 
-## Why This Directory Exists
+## Output Contract
 
-This `scripts/` directory and README serve as an explicit guardrail: if
-someone tries to add a language-specific script here, this file signals that
-it belongs in the language organization skill instead.
+All scripts write:
+- **Status messages** to stderr
+- **Machine-readable JSON** to stdout
 
-Do NOT add scripts to this directory. Route to the appropriate language skill.
+### audit-test-doubles.sh
+
+Scans test files for mock/spy/fake usage patterns and reports counts per file.
+
+**Output schema:**
+
+```json
+{
+  "total_files_scanned": 42,
+  "files_with_mocks": 5,
+  "summary": [
+    {
+      "file": "src/order/order.test.ts",
+      "vi_fn": 3,
+      "vi_spyOn": 1,
+      "vi_mock": 0,
+      "jest_fn": 0,
+      "jest_spyOn": 0,
+      "jest_mock": 0,
+      "total_doubles": 4,
+      "flag": "review"
+    }
+  ]
+}
+```
+
+**Flag values:**
+- `"ok"` — 0–2 doubles per file (normal)
+- `"review"` — 3–5 doubles per file (worth checking)
+- `"warning"` — 6+ doubles per file (likely mock overuse)
