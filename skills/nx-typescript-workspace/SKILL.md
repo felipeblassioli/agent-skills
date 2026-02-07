@@ -57,80 +57,76 @@ Reference these guidelines when:
 
 ### 1. Architecture (CRITICAL)
 
-- `arch-project-locations` — All code MUST live under apps/, libs/, or tools/
-- `arch-library-first` — Product features MUST begin as standalone libraries
-- `arch-hexagonal-deps` — Domain libs must not depend on data/api/infra/tool
-- `arch-domain-purity` — Domain libs are pure: no I/O, no framework deps
-- `arch-apps-thin-shell` — Apps are thin composition roots, no business logic
+- [arch-project-locations](references/rules/arch-project-locations.md) — All code MUST live under apps/, libs/, or tools/
+- [arch-library-first](references/rules/arch-library-first.md) — Product features MUST begin as standalone libraries
+- [arch-hexagonal-deps](references/rules/arch-hexagonal-deps.md) — Domain libs must not depend on data/api/infra/tool
+- [arch-domain-purity](references/rules/arch-domain-purity.md) — Domain libs are pure: no I/O, no framework deps
+- [arch-apps-thin-shell](references/rules/arch-apps-thin-shell.md) — Apps are thin composition roots, no business logic
 
 ### 2. Module System (CRITICAL)
 
-- `esm-type-module` — package.json must have "type": "module"
-- `esm-import-extensions` — Must include .js extensions in ESM imports
-- `esm-no-require` — Never use require/module.exports
-- `esm-import-meta-url` — Use import.meta.url, never bare __dirname
+- [esm-type-module](references/rules/esm-type-module.md) — package.json must have "type": "module"
+- [esm-import-extensions](references/rules/esm-import-extensions.md) — Must include .js extensions in ESM imports
+- [esm-no-require](references/rules/esm-no-require.md) — Never use require/module.exports
+- [esm-import-meta-url](references/rules/esm-import-meta-url.md) — Use import.meta.url, never bare __dirname
 
 ### 3. Build (HIGH)
 
-- `build-composite-tsconfig` — Referenced tsconfigs must have composite: true
-- `build-rootdir-separation` — Keep vitest.config.ts out of tsconfig.lib.json
-- `build-no-circular-refs` — No circular TypeScript project references
-- `build-tsconfig-base-locked` — Don't modify tsconfig.base.json without reason
+- [build-composite-tsconfig](references/rules/build-composite-tsconfig.md) — Referenced tsconfigs must have composite: true
+- [build-rootdir-separation](references/rules/build-rootdir-separation.md) — Keep vitest.config.ts out of tsconfig.lib.json
+- [build-no-circular-refs](references/rules/build-no-circular-refs.md) — No circular TypeScript project references
+- [build-tsconfig-base-locked](references/rules/build-tsconfig-base-locked.md) — Don't modify tsconfig.base.json without reason
 
 ### 4. Linking (HIGH)
 
-- `linking-exports-field` — Lib package.json must have exports with @nx/source
-- `linking-consumer-deps` — Consumers must declare workspace dependencies
-- `linking-no-file-link` — Never use file:, link:, or relative paths
-- `linking-no-path-aliases` — Never use root-level TS path aliases for workspace libs
-- `linking-workspaces-coverage` — Root workspaces array must cover all project folders
+- [linking-exports-field](references/rules/linking-exports-field.md) — Lib package.json must have exports with @nx/source
+- [linking-consumer-deps](references/rules/linking-consumer-deps.md) — Consumers must declare workspace dependencies
+- [linking-no-file-link](references/rules/linking-no-file-link.md) — Never use file:, link:, or relative paths
+- [linking-no-path-aliases](references/rules/linking-no-path-aliases.md) — Never use root-level TS path aliases for workspace libs
+- [linking-workspaces-coverage](references/rules/linking-workspaces-coverage.md) — Root workspaces array must cover all project folders
 
 ### 5. Testing (HIGH)
 
-- `testing-vitest-workspace-root` — Set vitest root to workspace root
-- `testing-import-meta-url` — Use import.meta.url pattern in vitest.config.ts
-- `testing-workspace-relative-include` — Use workspace-relative include paths
-- `testing-test-first` — Tests MUST be written before implementation
-- `testing-pyramid` — Unit (colocated), Integration (test/integration/), E2E (critical only)
-- `testing-deterministic` — No live network calls, controlled time/randomness
+- [testing-vitest-workspace-root](references/rules/testing-vitest-workspace-root.md) — Set vitest root to workspace root
+- [testing-import-meta-url](references/rules/testing-import-meta-url.md) — Use import.meta.url pattern in vitest.config.ts
+- [testing-workspace-relative-include](references/rules/testing-workspace-relative-include.md) — Use workspace-relative include paths
+- [testing-test-first](references/rules/testing-test-first.md) — Tests MUST be written before implementation
+- [testing-pyramid](references/rules/testing-pyramid.md) — Unit (colocated), Integration (test/integration/), E2E (critical only)
+- [testing-deterministic](references/rules/testing-deterministic.md) — No live network calls, controlled time/randomness
 
 ### 6. Tags (MEDIUM)
 
-- `tags-required-dimensions` — Every project MUST have scope + type tags
-- `tags-hex-constraints` — Tags must obey hexagonal dependency rules
+- [tags-required-dimensions](references/rules/tags-required-dimensions.md) — Every project MUST have scope + type tags
+- [tags-hex-constraints](references/rules/tags-hex-constraints.md) — Tags must obey hexagonal dependency rules
 
 ### 7. Boundaries (MEDIUM)
 
-- `boundaries-typed-clients` — External calls must use typed clients with timeouts
-- `boundaries-input-validation` — Inputs must be validated at boundaries (Zod)
-- `boundaries-no-any` — Public TypeScript surfaces must have explicit types
-- `boundaries-structured-errors` — Errors must use stable codes and standard structures
+- [boundaries-typed-clients](references/rules/boundaries-typed-clients.md) — External calls must use typed clients with timeouts
+- [boundaries-input-validation](references/rules/boundaries-input-validation.md) — Inputs must be validated at boundaries (Zod)
+- [boundaries-no-any](references/rules/boundaries-no-any.md) — Public TypeScript surfaces must have explicit types
+- [boundaries-structured-errors](references/rules/boundaries-structured-errors.md) — Errors must use stable codes and standard structures
 
 ### 8. Observability (MEDIUM)
 
-- `observability-structured-logging` — Logging must be structured JSON
-- `observability-otel` — OpenTelemetry is standard for tracing and metrics
-- `observability-pii-redaction` — Secrets and tokens must be redacted from logs
+- [observability-structured-logging](references/rules/observability-structured-logging.md) — Logging must be structured JSON
+- [observability-otel](references/rules/observability-otel.md) — OpenTelemetry is standard for tracing and metrics
+- [observability-pii-redaction](references/rules/observability-pii-redaction.md) — Secrets and tokens must be redacted from logs
 
 ## How to Use
 
-Read individual rule files for detailed explanations and code examples:
+**For a specific topic** — read the relevant rule from the Quick Reference
+above. Each file is self-contained with incorrect/correct examples.
 
-- [arch-hexagonal-deps](references/rules/arch-hexagonal-deps.md) — Domain libs must not depend on data/API/infra/tool
-- [linking-exports-field](references/rules/linking-exports-field.md) — Lib package.json must have exports with @nx/source
-- [testing-vitest-workspace-root](references/rules/testing-vitest-workspace-root.md) — Set Vitest root to workspace root
+**For a comprehensive workspace-wide review** — load
+[compiled-rules.md](references/compiled-rules.md) (all 33 rules in one
+document). Do NOT load this for single-topic lookups.
 
-Each rule file contains:
-
-- Brief explanation of why it matters
-- Incorrect code example with explanation
-- Correct code example with explanation
-- Additional context and references
+**Vitest workspaceRoot depth formula:** count directory segments from workspace
+root to the `vitest.config.ts` file. Use that many `..` segments.
+Example: `libs/guard/ingestion/domain/` = 4 segments →
+`path.resolve(__dirname, '../../../..')`.
 
 ## Additional Resources
 
 - For detailed error troubleshooting, see [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md)
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: [compiled-rules.md](references/compiled-rules.md)
+- To regenerate the compiled document: `bash scripts/compile-rules.sh`

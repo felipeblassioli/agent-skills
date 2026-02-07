@@ -13,15 +13,8 @@ The `@nx/enforce-module-boundaries` lint rule uses tags to enforce hexagonal
 architecture constraints at lint time. The dependency matrix must be configured
 in `.eslintrc.json` (or `eslint.config.*`) at the workspace root.
 
-**Dependency matrix:**
-
-| Source tag | Can depend on | MUST NOT depend on |
-|------------|---------------|--------------------|
-| `type:domain` | `type:util` | `type:data`, `type:api`, `type:tool` |
-| `type:data` | `type:domain`, `type:util` | `type:api`, `type:tool` |
-| `type:api` | `type:domain`, `type:data`, `type:util` | `type:tool` |
-| `type:tool` | `type:domain`, `type:data`, `type:util` | — |
-| `type:util` | `type:util` | `type:domain`, `type:data`, `type:api` |
+**Dependency matrix:** See [arch-hexagonal-deps](arch-hexagonal-deps.md) for
+the canonical table. The eslint config below encodes these same constraints.
 
 **Incorrect (domain depending on data — lint should catch):**
 
