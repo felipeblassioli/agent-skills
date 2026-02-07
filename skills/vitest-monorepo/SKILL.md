@@ -11,9 +11,9 @@ compatibility:
 
 # Vitest Monorepo
 
-Configuration rules for Vitest in monorepo workspaces. Contains 3 rules covering
-workspace-root config patterns, `import.meta.url` pattern, and
-workspace-relative include paths.
+Configuration and methodology rules for Vitest in monorepo workspaces. Contains
+6 rules covering workspace-root config patterns, test-first methodology, the
+testing pyramid, and deterministic test requirements.
 
 ## When to Apply
 
@@ -21,7 +21,9 @@ Reference these guidelines when:
 
 - Vitest reports "0 tests" or "No test suite found"
 - Setting up or troubleshooting `vitest.config.ts` in a monorepo
-- Configuring test coverage paths or include patterns
+- Writing new tests (test-first methodology)
+- Deciding test placement (unit vs integration vs E2E)
+- Configuring test coverage paths
 
 ## When NOT to Apply
 
@@ -30,17 +32,15 @@ Do NOT reference these guidelines when:
 - The project uses Jest or another test runner (not Vitest)
 - The project is not a monorepo (single-package vitest works differently)
 - You are working in this skills repository itself
-- Deciding **which test tier** a test belongs to → see **tdd-classicist**
-- Deciding **test file suffixes or directory layout** → see
-  **typescript-testing-organization**
-- Following the **TDD cycle** or choosing **test doubles** → see
-  **tdd-classicist**
 
 ## Quick Reference
 
 - [testing-vitest-workspace-root](references/rules/testing-vitest-workspace-root.md) — Set vitest root to workspace root
 - [testing-import-meta-url](references/rules/testing-import-meta-url.md) — Use `import.meta.url` pattern in `vitest.config.ts`
 - [testing-workspace-relative-include](references/rules/testing-workspace-relative-include.md) — Use workspace-relative include paths
+- [testing-test-first](references/rules/testing-test-first.md) — Tests MUST be written before implementation
+- [testing-pyramid](references/rules/testing-pyramid.md) — Unit (colocated), Integration (test/integration/), E2E (critical only)
+- [testing-deterministic](references/rules/testing-deterministic.md) — No live network calls, controlled time/randomness
 
 ## Vitest workspaceRoot Depth Formula
 
@@ -69,9 +69,5 @@ user confirmation. Present proposed changes as diffs and wait for approval.
 
 ## Related Skills
 
-- **tdd-classicist** — Testing doctrine: test tiers, doubles taxonomy,
-  assertions, TDD cycle (language-agnostic)
-- **typescript-testing-organization** — TS test file suffixes, directory layout,
-  templates, and audit scripts
-- **esm-typescript** — ESM `import.meta.url` details beyond vitest.config.ts
-- **nx-monorepo** — `tsconfig.spec.json` patterns (`build-rootdir-separation`)
+- For ESM `import.meta.url` details beyond vitest.config.ts, see the **esm-typescript** skill.
+- For `tsconfig.spec.json` patterns (`build-rootdir-separation`), see the **nx-monorepo** skill.
