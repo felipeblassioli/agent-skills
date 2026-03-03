@@ -175,6 +175,21 @@
         "deploy"
       ],
       "description": "Deploy apps to Vercel with claimable ownership transfer"
+    },
+    "commit-hygiene": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "git",
+        "conventions",
+        "pr",
+        "commits"
+      ],
+      "description": "Commit hygiene and self-contained pull requests. Highlights production impact, uses gh CLI for opening/updating PRs, and adding proof comments (test runs, coverage reports)."
     }
   },
   "targetPaths": {
