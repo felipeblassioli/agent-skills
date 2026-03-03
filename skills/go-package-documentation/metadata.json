@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "organization": "Engineering",
+  "date": "February 2026",
+  "abstract": "Official conventions for writing Go package documentation (doc.go files). Ensures documentation is properly formatted for go doc, godoc, and pkg.go.dev. These patterns make Go codebases easier for both humans and AI agents to document and maintain as they scale.",
+  "references": [
+    "https://go.dev/doc/comment",
+    "https://go.dev/doc/effective_go",
+    "https://google.github.io/styleguide/go/",
+    "https://pkg.go.dev/go/doc"
+  ]
+}
