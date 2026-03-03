@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Classicist TDD methodology — Red-Green-Refactor, Meszaros test-double taxonomy, tiered test pyramid, assertion policies, and contracts-as-spine doctrine."
+}
