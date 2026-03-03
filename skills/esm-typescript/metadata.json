@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Fix and prevent ESM errors in TypeScript projects using type:module with moduleResolution nodenext."
+}
