@@ -218,7 +218,7 @@
         "nodejs",
         "testing"
       ],
-      "description": "Guide writing, configuring, testing, and migrating Firebase Cloud Functions for Node.js (JavaScript/TypeScript). Distinguish v1 (deprecated) from v2 functions by import path. Use when writing a new Cloud Function, adding a trigger (HTTP, PubSub, Firestore), configuring environment or secrets, testing functions locally or with firebase-functions-test, or migrating v1 functions to v2. Do NOT use for client-side Firebase SDK integration, GCP services unrelated to Cloud Functions, or test-tier selection methodology (see tdd-classicist). ---"
+      "description": "Guide writing, configuring, testing, and migrating Firebase Cloud Functions for Node.js (JavaScript/TypeScript). Distinguish v1 (deprecated) from v2 functions by import path. Use when writing a new Cloud Function, adding a trigger (HTTP, PubSub, Firestore), configuring environment or secrets, testing functions locally or with firebase-functions-test, or migrating v1 functions to v2. Do NOT use for client-side Firebase SDK integration, GCP services unrelated to Cloud Functions, or test-tier selection methodology (see tdd-classicist)."
     },
     "gcloud-logging": {
       "version": "1.0.0",
@@ -262,7 +262,7 @@
         "coverage",
         "turbi"
       ],
-      "description": ""
+      "description": "Verify working-tree changes against turbi-guard's 8-tier test pyramid. Runs the right tests for changed files, collects coverage from instrumentable tiers, and returns a structured verification report. Use when the agent modifies production code, the user asks to run tests or check coverage, or the gh-pr-creator skill needs \"Validação executada\" data."
     }
   },
   "targetPaths": {
