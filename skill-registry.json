@@ -175,6 +175,109 @@
         "deploy"
       ],
       "description": "Deploy apps to Vercel with claimable ownership transfer"
+    },
+    "commit-hygiene": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "git",
+        "conventions",
+        "pr",
+        "commits"
+      ],
+      "description": "Commit hygiene and self-contained pull requests. Highlights production impact, uses gh CLI for opening/updating PRs, and adding proof comments (test runs, coverage reports)."
+    },
+    "create-skill-from-refs": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "skill-creation"
+      ],
+      "description": "Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package. Use when the user asks to create a skill, write a SKILL.md, or package domain knowledge into a reusable skill — especially when they provide reference documents or code as context. Invoke explicitly via /create-skill-from-refs."
+    },
+    "firebase-functions-node": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "firebase",
+        "cloud-functions",
+        "nodejs",
+        "testing"
+      ],
+      "description": "Guide writing, configuring, testing, and migrating Firebase Cloud Functions for Node.js (JavaScript/TypeScript). Distinguish v1 (deprecated) from v2 functions by import path. Use when writing a new Cloud Function, adding a trigger (HTTP, PubSub, Firestore), configuring environment or secrets, testing functions locally or with firebase-functions-test, or migrating v1 functions to v2. Do NOT use for client-side Firebase SDK integration, GCP services unrelated to Cloud Functions, or test-tier selection methodology (see tdd-classicist)."
+    },
+    "gcloud-logging": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "gcp",
+        "logging",
+        "gcloud",
+        "observability"
+      ],
+      "description": "Query and extract Google Cloud Logging entries using the Logging query language DSL and gcloud CLI. Covers Cloud Run, Firebase Functions (1st gen), GKE, Compute Engine, and other GCP resource types. Use when the user asks to read logs, debug Cloud Run errors, tail Firebase Functions output, build Logging filters, parse log entries, or investigate GCP service behavior via logs."
+    },
+    "gh-pr-creator": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "github",
+        "pr",
+        "turbiteam"
+      ],
+      "description": "Create and update GitHub pull requests using gh CLI for turbiteam repositories. PRs are written in Brazilian Portuguese following the repo's pull_request_template.md with comment markers. Uses a .work/ staging directory for body files. Use when the user asks to create a PR, open a PR, update a PR description, or prepare a PR body."
+    },
+    "skill-pr-review": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "pr",
+        "review",
+        "quality"
+      ],
+      "description": "Reviews pull requests that add or modify agent skills by combining structural validation, registry consistency checks, and PR hygiene analysis. Produces a structured pass/fail report with actionable findings. Use when asked to review a skill PR, check pull request quality, validate skill changes before merge, or prepare PR validation evidence."
+    },
+    "test-verifier": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "testing",
+        "verification",
+        "coverage",
+        "turbi"
+      ],
+      "description": "Verify working-tree changes against turbi-guard's 8-tier test pyramid. Runs the right tests for changed files, collects coverage from instrumentable tiers, and returns a structured verification report. Use when the agent modifies production code, the user asks to run tests or check coverage, or the gh-pr-creator skill needs \"Validação executada\" data."
     }
   },
   "targetPaths": {
