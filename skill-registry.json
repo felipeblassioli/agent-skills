@@ -204,6 +204,21 @@
         "skill-creation"
       ],
       "description": "Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package. Use when the user asks to create a skill, write a SKILL.md, or package domain knowledge into a reusable skill — especially when they provide reference documents or code as context. Invoke explicitly via /create-skill-from-refs."
+    },
+    "firebase-functions-node": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "firebase",
+        "cloud-functions",
+        "nodejs",
+        "testing"
+      ],
+      "description": "Guide writing, configuring, testing, and migrating Firebase Cloud Functions for Node.js (JavaScript/TypeScript). Distinguish v1 (deprecated) from v2 functions by import path. Use when writing a new Cloud Function, adding a trigger (HTTP, PubSub, Firestore), configuring environment or secrets, testing functions locally or with firebase-functions-test, or migrating v1 functions to v2. Do NOT use for client-side Firebase SDK integration, GCP services unrelated to Cloud Functions, or test-tier selection methodology (see tdd-classicist). ---"
     }
   },
   "targetPaths": {
