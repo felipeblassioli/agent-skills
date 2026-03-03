@@ -175,6 +175,65 @@
         "deploy"
       ],
       "description": "Deploy apps to Vercel with claimable ownership transfer"
+    },
+    "commit-hygiene": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "git",
+        "conventions",
+        "pr",
+        "commits"
+      ],
+      "description": "Commit hygiene and self-contained pull requests. Highlights production impact, uses gh CLI for opening/updating PRs, and adding proof comments (test runs, coverage reports)."
+    },
+    "create-skill-from-refs": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "skill-creation"
+      ],
+      "description": ">-"
+    },
+    "firebase-functions-node": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "firebase",
+        "cloud-functions",
+        "nodejs",
+        "testing"
+      ],
+      "description": ">-"
+    },
+    "gcloud-logging": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "gcp",
+        "logging",
+        "gcloud",
+        "observability"
+      ],
+      "description": ">-"
     }
   },
   "targetPaths": {
