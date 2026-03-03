@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Reviews pull requests that add or modify agent skills by combining structural validation, registry consistency checks, and PR hygiene analysis. Produces a structured pass/fail report with actionable findings. Use when asked to review a skill PR, check pull request quality, validate skill changes before merge, or prepare PR validation evidence."
+}

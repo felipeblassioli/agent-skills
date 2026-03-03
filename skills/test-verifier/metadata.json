@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Verify working-tree changes against turbi-guard's 8-tier test pyramid. Runs the right tests for changed files, collects coverage from instrumentable tiers, and returns a structured verification report. Use when the agent modifies production code, the user asks to run tests or check coverage, or the gh-pr-creator skill needs "Validação executada" data."
+}
