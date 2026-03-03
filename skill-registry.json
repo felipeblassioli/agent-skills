@@ -249,6 +249,21 @@
       ],
       "description": "Create and update GitHub pull requests using gh CLI for turbiteam repositories. PRs are written in Brazilian Portuguese following the repo's pull_request_template.md with comment markers. Uses a .work/ staging directory for body files. Use when the user asks to create a PR, open a PR, update a PR description, or prepare a PR body."
     },
+    "skill-pr-review": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "pr",
+        "review",
+        "quality"
+      ],
+      "description": "Reviews pull requests that add or modify agent skills by combining structural validation, registry consistency checks, and PR hygiene analysis. Produces a structured pass/fail report with actionable findings. Use when asked to review a skill PR, check pull request quality, validate skill changes before merge, or prepare PR validation evidence."
+    },
     "test-verifier": {
       "version": "1.0.0",
       "author": "felipeblassioli",
