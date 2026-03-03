@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Opportunistically migrate away from deprecated @turbi/mysql, @turbi/types, and @turbi/config libraries when touching code that uses them. Use when editing files that import @turbi/mysql, @turbi/types (Result/ValueResult), or @turbi/config, or when creating new repositories, error handling, or configuration code. Triggers on tasks involving Filterable, ConnectionManager, ValueResult, Result, cachedConfig, setup(), setDefaultCredentials, or any @turbi/* import."
+}
