@@ -95,7 +95,7 @@ bash scripts/skill-import.sh <project-path> <skill-name> [options]
 
 **Example:**
 ```bash
-bash scripts/skill-import.sh ~/dev/tmp/tguard-riskEngineV2 commit-hygiene \
+bash scripts/skill-import.sh ~/dev/tmp/local-project commit-hygiene \
   --tags=git,conventions,pr
 ```
 

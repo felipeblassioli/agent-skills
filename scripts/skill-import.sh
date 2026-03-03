@@ -22,7 +22,7 @@ NC='\033[0m'
 
 if [[ $# -lt 2 ]]; then
   echo "Usage: $0 <source-project-path> <skill-name> [options]" >&2
-  echo "Example: $0 ~/dev/tmp/tguard-riskEngineV2 commit-hygiene --tags=git,conventions" >&2
+  echo "Example: $0 ~/dev/tmp/local-project commit-hygiene --tags=git,conventions" >&2
   exit 1
 fi
 
