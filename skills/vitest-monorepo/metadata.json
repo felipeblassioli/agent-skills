@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Configure Vitest in monorepo workspaces with correct workspace root, import.meta.url pattern, and workspace-relative include paths."
+}

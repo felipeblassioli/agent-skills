@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "TypeScript code quality patterns — typed clients, Zod validation, domain errors, structured logging, tracing, and PII redaction."
+}
