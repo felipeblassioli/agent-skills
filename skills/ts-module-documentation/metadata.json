@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-03-06",
+  "abstract": "TypeScript module and API documentation guidelines with export auditing and reusable JSDoc templates."
+}

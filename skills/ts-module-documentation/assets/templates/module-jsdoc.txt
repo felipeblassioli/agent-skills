@@ -1,0 +1,8 @@
+/**
+ * @module [ModuleName]
+ * 
+ * [A 1-2 sentence description of what this module provides and its primary responsibility.]
+ * 
+ * @example
+ * // Provide a brief example of how to consume the main exports of this module, if applicable.
+ */
