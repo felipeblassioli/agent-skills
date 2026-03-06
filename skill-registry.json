@@ -148,6 +148,20 @@
       ],
       "description": "TypeScript test file suffixes, layout, and tier-suffix policy"
     },
+    "ts-module-documentation": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "typescript",
+        "documentation",
+        "jsdoc"
+      ],
+      "description": "Ensure TypeScript modules and public exports are documented with clear JSDoc purpose and API details."
+    },
     "typescript-error-handling": {
       "version": "1.0.0",
       "author": "felipeblassioli",
@@ -268,6 +282,23 @@
         "cloud-logging"
       ],
       "description": "Set up and use Google Cloud Error Reporting in Node.js applications. Covers automatic capture on Cloud Run / Cloud Run functions, the @google-cloud/error-reporting client library (configuration + middleware), and Cloud Logging log-entry formatting rules for Error Reporting ingestion."
+    },
+    "gcp-opentelemetry-nodejs": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "gcp",
+        "opentelemetry",
+        "observability",
+        "nodejs",
+        "cloud-run"
+      ],
+      "description": "OpenTelemetry explicit instrumentation and Google Cloud structured logging/error-reporting patterns for Node.js workloads."
     },
     "gh-pr-creator": {
       "version": "1.0.0",
