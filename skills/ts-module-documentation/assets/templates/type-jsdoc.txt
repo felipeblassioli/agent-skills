@@ -1,0 +1,9 @@
+/**
+ * [A 1-2 sentence description of what this type/interface represents.]
+ */
+export interface [InterfaceName] {
+  /**
+   * [Description of the field and any specific constraints.]
+   */
+  [fieldName]: [Type];
+}

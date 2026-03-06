@@ -1,0 +1,10 @@
+/**
+ * [A 1-2 sentence description of what the function does.]
+ *
+ * @param {[Type]} [paramName] - [Description of the parameter, including constraints.]
+ * @returns {[Type]} [Description of what the function returns.]
+ * 
+ * @example
+ * // Example usage
+ * const result = myFunction(args);
+ */
