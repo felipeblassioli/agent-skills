@@ -162,6 +162,22 @@
       ],
       "description": "Ensure TypeScript modules and public exports are documented with clear JSDoc purpose and API details."
     },
+    "typescript-error-handling": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "typescript",
+        "errors",
+        "resilience",
+        "neverthrow"
+      ],
+      "description": "TypeScript error handling patterns inspired by ZIO: expected vs unexpected failures, typed domain errors, and robust recovery strategies."
+    },
     "vitest-monorepo": {
       "version": "1.0.0",
       "author": "felipeblassioli",
