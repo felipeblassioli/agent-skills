@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-03-06",
+  "abstract": "TypeScript error handling patterns transposed from ZIO, focusing on typed errors, explicit domain errors vs unexpected defects, and separating exception-based from function-return-based (neverthrow) approaches."
+}

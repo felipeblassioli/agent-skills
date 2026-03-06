@@ -148,6 +148,22 @@
       ],
       "description": "TypeScript test file suffixes, layout, and tier-suffix policy"
     },
+    "typescript-error-handling": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "typescript",
+        "errors",
+        "resilience",
+        "neverthrow"
+      ],
+      "description": "TypeScript error handling patterns inspired by ZIO: expected vs unexpected failures, typed domain errors, and robust recovery strategies."
+    },
     "vitest-monorepo": {
       "version": "1.0.0",
       "author": "felipeblassioli",
