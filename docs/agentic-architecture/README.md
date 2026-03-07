@@ -83,7 +83,8 @@ Defines how the repository is exposed for AI navigation:
   - Does not own: memory persistence rules, governance policy, skill internals.
 - **Memory**
   - Answers: "What context persists, at which tier, and when is it updated?"
-  - Owns: bootstrap flow, memory tiers, session/repository memory templates.
+  - Owns: bootstrap flow, memory tiers, proactive memory update practices,
+    session/repository memory templates.
   - Does not own: agent identity, approval/risk policy, skill catalogs/workflows.
 - **Governance**
   - Answers: "What is allowed, restricted, or escalated during execution?"
