@@ -50,6 +50,29 @@ A new contributor should be able to read only this roadmap and understand:
 - `repository-architecture/architecture-maps.md`
 - `repository-architecture/monorepo-discoverability.md`
 
+
+## Document purpose matrix
+
+| Layer | File | Purpose | Scope boundary | Must not redefine / absorb |
+|---|---|---|---|---|
+| Primary agent | `primary-agent/profile.md` | Define the long-lived coworker role and boundaries. | Identity/role contract for execution and collaboration posture. | Memory tiers, governance policy, skill procedures. |
+| Primary agent | `primary-agent/operating-manual.md` | Define default reasoning and execution behavior. | Problem framing, exploration strategy, synthesis/delegation stance. | Tool-approval policy, skill-specific runbooks, memory schema. |
+| Primary agent | `primary-agent/collaboration-contract.md` | Define human↔agent interaction norms. | Communication rigor, escalation behavior, reporting/handoffs. | Governance controls, persona theatrics, skill catalog content. |
+| Memory | `memory/bootstrap.md` | Define cold-start context acquisition and first memory initialization. | Entry sequence, reading order, bootstrap deliverable and exit condition. | Governance policy authoring, primary-agent identity, full task execution plans. |
+| Memory | `memory/memory-model.md` | Define memory tiers and promotion/pruning rules. | Ephemeral/session/repository/collaboration memory lifecycle. | Persona definition, approvals/risk controls, skill definitions. |
+| Memory | `memory/session-memory-template.md` | Provide compact template for session working memory. | In-session facts, hypotheses, paths, commands, risks, checkpoints. | Durable repo canon, governance directives, identity contracts. |
+| Memory | `memory/repository-memory-template.md` | Provide durable low-noise template for stable repo memory. | Long-lived repository facts, constraints, caveats, stable workflows. | Session scratchpad content, governance policy, skill workflow specs. |
+| Governance | `governance/tool-constraints.md` | Define tool-level allowed/prohibited actions. | Execution constraint model for tools/environments. | Collaboration style, memory lifecycle, skill selection logic. |
+| Governance | `governance/approvals.md` | Define approval and escalation requirements. | Decision points requiring human confirmation. | Agent identity, memory templates, repository navigation docs. |
+| Governance | `governance/risk-levels.md` | Define risk taxonomy and operation classes. | Risk mapping for read/write/impactful actions. | Primary-agent behavior defaults, skill internals, memory promotion rules. |
+| Skills | `skills/skills-catalog.md` | Enumerate available skills and intended fit. | Skill inventory, capability boundaries, applicability signals. | Primary-agent role, governance controls, memory ownership. |
+| Skills | `skills/specialized-workflows.md` | Define reusable multi-step skill workflows. | Task-type playbooks built from existing skills. | Global execution policy, agent collaboration contract, memory model. |
+| Skills | `skills/delegation.md` | Define when/how the primary agent delegates to skills. | Delegation triggers, handoff inputs/outputs, return-to-synthesis. | Primary-agent identity, approvals model, repository architecture canon. |
+| Repository architecture | `repository-architecture/ai-doc-index.md` | Define AI-facing index of canonical docs/sources. | Source-of-truth map and retrieval starting points. | Governance policy, collaboration norms, memory tier rules. |
+| Repository architecture | `repository-architecture/navigation.md` | Define practical navigation paths through repo artifacts. | Discovery heuristics for directories, docs, and scripts. | Execution constraints, agent role definition, delegation policy. |
+| Repository architecture | `repository-architecture/architecture-maps.md` | Define structural maps of systems/packages/dependencies. | High-signal topology and boundaries for understanding impact. | Run-time governance decisions, identity/communication norms, memory templates. |
+| Repository architecture | `repository-architecture/monorepo-discoverability.md` | Define conventions that keep large-repo discovery reliable. | Naming/indexing/linking rules for findability at scale. | Tool approval model, primary-agent behavior policy, skill workflow semantics. |
+
 ## Maturation phases (no timeline)
 
 ### Phase 1: architecture skeleton

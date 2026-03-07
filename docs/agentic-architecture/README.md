@@ -73,6 +73,35 @@ Defines how the repository is exposed for AI navigation:
 - architecture maps,
 - monorepo discoverability conventions.
 
+## Document Family Roles (north-star boundaries)
+
+- **Primary agent**
+  - Answers: "How should the long-lived coworker think, decide, and collaborate?"
+  - Owns: role definition, execution behavior, collaboration contract.
+  - Does not own: memory persistence rules, governance policy, skill internals.
+- **Memory**
+  - Answers: "What context persists, at which tier, and when is it updated?"
+  - Owns: bootstrap flow, memory tiers, session/repository memory templates.
+  - Does not own: agent identity, approval/risk policy, skill catalogs/workflows.
+- **Governance**
+  - Answers: "What is allowed, restricted, or escalated during execution?"
+  - Owns: tool constraints, approvals, risk levels.
+  - Does not own: collaboration style, memory schema, task-domain procedures.
+- **Skills**
+  - Answers: "Which specialized modules exist and when should they be delegated?"
+  - Owns: skill catalog, specialized workflows, delegation patterns.
+  - Does not own: primary-agent identity, global governance, memory architecture.
+- **Repository architecture**
+  - Answers: "How should agents discover repository structure and key entry points?"
+  - Owns: AI doc index, navigation guidance, architecture maps, discoverability.
+  - Does not own: execution policy, collaboration contract, memory lifecycle.
+
+Boundary reminders:
+- Primary agent identity is not memory.
+- Memory is not governance.
+- Skills are not the main agent.
+- Repository architecture is not a substitute for execution policy.
+
 
 ## Scope and non-goals
 
