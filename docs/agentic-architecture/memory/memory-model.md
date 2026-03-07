@@ -49,10 +49,20 @@ Retention target: multi-session until repository changes invalidate entries.
 Cross-session collaboration patterns and recurring operational learnings shared
 across contributors or repeated engagements.
 
+Tier 3 is **not** a catch-all for long-term behavior. It does not absorb
+primary-agent identity/behavior, governance policy, skill definitions, or any
+other contracts owned by other layers.
+
 **Belongs here**
 - recurring integration pitfalls,
 - stable handoff conventions,
 - repeated decision rationales with long-term value.
+
+**Does not belong here**
+- primary-agent identity, role, or operating behavior,
+- governance rules, policy, or approval logic,
+- skill definitions or skill-specific workflow contracts,
+- ownership contracts already defined by other architecture layers.
 
 Retention target: long horizon, reviewed periodically for relevance.
 

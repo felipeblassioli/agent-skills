@@ -23,6 +23,13 @@ If this summary cannot be produced with confidence, bootstrap is not complete.
 
 ### Phase 0 — Confirm mission and constraints
 - Parse the request and identify explicit scope boundaries.
+- Classify the active task by layer before deeper reading:
+  - primary agent,
+  - memory,
+  - governance,
+  - skills,
+  - repository architecture.
+- Mark one primary layer and any secondary layers to guide reading priority.
 - Identify environment constraints (tooling, permissions, branch state).
 - Record unknowns that can block safe progress.
 
