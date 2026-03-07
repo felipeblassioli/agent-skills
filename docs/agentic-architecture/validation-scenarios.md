@@ -1,125 +1,151 @@
 # Validation Scenarios for the Documentation System
 
-Purpose: evaluate whether the current architecture docs improve real agent
-behavior in day-to-day repository work.
+Purpose: verify that the architecture improves behavior through **less, more
+relevant context**, not through broader document loading.
 
-Use these as lightweight scenario checks, not formal benchmark suites.
+Use these scenarios on real tasks. Treat failures as retrieval-discipline
+failures first, then capability failures.
 
 ## 1) Small scoped edit in Cursor
 
 **What is being tested**
-- Fast layer routing and minimal context loading for a low-risk local change.
+- Local-first execution for a low-risk, file-scoped change.
 
-**Docs expected to be used**
-- `docs/agentic-architecture/README.md`
-- `docs/agentic-architecture/governance/risk-levels.md`
-- Optional: `docs/agentic-architecture/memory/session-memory-template.md`
+**Minimum docs expected**
+- `docs/agentic-architecture/governance/risk-levels.md` (quick risk check)
+- Optional only if needed: `docs/agentic-architecture/README.md`
+
+**Docs that should not be loaded by default**
+- `docs/agentic-architecture/ROADMAP.md`
+- Multiple layer families unrelated to the edit
 
 **Good behavior**
-- Agent classifies task quickly, loads only needed docs, edits target files,
-  runs a narrow check, and reports succinctly.
+- Agent starts from task-local files, classifies risk quickly, executes one
+  bounded change, and runs a focused check.
 
-**Failure behavior**
-- Agent loads multiple unrelated layer docs, over-explores the repo, or adds
-  unnecessary process overhead for a small change.
+**Failure / context sprawl signs**
+- Opens many architecture docs before touching target files.
+- Expands into multi-layer analysis for a simple edit.
+- Mirrors long doc excerpts into prompt or notes.
 
 **Signal/output to observe**
-- Short execution trace with explicit layer classification, limited files
-  touched, and one focused validation command.
+- Explicit "local context first" trace, limited doc reads, small diff, focused
+  validation command.
 
 ## 2) Repo exploration / cold-start in terminal mode
 
 **What is being tested**
-- Bootstrap quality, bounded exploration, and early memory initialization.
+- Bootstrap usefulness for rapid orientation without repo wandering.
 
-**Docs expected to be used**
+**Minimum docs expected**
+- `docs/agentic-architecture/README.md`
 - `docs/agentic-architecture/memory/bootstrap.md`
-- `docs/agentic-architecture/repository-architecture/navigation.md`
 - `docs/agentic-architecture/memory/memory-model.md`
 
-**Good behavior**
-- Agent follows phased bootstrap, identifies high-signal paths/commands, stores
-  compact session memory, and avoids broad indexing.
+**Docs that should not be loaded by default**
+- `docs/agentic-architecture/ROADMAP.md`
+- All governance + primary-agent docs upfront without task signal
 
-**Failure behavior**
-- Agent performs large unfocused scans, captures trivia, or starts implementing
-  before finishing minimal bootstrap.
+**Good behavior**
+- Agent runs a lightweight bootstrap, identifies high-signal paths/commands,
+  records decision-shaping memory, then proposes bounded next steps.
+
+**Failure / context sprawl signs**
+- Aimless repo scans with no checkpoint.
+- Premature implementation before bootstrap exit condition.
+- Memory filled with trivia instead of reusable anchors.
 
 **Signal/output to observe**
-- A concise bootstrap deliverable: primary layer guess, key paths, stable
-  commands, risks, and open questions.
+- Bootstrap artifact: layer classification, key paths, stable commands,
+  constraints/caveats, and next checkpoint.
 
 ## 3) Moderate-risk bounded write
 
 **What is being tested**
-- Governance-aware execution for reversible writes with clear boundaries.
+- Whether governance changes execution behavior when risk increases.
 
-**Docs expected to be used**
+**Minimum docs expected**
 - `docs/agentic-architecture/governance/risk-levels.md`
 - `docs/agentic-architecture/governance/approvals.md`
 - `docs/agentic-architecture/governance/tool-constraints.md`
 
-**Good behavior**
-- Agent identifies moderate risk, states assumptions, confirms approval posture,
-  performs limited writes, and validates outcomes.
+**Docs that should not be loaded by default**
+- Full memory family unless continuity issues require it
+- Broad architecture docs unrelated to the write boundary
 
-**Failure behavior**
-- Agent treats write as low-risk by default, skips approval checkpoint language,
-  or executes broad-impact commands without narrowing.
+**Good behavior**
+- Agent labels risk as moderate, surfaces approval/checkpoint language,
+  narrows write scope first, then validates result.
+
+**Failure / context sprawl signs**
+- Treats write as routine low risk.
+- No explicit approval/escalation checkpoint.
+- Broad-impact operations before narrowing.
 
 **Signal/output to observe**
-- Progress update showing risk class, approval/escalation status, bounded
-  operation plan, and post-change verification.
+- Progress update includes risk class, approval status, bounded plan, and
+  post-write verification.
 
 ## 4) Ambiguous task that requires narrowing
 
 **What is being tested**
-- Problem framing discipline and layer-drift prevention under uncertainty.
+- Explicit narrowing discipline and prevention of default overreach.
 
-**Docs expected to be used**
+**Minimum docs expected**
 - `docs/agentic-architecture/primary-agent/operating-manual.md`
 - `docs/agentic-architecture/README.md`
-- Optional: `docs/agentic-architecture/repository-architecture/ai-doc-index.md`
+
+**Docs that should not be loaded by default**
+- Multiple layer docs before clarifying task intent
+- Governance deep-dive unless risk is already elevated
 
 **Good behavior**
-- Agent proposes 2–3 plausible interpretations, narrows scope with explicit
-  assumptions/questions, and avoids premature broad execution.
+- Agent states 2-3 plausible interpretations, narrows with assumptions or
+  questions, selects one bounded path, and documents why.
 
-**Failure behavior**
-- Agent commits to one interpretation without framing uncertainty, or drifts
-  into unrelated layers/docs.
+**Failure / context sprawl signs**
+- Commits to one interpretation without framing uncertainty.
+- Drifts across layers without justification.
+- Starts implementation while task meaning is still unstable.
 
 **Signal/output to observe**
-- Clear narrowing note: chosen interpretation, rejected alternatives, and why.
+- Narrowing note with chosen interpretation, rejected alternatives, and
+  immediate bounded next action.
 
 ## 5) Handoff / continuation using memory
 
 **What is being tested**
-- Continuity quality across sessions and delegation/reintegration readiness.
+- Whether memory reduces repeated work and supports clean reintegration.
 
-**Docs expected to be used**
+**Minimum docs expected**
 - `docs/agentic-architecture/memory/proactive-memory-practices.md`
 - `docs/agentic-architecture/memory/session-memory-template.md`
 - `docs/agentic-architecture/memory/repository-memory-template.md`
 
-**Good behavior**
-- Agent records decision-shaping facts, unresolved questions, and next
-  checkpoints so a follow-up can resume without rediscovery.
+**Docs that should not be loaded by default**
+- Full architecture corpus during handoff drafting
+- Governance docs unless handoff includes unresolved risk actions
 
-**Failure behavior**
-- Handoff is either too sparse (missing key constraints) or bloated with raw
-  logs and low-value detail.
+**Good behavior**
+- Handoff captures only reusable decision-shaping state: current focus,
+  constraints, paths/commands, open risks, next checkpoint.
+
+**Failure / context sprawl signs**
+- Bloated handoff with raw logs and redundant chronology.
+- Missing key constraints causing rediscovery next session.
+- No explicit "resume here" instruction.
 
 **Signal/output to observe**
-- Handoff artifact with reusable paths/commands, current task focus,
-  assumptions, risks, and immediate next action.
+- Compact continuation package that allows a follow-up agent to act without
+  broad rediscovery.
 
-## How to run this guide in practice
+## Cross-scenario pass/fail criteria
 
-- Pick a real PR task matching one scenario.
-- Check whether observed behavior matches “good behavior” and signal criteria.
-- Record one improvement note per scenario failure (do not redesign layers in
-  this pass).
+A scenario passes only if:
+- the agent used the **minimum relevant docs**,
+- avoided default loading of unrelated document families,
+- stopped retrieval when the next safe step became clear,
+- and produced a bounded, testable action plan.
 
-If repeated failures cluster in one layer, refine that layer docs before adding
-new architecture surface.
+If behavior improves only after reading many docs, treat that as architecture
+noise, not success.
