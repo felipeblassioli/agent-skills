@@ -4,8 +4,23 @@
 
 This model separates working context from durable repository knowledge.
 
-Memory supports execution continuity. It does not define persona, governance,
-or skill definitions.
+Memory is a decision-support system for repository execution continuity. It is
+not an archive of everything observed, and it does not define persona,
+governance, or skill definitions.
+
+## Memory-Worthiness Rule
+A fact is memory-worthy when it is likely to change future decisions by
+improving safety, speed, or correctness.
+
+Prefer storing facts that are:
+- reusable across multiple steps/sessions,
+- expensive or error-prone to rediscover,
+- likely to shape planning, framing, handoff, or execution order.
+
+Avoid storing facts that are:
+- obvious from nearby files,
+- one-off observations with no expected reuse,
+- verbose logs, incidental outputs, or transient noise.
 
 ## Tiers
 
@@ -46,17 +61,18 @@ Durable, low-churn knowledge about how the repository works.
 Retention target: multi-session until repository changes invalidate entries.
 
 ### Tier 3: Long-lived collaboration memory
-Cross-session collaboration patterns and recurring operational learnings shared
-across contributors or repeated engagements.
+Cross-session shared conventions and recurring operational learnings that
+consistently improve collaboration outcomes.
 
-Tier 3 is **not** a catch-all for long-term behavior. It does not absorb
-primary-agent identity/behavior, governance policy, skill definitions, or any
-other contracts owned by other layers.
+Tier 3 is **not** a catch-all long-term bucket. It does not absorb
+primary-agent identity/behavior, governance policy, skill definitions, or other
+layer-owned contracts.
 
 **Belongs here**
 - recurring integration pitfalls,
 - stable handoff conventions,
-- repeated decision rationales with long-term value.
+- repeated decision rationales with long-term value,
+- durable collaboration patterns that reduce repeated coordination overhead.
 
 **Does not belong here**
 - primary-agent identity, role, or operating behavior,
@@ -82,7 +98,8 @@ Promote only verified, low-volatility information.
 Criteria:
 - confirmed by authoritative sources or repeated observation,
 - expected to remain valid across sessions,
-- useful beyond the current task.
+- useful beyond the current task,
+- reduces repeated repo exploration.
 
 ### Repository → Long-lived collaboration
 Promote when knowledge repeatedly influences collaboration outcomes across
@@ -91,29 +108,41 @@ multiple sessions or contributors.
 Criteria:
 - high reuse frequency,
 - clear operational impact,
-- low dependence on transient task context.
+- low dependence on transient task context,
+- improves recurring handoffs or planning quality.
 
-## Proactive Memory Updates
-Update memory at natural checkpoints:
-- after bootstrap,
-- after discovering a major constraint,
-- after changing task direction,
+## Proactive Update Checkpoints
+Update memory without explicit request when new information changes decisions:
+- after bootstrap, to lock initial navigation and constraints,
+- after discovering a new blocker/constraint,
+- after changing task direction or plan shape,
+- after identifying a repeated lookup pattern (paths/commands/caveats),
 - before handoff or session end.
 
-When updating, prioritize signal over volume: record what changes decisions.
+Each update should answer: "What will this prevent us from re-discovering?"
 
-## Memory Hygiene and Pruning
+## Operational Value Targets
+Memory should actively improve:
+- **Planning**: clearer next actions and dependencies.
+- **Task framing**: better scoping from known constraints and landmarks.
+- **Navigation**: faster return to key files/paths.
+- **Handoff**: concise state transfer with less re-analysis.
+- **Reuse**: repeated command/risk patterns captured once and reused.
+
+## Memory Hygiene and Compactness
 - Remove stale hypotheses once resolved.
 - Mark invalidated entries rather than silently overwriting when traceability
   matters.
 - Keep repository memory concise; avoid task-specific noise.
-- Periodically demote or delete entries that no longer match repository reality.
+- Prune low-value entries that do not affect decisions.
 - Prefer linked references (paths/commands) over narrative repetition.
+- Periodically merge duplicate entries into a single higher-signal statement.
 
 ## Bootstrap Relationship
 Bootstrap is the initialization path into this model:
 - it creates first session-memory anchors,
 - it determines what is known vs uncertain,
+- it captures minimum facts needed to avoid duplicate exploration,
 - it sets promotion candidates without prematurely making them durable.
 
 A good bootstrap yields a clean Tier 1 state and a short candidate list for
