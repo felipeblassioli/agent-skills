@@ -19,6 +19,7 @@ docs/agentic-architecture/
 ├── memory/
 │   ├── bootstrap.md
 │   ├── memory-model.md
+│   ├── proactive-memory-practices.md
 │   ├── session-memory-template.md
 │   └── repository-memory-template.md
 ├── governance/
@@ -51,6 +52,7 @@ Defines the primary coworker identity and operating behavior:
 Defines memory bootstrap and persistence mechanics:
 - initial context loading,
 - memory model (tiers and update rules),
+- proactive memory update practices,
 - session and repository memory templates.
 
 ### 3) Governance layer

@@ -31,6 +31,7 @@ A new contributor should be able to read only this roadmap and understand:
 ### Memory
 - `memory/bootstrap.md`
 - `memory/memory-model.md`
+- `memory/proactive-memory-practices.md`
 - `memory/session-memory-template.md`
 - `memory/repository-memory-template.md`
 
@@ -60,6 +61,7 @@ A new contributor should be able to read only this roadmap and understand:
 | Primary agent | `primary-agent/collaboration-contract.md` | Define human↔agent interaction norms. | Communication rigor, escalation behavior, reporting/handoffs. | Governance controls, persona theatrics, skill catalog content. |
 | Memory | `memory/bootstrap.md` | Define cold-start context acquisition and first memory initialization. | Entry sequence, reading order, bootstrap deliverable and exit condition. | Governance policy authoring, primary-agent identity, full task execution plans. |
 | Memory | `memory/memory-model.md` | Define memory tiers and promotion/pruning rules. | Ephemeral/session/repository/collaboration memory lifecycle. | Persona definition, approvals/risk controls, skill definitions. |
+| Memory | `memory/proactive-memory-practices.md` | Define proactive memory update triggers and selection discipline. | Checkpoint-driven capture/pruning of decision-shaping operational learnings. | Primary-agent behavior policy, governance decisions, skill procedures. |
 | Memory | `memory/session-memory-template.md` | Provide compact template for session working memory. | In-session facts, hypotheses, paths, commands, risks, checkpoints. | Durable repo canon, governance directives, identity contracts. |
 | Memory | `memory/repository-memory-template.md` | Provide durable low-noise template for stable repo memory. | Long-lived repository facts, constraints, caveats, stable workflows. | Session scratchpad content, governance policy, skill workflow specs. |
 | Governance | `governance/tool-constraints.md` | Define tool-level allowed/prohibited actions. | Execution constraint model for tools/environments. | Collaboration style, memory lifecycle, skill selection logic. |
