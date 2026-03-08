@@ -8,12 +8,19 @@ alwaysApply: false
 Use the lightest viable Cursor surface for the job.
 
 - Use `skills` to teach domain knowledge, routing, and repeatable workflows.
+- Use repo `AGENTS.md` files for repository-local context: the root file should
+  stay thin and invariant-focused, while nested files should capture
+  directory-specific execution details.
 - Use `rules` to persist project guidance that should stay in context across
-  many conversations.
+  many conversations, especially for cross-cutting or path-scoped policy.
 - Use `subagents` when work is noisy, parallelizable, or would otherwise bloat
   the parent context.
 - Use `hooks` when a behavior must be enforced, blocked, or audited at runtime.
 - Use `MCP` when the agent must access external systems or structured data.
+
+Do not use a pack as the primary home for repo-specific nested `AGENTS.md`
+content. Packs can provide guides and templates, but the repository should own
+its local `AGENTS.md` files.
 
 ## Guard-rail policy
 
