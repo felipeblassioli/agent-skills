@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/block-dangerous-shell.sh",
+        "timeout": 10
+      }
+    ],
+    "beforeReadFile": [
+      {
+        "command": ".cursor/hooks/protect-sensitive-reads.sh",
+        "timeout": 10,
+        "failClosed": true
+      }
+    ]
+  }
+}

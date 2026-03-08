@@ -1,0 +1,110 @@
+{
+  "$schema": "../../cursor-pack.schema.json",
+  "name": "cursor-companion",
+  "version": "0.1.0",
+  "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, and operational guides.",
+  "author": "felipeblassioli",
+  "targets": [
+    "project-cursor",
+    "user-cursor"
+  ],
+  "profiles": {
+    "lite": {
+      "description": "Installs reusable subagents and MCP configuration examples without active hooks."
+    },
+    "strict": {
+      "description": "Installs the full companion bundle, including hooks and project rules where Cursor supports them."
+    }
+  },
+  "artifacts": [
+    {
+      "id": "agents",
+      "source": ".cursor/agents",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "projectPath": ".cursor/agents",
+      "userPath": "agents"
+    },
+    {
+      "id": "rules",
+      "source": ".cursor/rules",
+      "targets": [
+        "project-cursor"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "projectPath": ".cursor/rules",
+      "notes": [
+        "User rules are managed in Cursor settings, so filesystem rules are installed only for project targets."
+      ]
+    },
+    {
+      "id": "project-hooks-config",
+      "source": ".cursor/hooks.project.json",
+      "targets": [
+        "project-cursor"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "projectPath": ".cursor/hooks.json"
+    },
+    {
+      "id": "user-hooks-config",
+      "source": ".cursor/hooks.user.json",
+      "targets": [
+        "user-cursor"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "userPath": "hooks.json"
+    },
+    {
+      "id": "hook-scripts",
+      "source": ".cursor/hooks",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "projectPath": ".cursor/hooks",
+      "userPath": "hooks"
+    },
+    {
+      "id": "mcp-example",
+      "source": ".cursor/mcp.example.json",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "projectPath": ".cursor/mcp.example.json",
+      "userPath": "mcp.example.json",
+      "notes": [
+        "The installer never promotes this file to mcp.json automatically."
+      ]
+    }
+  ],
+  "install": {
+    "defaultProfile": "lite",
+    "backupOnConflict": true,
+    "stageRoot": ".work/cursor-pack-staging",
+    "backupRoot": ".work/cursor-pack-backups",
+    "manifestFile": ".cursor-pack-manifest.json",
+    "conflictPolicy": "backup-and-overwrite",
+    "mcpPolicy": "example-only"
+  }
+}

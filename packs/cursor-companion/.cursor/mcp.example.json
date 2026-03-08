@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "local-docs-example": {
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/tools/mcp/local-docs-server.js"
+      ],
+      "env": {
+        "DOCS_TOKEN": "${env:DOCS_TOKEN}"
+      }
+    },
+    "remote-api-example": {
+      "url": "https://example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:EXAMPLE_MCP_TOKEN}"
+      }
+    }
+  }
+}

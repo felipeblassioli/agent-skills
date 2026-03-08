@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "./hooks/block-dangerous-shell.sh",
+        "timeout": 10,
+        "matcher": "rm -rf|git reset --hard|git clean -fd|git clean -xdf|chmod -R 777"
+      }
+    ],
+    "beforeReadFile": [
+      {
+        "command": "./hooks/protect-sensitive-reads.sh",
+        "timeout": 10,
+        "failClosed": true
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "type": "prompt",
+        "prompt": "Allow this MCP tool only if the action is clearly explained, uses the minimum needed scope, and does not expose secrets. If the request is ambiguous or seems overly broad, deny it. Arguments: $ARGUMENTS",
+        "timeout": 10,
+        "failClosed": true
+      }
+    ],
+    "subagentStart": [
+      {
+        "command": "./hooks/audit-subagent.sh",
+        "timeout": 10
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": "./hooks/audit-subagent.sh",
+        "timeout": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+---
+description: "Delegate to subagents only for focused, context-heavy, or parallel tasks. Keep descriptions specific and prompts concise."
+alwaysApply: false
+---
+
+# Subagent Delegation Policy
+
+Subagents exist to preserve context and isolate noisy work.
+
+- Delegate when the task is long-running, verbose, investigative, or naturally
+  parallel.
+- Keep subagents narrow. Prefer 2-4 focused subagents over a large catalog of
+  vague helpers.
+- Write descriptions that clearly say when the subagent should be used.
+- Return structured summaries instead of raw logs.
+
+## Anti-patterns
+
+- Do not create generic "helper" subagents.
+- Do not use subagents for one-shot work that a skill or direct tool call can
+  handle cleanly.
+- Do not copy large amounts of parent context when a concise brief is enough.
