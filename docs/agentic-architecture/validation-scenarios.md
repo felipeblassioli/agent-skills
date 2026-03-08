@@ -1,151 +1,161 @@
 # Validation Scenarios for the Documentation System
 
-Purpose: verify that the architecture improves behavior through **less, more
-relevant context**, not through broader document loading.
+Purpose: verify behavior improvement through **less, more relevant context**,
+not through broad doc loading.
 
-Use these scenarios on real tasks. Treat failures as retrieval-discipline
-failures first, then capability failures.
+Use these scenarios as adversarial checks for retrieval discipline.
 
 ## 1) Small scoped edit in Cursor
 
 **What is being tested**
-- Local-first execution for a low-risk, file-scoped change.
+- Local-first execution in IDE mode for a low-risk, file-scoped change.
 
 **Minimum docs expected**
-- `docs/agentic-architecture/governance/risk-levels.md` (quick risk check)
-- Optional only if needed: `docs/agentic-architecture/README.md`
+- Usually none beyond local files.
+- Optional quick check: `docs/agentic-architecture/governance/risk-levels.md`.
 
 **Docs that should not be loaded by default**
-- `docs/agentic-architecture/ROADMAP.md`
-- Multiple layer families unrelated to the edit
+- `docs/agentic-architecture/ROADMAP.md`.
+- Memory/governance/primary-agent families beyond the immediate need.
 
-**Good behavior**
-- Agent starts from task-local files, classifies risk quickly, executes one
-  bounded change, and runs a focused check.
+**Why this should work if architecture helps**
+- Routing discipline should keep work in file-local context and prevent
+  over-processing for small edits.
 
-**Failure / context sprawl signs**
-- Opens many architecture docs before touching target files.
-- Expands into multi-layer analysis for a simple edit.
-- Mirrors long doc excerpts into prompt or notes.
+**How it fails if architecture is used poorly**
+- Agent preloads architecture docs before touching target files.
+- Agent expands into multi-layer analysis for a simple local change.
+
+**Signs of context sprawl / retrieval failure**
+- Many doc reads, little code-local inspection.
+- Large prompt notes with copied architecture content.
 
 **Signal/output to observe**
-- Explicit "local context first" trace, limited doc reads, small diff, focused
-  validation command.
+- Small diff, focused validation command, explicit local-first trace.
 
 ## 2) Repo exploration / cold-start in terminal mode
 
 **What is being tested**
-- Bootstrap usefulness for rapid orientation without repo wandering.
+- Whether bootstrap reduces search entropy and repo wandering.
 
 **Minimum docs expected**
-- `docs/agentic-architecture/README.md`
-- `docs/agentic-architecture/memory/bootstrap.md`
-- `docs/agentic-architecture/memory/memory-model.md`
+- `docs/agentic-architecture/README.md`.
+- `docs/agentic-architecture/memory/bootstrap.md`.
+- `docs/agentic-architecture/memory/memory-model.md`.
 
 **Docs that should not be loaded by default**
-- `docs/agentic-architecture/ROADMAP.md`
-- All governance + primary-agent docs upfront without task signal
+- `docs/agentic-architecture/ROADMAP.md`.
+- Unrelated layer docs before task routing is clear.
 
-**Good behavior**
-- Agent runs a lightweight bootstrap, identifies high-signal paths/commands,
-  records decision-shaping memory, then proposes bounded next steps.
+**Why this should work if architecture helps**
+- Bootstrap should produce high-signal paths/commands quickly and constrain
+  exploration with checkpoints.
 
-**Failure / context sprawl signs**
-- Aimless repo scans with no checkpoint.
-- Premature implementation before bootstrap exit condition.
-- Memory filled with trivia instead of reusable anchors.
+**How it fails if architecture is used poorly**
+- Agent performs broad tree sweeps without a checkpoint or hypothesis.
+- Agent starts implementation before bootstrap exit condition is met.
+
+**Signs of context sprawl / retrieval failure**
+- Long command history with no reusable summary.
+- Memory captures trivia instead of decision-shaping anchors.
 
 **Signal/output to observe**
-- Bootstrap artifact: layer classification, key paths, stable commands,
-  constraints/caveats, and next checkpoint.
+- Compact bootstrap artifact: likely primary/secondary layers, key paths,
+  stable commands, constraints, next checkpoint.
 
 ## 3) Moderate-risk bounded write
 
 **What is being tested**
-- Whether governance changes execution behavior when risk increases.
+- Whether governance visibly changes behavior when risk increases.
 
 **Minimum docs expected**
-- `docs/agentic-architecture/governance/risk-levels.md`
-- `docs/agentic-architecture/governance/approvals.md`
-- `docs/agentic-architecture/governance/tool-constraints.md`
+- `docs/agentic-architecture/governance/risk-levels.md`.
+- `docs/agentic-architecture/governance/approvals.md`.
+- `docs/agentic-architecture/governance/tool-constraints.md`.
 
 **Docs that should not be loaded by default**
-- Full memory family unless continuity issues require it
-- Broad architecture docs unrelated to the write boundary
+- Full architecture set unrelated to the write boundary.
+- Full memory set unless continuity/handoff is required.
 
-**Good behavior**
-- Agent labels risk as moderate, surfaces approval/checkpoint language,
-  narrows write scope first, then validates result.
+**Why this should work if architecture helps**
+- Risk classification should force explicit checkpoints and narrower operations.
 
-**Failure / context sprawl signs**
-- Treats write as routine low risk.
-- No explicit approval/escalation checkpoint.
-- Broad-impact operations before narrowing.
+**How it fails if architecture is used poorly**
+- Agent treats moderate-risk write as routine low-risk work.
+- Agent performs broad-impact operations before narrowing or approvals.
+
+**Signs of context sprawl / retrieval failure**
+- No explicit risk label.
+- No approval status in progress updates.
 
 **Signal/output to observe**
-- Progress update includes risk class, approval status, bounded plan, and
-  post-write verification.
+- Progress note includes risk class, approval/checkpoint state, bounded write
+  plan, and post-write verification.
 
 ## 4) Ambiguous task that requires narrowing
 
 **What is being tested**
-- Explicit narrowing discipline and prevention of default overreach.
+- Whether routing reduces overreach when intent is unclear.
 
 **Minimum docs expected**
-- `docs/agentic-architecture/primary-agent/operating-manual.md`
-- `docs/agentic-architecture/README.md`
+- `docs/agentic-architecture/primary-agent/operating-manual.md`.
+- `docs/agentic-architecture/README.md` (for layer routing boundaries).
 
 **Docs that should not be loaded by default**
-- Multiple layer docs before clarifying task intent
-- Governance deep-dive unless risk is already elevated
+- Multiple layer docs before forming explicit interpretations.
+- Governance deep dive unless risk is already elevated.
 
-**Good behavior**
-- Agent states 2-3 plausible interpretations, narrows with assumptions or
-  questions, selects one bounded path, and documents why.
+**Why this should work if architecture helps**
+- Layer routing + narrowing discipline should produce a bounded hypothesis
+  before execution.
 
-**Failure / context sprawl signs**
-- Commits to one interpretation without framing uncertainty.
-- Drifts across layers without justification.
-- Starts implementation while task meaning is still unstable.
+**How it fails if architecture is used poorly**
+- Agent jumps to implementation without clarifying ambiguity.
+- Agent drifts across layers without justification.
+
+**Signs of context sprawl / retrieval failure**
+- Many docs loaded while task meaning remains undefined.
+- No written rationale for chosen interpretation.
 
 **Signal/output to observe**
-- Narrowing note with chosen interpretation, rejected alternatives, and
-  immediate bounded next action.
+- Short narrowing record: candidate interpretations, chosen path, rejected
+  alternatives, next bounded step.
 
 ## 5) Handoff / continuation using memory
 
 **What is being tested**
-- Whether memory reduces repeated work and supports clean reintegration.
+- Whether memory reduces repeated exploration and enables clean reintegration.
 
 **Minimum docs expected**
-- `docs/agentic-architecture/memory/proactive-memory-practices.md`
-- `docs/agentic-architecture/memory/session-memory-template.md`
-- `docs/agentic-architecture/memory/repository-memory-template.md`
+- `docs/agentic-architecture/memory/proactive-memory-practices.md`.
+- `docs/agentic-architecture/memory/session-memory-template.md`.
+- `docs/agentic-architecture/memory/repository-memory-template.md`.
 
 **Docs that should not be loaded by default**
-- Full architecture corpus during handoff drafting
-- Governance docs unless handoff includes unresolved risk actions
+- Full architecture corpus while drafting handoff.
+- Governance docs unless unresolved risk actions must be handed off.
 
-**Good behavior**
-- Handoff captures only reusable decision-shaping state: current focus,
-  constraints, paths/commands, open risks, next checkpoint.
+**Why this should work if architecture helps**
+- Selective memory should preserve decision-shaping state and avoid rediscovery.
 
-**Failure / context sprawl signs**
-- Bloated handoff with raw logs and redundant chronology.
-- Missing key constraints causing rediscovery next session.
-- No explicit "resume here" instruction.
+**How it fails if architecture is used poorly**
+- Handoff is bloated with raw logs or missing key reusable constraints.
+- Follow-up agent must re-explore basic paths/commands.
+
+**Signs of context sprawl / retrieval failure**
+- Large chronology dump, weak “resume here” guidance.
+- Missing stable commands, risk notes, or next checkpoint.
 
 **Signal/output to observe**
-- Compact continuation package that allows a follow-up agent to act without
-  broad rediscovery.
+- Compact continuation package that allows immediate next action with minimal
+  rediscovery.
 
-## Cross-scenario pass/fail criteria
+## Cross-scenario pass criteria
 
 A scenario passes only if:
-- the agent used the **minimum relevant docs**,
-- avoided default loading of unrelated document families,
-- stopped retrieval when the next safe step became clear,
-- and produced a bounded, testable action plan.
-
-If behavior improves only after reading many docs, treat that as architecture
-noise, not success.
+- unnecessary layer docs were not loaded,
+- routing reduced search entropy,
+- bootstrap (terminal mode) reduced repo wandering,
+- memory reduced repeated exploration,
+- governance changed behavior when risk increased,
+- architecture docs improved retrieval discipline instead of adding noise.

@@ -1,128 +1,94 @@
 # How to Use This Documentation System
 
-Purpose: apply the current architecture docs with minimal context and clear
-layer routing, so work stays focused and avoids document sprawl.
+Purpose: route quickly, load less context, and execute safely with only the docs
+that matter for the current task.
 
-## Start rule (all modes)
+## Core routing rule (all modes)
 
-1. Classify the task by **primary layer** (primary agent, memory, governance,
-   skills, repository architecture).
-2. Load only that layer’s core document(s) first.
-3. Add one secondary layer only if the task demands it.
-4. Stop loading docs once you have enough to execute safely.
+Treat layer classification as a **working routing hypothesis**:
 
-If a task can be completed with local code context + one layer doc, do not load
-more architecture files.
+1. Identify the **likely primary layer**.
+2. Note any **secondary layer(s)** that may matter.
+3. Load only the minimum docs needed for the primary layer first.
+4. Reclassify if local evidence points elsewhere.
 
-Architecture docs are a routing and constraint system, not a default reading
-list.
+Classification is not permanent truth and is not one-layer-only. It is a way to
+decide what to read first.
 
-If repository-architecture docs are added later, treat them as optional discovery
-accelerators rather than mandatory startup reads.
+Architecture docs are for routing/constraints, not default reading.
 
-## A) Using within Cursor / IDE agent
+## Code navigation strategy (operational)
 
-Use this mode for local, scoped edits where code context is already visible.
+1. Start from the requested task and nearest relevant file(s), not broad repo
+   exploration.
+2. Inspect local code, tests, and adjacent files first.
+3. Widen only when local evidence is insufficient to explain behavior.
+4. Widen deliberately to high-signal control surfaces: nearby config, scripts,
+   tests, workspace/build files.
+5. Use architecture docs to resolve routing or constraints, not as the first
+   stop for every task.
+6. Persist only decision-shaping memory (paths, commands, constraints, caveats)
+   that prevents repeated lookup.
 
-Default stance: local-first, reactive, and narrow.
+Local-first does **not** mean local-only forever. It means widen by evidence,
+not by habit.
 
-### Fast routing sequence
+## A) Cursor / IDE mode
 
-1. Identify task type from the prompt:
-   - **Behavior/collaboration choice** → `primary-agent/*`
-   - **Context retention/reuse** → `memory/*`
-   - **Risk/approval/tool limits** → `governance/*`
-   - **Delegating to a specialized capability** → `skills/*`
-   - **Finding where things live in repo** → local tree + `README.md` layer map
-2. Read at most one doc family deeply at first.
-3. Open code paths directly related to the requested change.
+Default stance: highly local, reactive, file-local context dominates.
 
-### Most useful docs for local/scoped work
+### Expected behavior
 
-- `governance/risk-levels.md` and `governance/approvals.md` before any
-  moderate/high-impact change.
-- `memory/session-memory-template.md` for in-session continuity on multi-step
-  edits.
-- `README.md` only when layer ownership is unclear.
+- Start from open/target files and task-local diffs.
+- Use architecture docs only when local context does not clarify routing,
+  risk, or ownership.
+- Avoid bootstrap-style broad exploration by default.
+- Stop doc loading once the next safe step is clear.
 
-### When **not** to load more docs
+### Minimal doc loading pattern
 
-Do not broaden context when:
-- the request is a small file edit with clear acceptance criteria,
-- risk level is low and no approval boundary is crossed,
-- existing open files already provide enough implementation context.
+- Low-risk local edit: usually no architecture docs or only a quick
+  `governance/risk-levels.md` check.
+- If risk/approval uncertainty appears: add `governance/approvals.md`.
+- If continuity across multiple steps is needed: add
+  `memory/session-memory-template.md`.
+- If layer ownership is unclear: consult `docs/agentic-architecture/README.md`.
 
-### Avoiding context noise in IDE mode
+Broad architecture loading in IDE mode is usually a failure mode.
 
-- Prefer file-level excerpts over opening full architecture sets.
-- Treat architecture docs as routing + constraints, not reading backlog.
-- Keep temporary notes in session memory; do not mirror entire docs into prompt.
-- Stop loading docs once the next safe implementation step is clear.
+## B) Terminal / autonomous mode
 
-## B) Using an autonomous/terminal agent
+Default stance: broader exploration is allowed, but must be bounded and
+selective.
 
-Use this mode for repository exploration, multi-step execution, and bounded
-changes where the agent must self-route.
+### Expected behavior
 
-### Bootstrap sequence (lightweight)
+1. Run lightweight bootstrap (`memory/bootstrap.md`).
+2. Classify likely primary/secondary layers and load only relevant docs.
+3. Initialize compact memory anchors for reuse.
+4. Use governance (`governance/risk-levels.md`, `governance/approvals.md`) as
+   execution gates when risk increases.
+5. Explore broadly only with explicit checkpoints; avoid aimless wandering.
 
-1. Read `docs/agentic-architecture/README.md` for layer boundaries.
-2. Classify primary/secondary layers for the active task.
-3. Read the minimum layer docs needed:
-   - memory-heavy start: `memory/bootstrap.md`, `memory/memory-model.md`
-   - execution safety: `governance/risk-levels.md`, `governance/approvals.md`
-   - task framing: `primary-agent/operating-manual.md` (when scope is unclear)
-4. Initialize compact session memory (facts, paths, commands, risks, open
-   questions).
-5. Begin bounded exploration (narrow probes before broad operations).
+### Bounded exploration pattern
 
-Default stance: broader exploration is allowed, but only with explicit bounds
-and a clear next checkpoint.
+- Start with narrow probes.
+- Expand only when blockers persist.
+- Record reusable findings once.
+- Re-check risk before any broader or write-capable action.
 
-### Memory + governance used together
+## What not to do
 
-- Use memory to track decision-shaping facts (stable paths, commands,
-  constraints, caveats).
-- Use governance to decide what can run now vs what needs approval/escalation.
-- At each checkpoint: update memory if new facts change decisions, then verify
-  risk/approval status before next action.
+- Do not load `ROADMAP.md` by default for ordinary task execution.
+- Do not load all layer docs “just in case.”
+- Do not turn small edits into architecture exercises.
+- Do not mirror full docs into prompts when a short local summary is enough.
+- Do not treat initial layer classification as permanent truth.
 
-### Docs to read before broader execution
+## Practical loop (both modes)
 
-Before significant repo actions, confirm:
-- memory update discipline (`memory/proactive-memory-practices.md`),
-- approval thresholds (`governance/approvals.md`),
-- impact class (`governance/risk-levels.md`).
-
-### Keeping context relevant (without loading everything)
-
-- Load docs by decision need, not by folder completeness.
-- Prefer short summaries in working memory over repeated re-reading.
-- Promote only reusable facts to repository memory; leave trivia out.
-- End exploration when you can state a safe next action and validation plan.
-
-### How current docs support bounded exploration
-
-- Layer boundaries prevent drift across identity/memory/governance/skills.
-- Memory docs reduce repeated lookups during navigation and handoff.
-- Governance docs constrain tool usage and approval handling.
-- Primary-agent docs help narrow ambiguous tasks without broad overreach.
-
-## What not to do (context-overload guardrails)
-
-- Do **not** load `ROADMAP.md` by default for ordinary task execution.
-- Do **not** load multiple layer families "just in case."
-- Do **not** turn small file edits into architecture-wide reviews.
-- Do **not** copy large doc sections into prompts when a short local summary is
-  enough.
-- Do **not** continue doc loading after the next safe step is already clear.
-
-## Practical usage pattern (both modes)
-
-1. Route by layer.
-2. Load minimum docs.
-3. Execute smallest safe step.
-4. Record only reusable, decision-shaping memory.
-5. Re-check risk/approval before expanding scope.
-
-This keeps execution efficient while preserving continuity and control.
+1. Classify likely primary + secondary layers.
+2. Load minimum relevant docs.
+3. Execute smallest safe next step.
+4. Store only decision-shaping facts.
+5. Reclassify and widen only if new evidence requires it.
