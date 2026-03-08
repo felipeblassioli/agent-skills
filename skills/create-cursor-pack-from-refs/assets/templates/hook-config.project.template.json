@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "BeforeToolUse": [
+      {
+        "matcher": "shell",
+        "command": ".cursor/hooks/example.sh"
+      }
+    ]
+  }
+}
