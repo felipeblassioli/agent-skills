@@ -1,13 +1,13 @@
 ---
 name: gh-pr-creator
-description: Create and update GitHub pull requests using gh CLI for turbiteam repositories. PRs are written in Brazilian Portuguese following the repo's pull_request_template.md with comment markers. Uses a .work/ staging directory for body files. Use when the user asks to create a PR, open a PR, update a PR description, or prepare a PR body.
+description: Create and update GitHub pull requests using gh CLI for repositories that use a `.github/pull_request_template.md` with comment markers. PRs are written in Brazilian Portuguese and staged in `.work/` body files. Use when the user asks to create a PR, open a PR, update a PR description, or prepare a PR body.
 compatibility:
   - gh CLI installed and authenticated (`gh auth status`)
   - git repository with a GitHub remote
   - write access to the target repository (scope `repo`)
 ---
 
-# gh PR Creator (turbiteam / PT-BR)
+# GitHub PR Creator (PT-BR)
 
 ## Principles
 
@@ -49,7 +49,7 @@ When deferring work to a later PR, open an issue (or add a `TODO(<issue>)`) and 
 REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
 ```
 
-Read `.github/pull_request_template.md`. The standard turbiteam template uses comment markers required by the CI pipeline:
+Read `.github/pull_request_template.md`. The standard template pattern uses comment markers required by the CI pipeline:
 
 ```markdown
 ## Por que? <!-- why:init:required -->
@@ -158,7 +158,7 @@ gh pr create \
 gh pr edit <NUMBER> --body-file .work/body-pr-<slug>.md
 ```
 
-Add `-R turbiteam/<repo>` when running from outside the repo or from a different clone.
+Add `-R OWNER/REPO` when running from outside the repo or from a different clone.
 
 ### 6. Add proof comments
 
@@ -234,4 +234,4 @@ Defesa em profundidade com 4 camadas independentes:
 | Update PR body | `gh pr edit <N> --body-file .work/body-pr-<slug>.md` |
 | Add comment | `gh pr comment <N> --body "..."` |
 | Check CI status | `gh pr checks <N>` |
-| Cross-repo | Add `-R turbiteam/<repo>` to any command |
+| Cross-repo | Add `-R OWNER/REPO` to any command |

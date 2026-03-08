@@ -17,7 +17,7 @@ matching the TypeScript `module: "nodenext"` setting.
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/src/index.js"
@@ -31,7 +31,7 @@ runtime when importing ESM dependencies.
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "version": "0.0.0",
   "private": true,
   "type": "module",

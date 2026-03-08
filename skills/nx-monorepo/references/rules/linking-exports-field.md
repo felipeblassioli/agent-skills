@@ -18,7 +18,7 @@ first.
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -48,7 +48,7 @@ Development/test will require building every dependency first.
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "version": "0.0.0",
   "private": true,
   "type": "module",

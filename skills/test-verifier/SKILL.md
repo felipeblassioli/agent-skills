@@ -1,7 +1,7 @@
 ---
 name: test-verifier
 description: >-
-  Verify working-tree changes against turbi-guard's 8-tier test pyramid.
+  Verify working-tree changes against an 8-tier test pyramid.
   Runs the right tests for changed files, collects coverage from instrumentable
   tiers, and returns a structured verification report. Use when the agent
   modifies production code, the user asks to run tests or check coverage, or
@@ -14,7 +14,7 @@ compatibility:
 metadata:
   domain: testing
   framework: jest
-  project: turbi-guard
+  project: workspace
 ---
 
 # Test Verifier — Multi-Tier Test Runner
@@ -66,7 +66,7 @@ Map changed file paths to the tiers that should run:
 | Changed path pattern | Tiers to run |
 |---|---|
 | `domain/services/*.js` | unit |
-| `domain/services/riskEngine/*.js` | unit + functional |
+| `domain/services/scoring/*.js` | unit + functional |
 | `domain/repositories/*.js` | unit + integration (if Docker running) |
 | `application/routes/*.js`, `application/config/*` | unit + functional-HTTP |
 | `providers/*.js` | unit |
@@ -91,7 +91,7 @@ git diff --name-only HEAD | scripts/detect-tiers.sh
 | Functional | Yes | `test:functional` | None |
 | Functional-HTTP | Yes | `test:functional:http` | None |
 | Emulator | No | `test:emulator` | Firebase emulator |
-| System | No | `test:system` | Deployed GCP (turbi-dev) |
+| System | No | `test:system` | Deployed GCP environment (`PROJECT_ID`) |
 | Smoke | No | `smoke:test` | Live services |
 
 Only 4 tiers produce coverage data: unit, integration, functional, functional-HTTP.

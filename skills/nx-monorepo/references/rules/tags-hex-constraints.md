@@ -21,7 +21,7 @@ the canonical table. The eslint config below encodes these same constraints.
 ```typescript
 // libs/guard/ingestion/domain/src/event-ingestion.usecase.ts
 // ❌ Importing from data layer in domain — violates hexagonal rules
-import { KyselyRawEventsRepo } from '@turbi/guard-ingestion-data';
+import { KyselyRawEventsRepo } from '@acme/orders-data';
 ```
 
 ```

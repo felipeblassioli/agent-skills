@@ -57,14 +57,14 @@ libs/
 npm install
 
 # Verify the symlink was created
-ls -la node_modules/@turbi/<new-lib>
+ls -la node_modules/@acme/<new-lib>
 ```
 
 **Diagnostic — if import fails:**
 
 ```
-Import fails for @turbi/foo
-├── Does node_modules/@turbi/foo symlink exist?
+Import fails for @acme/foo
+├── Does node_modules/@acme/foo symlink exist?
 │   ├── No → Is foo's folder in root workspaces array?
 │   │   ├── No → Add glob to root package.json, run npm install
 │   │   └── Yes → Run npm install

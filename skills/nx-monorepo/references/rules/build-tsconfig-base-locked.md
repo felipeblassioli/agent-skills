@@ -45,7 +45,7 @@ Key settings and why they're locked:
   "compilerOptions": {
     "module": "commonjs",   // ❌ breaks all ESM projects
     "paths": {
-      "@turbi/*": ["libs/*/src"]  // ❌ use npm workspaces instead
+      "@acme/*": ["libs/*/src"]  // ❌ use npm workspaces instead
     }
   }
 }

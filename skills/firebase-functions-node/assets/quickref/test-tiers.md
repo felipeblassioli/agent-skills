@@ -6,8 +6,8 @@ Extracted from [ADR-0002](../../../../docs/ADR/ADR-0002-multi-tier-testing-and-c
 
 ```
                     ┌──────────────┐
-                    │   System     │  real GCP deployment (turbi-dev)
-                    │  (turbi-dev) │  Proves: Cloud Tasks e2e, real Pub/Sub, cold start
+                    │   System     │  real GCP deployment (PROJECT_ID)
+                    │ (PROJECT_ID) │  Proves: Cloud Tasks e2e, real Pub/Sub, cold start
                     ├──────────────┤
                     │  Emulator    │  Firebase emulator
                     │  (local)     │  Proves: onRequest lifecycle, Auth, Pub/Sub triggers

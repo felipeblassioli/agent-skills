@@ -50,24 +50,24 @@ npx vitest list --config <project>/vitest.config.ts
 
 ## 4. Dependency & Workspace Linking Issues
 
-**Symptoms:** `Cannot find module '@turbi/mylib'` even though it exists.
+**Symptoms:** `Cannot find module '@acme/mylib'` even though it exists.
 
 | Cause | Fix |
 |-------|-----|
 | Missing `exports` in lib `package.json` | Native ESM requires `exports`. Ensure the lib has the full exports map with `@nx/source` condition. |
-| Stale workspace symlinks | Run `npm install` again. Verify `node_modules/@turbi/mylib` is a symlink. |
+| Stale workspace symlinks | Run `npm install` again. Verify `node_modules/@acme/mylib` is a symlink. |
 | TS happy but Node fails | TS found sources via `references`, but Node uses `exports`. Ensure `exports` paths match what you import. |
-| Consumer missing dependency declaration | If project imports `@turbi/foo`, its `package.json` MUST list `"@turbi/foo": "*"`. |
+| Consumer missing dependency declaration | If project imports `@acme/foo`, its `package.json` MUST list `"@acme/foo": "*"`. |
 | Project folder not in workspaces array | Root `package.json` `workspaces` must include a glob covering the project folder. |
 | Using `file:` or `link:` | **Disallowed.** Use `"*"` version for workspace deps. |
 
 **Diagnostic:**
 ```bash
 # Check symlink exists
-ls -la node_modules/@turbi/<lib>
+ls -la node_modules/@acme/<lib>
 
 # Verify exports resolution
-node -e "import('@turbi/<lib>').then(m => console.log(Object.keys(m)))"
+node -e "import('@acme/<lib>').then(m => console.log(Object.keys(m)))"
 ```
 
 ---
@@ -126,16 +126,16 @@ nx build <project> --verbose # See build order
 ## Decision Tree: "My import doesn't resolve"
 
 ```
-Import fails for @turbi/foo
-├── Does node_modules/@turbi/foo symlink exist?
+Import fails for @acme/foo
+├── Does node_modules/@acme/foo symlink exist?
 │   ├── No → Is foo's folder in root workspaces array?
 │   │   ├── No → Add glob to root package.json, run npm install
 │   │   └── Yes → Run npm install
 │   └── Yes → Does foo's package.json have "exports" with "@nx/source"?
 │       ├── No → Add exports field
-│       └── Yes → Does consumer's package.json declare "@turbi/foo": "*"?
+│       └── Yes → Does consumer's package.json declare "@acme/foo": "*"?
 │           ├── No → Add dependency declaration
 │           └── Yes → Is the import path correct (no deep imports)?
-│               ├── No → Use @turbi/foo (root), not @turbi/foo/src/...
+│               ├── No → Use @acme/foo (root), not @acme/foo/src/...
 │               └── Yes → Check tsconfig includes and module resolution
 ```

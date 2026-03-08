@@ -16,7 +16,7 @@ they MUST NOT contain business logic, domain rules, or data access code.
 **Incorrect (business logic in app):**
 
 ```typescript
-// apps/guard-api/src/routes/events.ts
+// apps/example-api/src/routes/events.ts
 // ❌ Validation, domain logic, and DB access all in the route handler
 router.put('/events/:id', async (req, res) => {
   // Domain validation — should be in domain lib
@@ -39,10 +39,10 @@ router.put('/events/:id', async (req, res) => {
 **Correct (app wires libs together):**
 
 ```typescript
-// apps/guard-api/src/ingestion/event-ingestion.routes.ts
+// apps/example-api/src/ingestion/event-ingestion.routes.ts
 // ✅ App only wires dependencies and handles HTTP concerns
-import { ingestEvent } from '@turbi/guard-ingestion-domain';
-import { KyselyRawEventsRepo } from '@turbi/guard-ingestion-data';
+import { ingestEvent } from '@acme/orders-domain';
+import { KyselyRawEventsRepo } from '@acme/orders-data';
 
 export function createEventRoutes(deps: { repo: KyselyRawEventsRepo }) {
   const router = Router();

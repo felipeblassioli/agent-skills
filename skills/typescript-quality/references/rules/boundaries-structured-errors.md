@@ -63,7 +63,7 @@ throw new DomainError(
 **Correct (standard HTTP error responses):**
 
 ```typescript
-// apps/guard-api/src/middleware/error-handler.ts
+// apps/example-api/src/middleware/error-handler.ts
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof DomainError) {
     const statusMap: Record<string, number> = {

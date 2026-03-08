@@ -13,7 +13,7 @@
 #
 #   # Explicit time window, save to file
 #   gcloud-log-read.sh --project my-proj \
-#     --filter 'resource.type="cloud_function" resource.labels.function_name="riskEngine"' \
+#     --filter 'resource.type="cloud_function" resource.labels.function_name="FUNCTION_NAME"' \
 #     --since "2026-02-26T15:00:00Z" --until "2026-02-26T16:00:00Z" \
 #     --output logs.json
 

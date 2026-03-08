@@ -5,11 +5,11 @@
  *   import './otel-init.js';
  *   import express from 'express';
  *
- * Replace SERVICE_NAME with the app name (e.g., 'guard-api').
+ * Replace SERVICE_NAME with the app name (e.g., 'example-api').
  *
  * Reference: observability-otel rule
  */
-import { initTelemetry } from '@turbi/shared-observability';
+import { initTelemetry } from '@acme/shared-observability';
 
 initTelemetry({
   serviceName: 'SERVICE_NAME',

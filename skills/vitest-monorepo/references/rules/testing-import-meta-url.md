@@ -31,7 +31,7 @@ export default defineConfig({
 
 ```typescript
 export default defineConfig({
-  root: '/Users/dev/projects/turbi-guard',  // ❌ hardcoded absolute path
+  root: '/Users/dev/projects/workspace',  // ❌ hardcoded absolute path
   test: { /* ... */ },
 });
 ```

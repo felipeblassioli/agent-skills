@@ -32,7 +32,7 @@ type:api (app)  →  type:domain (lib)  ←  type:data (lib)
 ```typescript
 // libs/guard/ingestion/domain/src/event-ingestion.usecase.ts
 // ❌ Domain importing infrastructure
-import { KyselyRawEventsRepo } from '@turbi/guard-ingestion-data';
+import { KyselyRawEventsRepo } from '@acme/orders-data';
 
 export function ingestEvent(input: EventInput) {
   const repo = new KyselyRawEventsRepo(); // ❌ concrete infra in domain
@@ -61,7 +61,7 @@ export function ingestEvent(
 
 // libs/guard/ingestion/data/src/raw-events.repository.ts
 // ✅ Data layer implements the domain port
-import type { EventRepository } from '@turbi/guard-ingestion-domain';
+import type { EventRepository } from '@acme/orders-domain';
 
 export class KyselyRawEventsRepo implements EventRepository {
   async create(event: BufferedEvent): Promise<void> { /* Kysely insert */ }

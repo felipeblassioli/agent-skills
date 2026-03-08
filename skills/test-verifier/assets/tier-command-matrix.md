@@ -1,6 +1,6 @@
 # Tier Command Matrix
 
-Quick reference for all 8 test tiers in turbi-guard. Derived from
+Quick reference for all 8 test tiers in a layered backend workspace. Derived from
 `docs/ADR/ADR-0002-multi-tier-testing-and-coverage-merging.md` and
 `functions/package.json`.
 
@@ -21,7 +21,7 @@ All npm scripts run from the `functions/` directory.
 |------|-----------|-------------|---------------|-------------|
 | Structural | `test:structural` | `jest.structural.config.js` | None (reads source as text) | `test/structural/**/*.test.ts/js` |
 | Emulator | `test:emulator` | `jest.emulator.config.js` | Firebase emulator running | `test/emulator/**/*.emulator.test.ts/js` |
-| System | `test:system` | `jest.system.config.js` | Deployed GCP (turbi-dev) | `test/system/**/*.system.test.ts/js` |
+| System | `test:system` | `jest.system.config.js` | Deployed GCP environment (`PROJECT_ID`) | `test/system/**/*.system.test.ts/js` |
 | Smoke | `smoke:test` | `jest.smoke.config.js` | Live services | `**/*.smoke.test.js/ts` |
 
 ## Coverage pipeline commands

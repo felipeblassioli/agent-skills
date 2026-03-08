@@ -15,7 +15,7 @@ TypeScript projects under `apps/`, `libs/`, or `tools/`. New `package.json` or
 
 | Directory | Role | Tag | Example |
 |-----------|------|-----|---------|
-| `apps/` | Thin deployable shells (composition roots) | `type:api` | `apps/guard-api` |
+| `apps/` | Thin deployable shells (composition roots) | `type:api` | `apps/example-api` |
 | `libs/` | Business logic, data access, shared utilities | `type:domain`, `type:data`, `type:util` | `libs/guard/ingestion/domain` |
 | `tools/` | Dev-time tooling only (CLIs, generators) | `type:tool` | `tools/gcp-dev` |
 
@@ -28,7 +28,7 @@ project-root/
 ├── helpers/
 │   └── package.json    ← NOT under apps/, libs/, or tools/
 └── apps/
-    └── guard-api/
+    └── example-api/
 ```
 
 **Correct (all projects under standard directories):**
@@ -36,7 +36,7 @@ project-root/
 ```
 project-root/
 ├── apps/
-│   └── guard-api/          ← type:api
+│   └── example-api/        ← type:api
 ├── libs/
 │   ├── guard/ingestion/
 │   │   ├── domain/         ← type:domain
