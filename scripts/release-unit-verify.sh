@@ -55,8 +55,9 @@ case "$KIND" in
     metadata_version="$(jq -r '.version' "$METADATA_FILE")"
     [[ "$metadata_version" == "$VERSION" ]] || release_unit_die "Skill metadata version '$metadata_version' does not match tag version '$VERSION'"
 
-    if rg -q '^version:' "$SKILL_MD"; then
-      skill_md_version="$(sed -n '/^---$/,/^---$/p' "$SKILL_MD" | awk -F': *' '/^version:/{gsub(/["'\'']/, "", $2); print $2; exit}')"
+    skill_frontmatter="$(awk '/^---$/ { n++; next } n==1 { print }' "$SKILL_MD")"
+    if printf '%s\n' "$skill_frontmatter" | rg -q '^version:'; then
+      skill_md_version="$(printf '%s\n' "$skill_frontmatter" | awk -F': *' '/^version:/{gsub(/["'\'']/, "", $2); print $2; exit}')"
       [[ "$skill_md_version" == "$VERSION" ]] || release_unit_die "SKILL.md version '$skill_md_version' does not match tag version '$VERSION'"
     fi
 
