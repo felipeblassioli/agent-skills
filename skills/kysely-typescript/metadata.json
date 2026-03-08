@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-03-08",
+  "abstract": "Knowledge Hub for writing type-safe SQL with Kysely."
+}
