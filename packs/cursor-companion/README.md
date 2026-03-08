@@ -41,3 +41,10 @@ User installs skip rules because Cursor user rules are managed in settings rathe
 - [guides/usage-patterns.md](guides/usage-patterns.md)
 - [guides/security-and-guardrails.md](guides/security-and-guardrails.md)
 - [guides/authoring-companion-subagents.md](guides/authoring-companion-subagents.md)
+
+## Release Artifacts
+
+- [CHANGELOG.md](CHANGELOG.md)
+- [VERIFICATION.md](VERIFICATION.md)
+- [RELEASE-POLICY.md](RELEASE-POLICY.md)
+- [ROADMAP.md](ROADMAP.md)

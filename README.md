@@ -93,6 +93,12 @@ bash scripts/cursor-pack-restore.sh --backup-dir .work/cursor-pack-backups/<pack
 bash scripts/cursor-pack-version.sh cursor-companion patch
 ```
 
+After a pack bump, update the committed release artifacts in the pack root:
+
+- `CHANGELOG.md`
+- `VERIFICATION.md`
+- `ROADMAP.md`
+
 ## PR Quality Standard
 
 Use focused PRs and keep content in English:
@@ -125,6 +131,13 @@ Each pack directory should include:
 - `README.md` (recommended)
 - runtime assets under `.cursor/`
 - optional `guides/` and `assets/`
+
+Maintained packs should also commit:
+
+- `CHANGELOG.md`
+- `VERIFICATION.md`
+- `RELEASE-POLICY.md`
+- `ROADMAP.md`
 
 Current reference pack:
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Usage: scripts/cursor-pack-verify.sh [--pack=NAME]
-# Validate cursor pack registry entries, pack structure, subagents, rules, hooks,
-# MCP templates, and common secret/path safety issues.
+# Validate cursor pack registry entries, pack structure, release artifacts,
+# subagents, rules, hooks, MCP templates, and common secret/path safety issues.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -137,6 +137,47 @@ validate_mcp_example() {
   fi
 }
 
+validate_release_artifacts() {
+  local pack_dir="$1"
+  local rel_dir="${pack_dir#$CURSOR_PACK_REPO_ROOT/}"
+  local changelog_file verification_file policy_file roadmap_file
+
+  changelog_file="$pack_dir/CHANGELOG.md"
+  verification_file="$pack_dir/VERIFICATION.md"
+  policy_file="$pack_dir/RELEASE-POLICY.md"
+  roadmap_file="$pack_dir/ROADMAP.md"
+
+  [[ -f "$changelog_file" ]] || add_error "$rel_dir: missing release artifact CHANGELOG.md"
+  [[ -f "$verification_file" ]] || add_error "$rel_dir: missing release artifact VERIFICATION.md"
+  [[ -f "$policy_file" ]] || add_error "$rel_dir: missing release artifact RELEASE-POLICY.md"
+  [[ -f "$roadmap_file" ]] || add_error "$rel_dir: missing release artifact ROADMAP.md"
+
+  [[ -s "$changelog_file" ]] || add_warning "$rel_dir/CHANGELOG.md: file is empty"
+  [[ -s "$verification_file" ]] || add_warning "$rel_dir/VERIFICATION.md: file is empty"
+  [[ -s "$policy_file" ]] || add_warning "$rel_dir/RELEASE-POLICY.md: file is empty"
+  [[ -s "$roadmap_file" ]] || add_warning "$rel_dir/ROADMAP.md: file is empty"
+
+  if [[ -f "$changelog_file" ]] && ! rg -q 'VERIFICATION\.md' "$changelog_file"; then
+    add_warning "$rel_dir/CHANGELOG.md: should point readers to VERIFICATION.md"
+  fi
+
+  if [[ -f "$verification_file" ]] && ! rg -q '^(## |### )?Diagnosis\b|residual risks|Outcome' "$verification_file"; then
+    add_warning "$rel_dir/VERIFICATION.md: should capture diagnosis, outcome, or residual risks"
+  fi
+
+  if [[ -f "$policy_file" ]] && ! rg -q 'CHANGELOG\.md' "$policy_file"; then
+    add_warning "$rel_dir/RELEASE-POLICY.md: should mention CHANGELOG.md"
+  fi
+
+  if [[ -f "$policy_file" ]] && ! rg -q 'VERIFICATION\.md' "$policy_file"; then
+    add_warning "$rel_dir/RELEASE-POLICY.md: should mention VERIFICATION.md"
+  fi
+
+  if [[ -f "$policy_file" ]] && ! rg -q 'ROADMAP\.md' "$policy_file"; then
+    add_warning "$rel_dir/RELEASE-POLICY.md: should mention ROADMAP.md"
+  fi
+}
+
 scan_pack_for_safety_issues() {
   local pack_dir="$1"
   local rel_dir="${pack_dir#$CURSOR_PACK_REPO_ROOT/}"
@@ -223,6 +264,8 @@ validate_pack() {
     [[ -n "${artifact_id:-}" ]] || continue
     add_error "$actual_path/pack.json: artifact '$artifact_id' references target '$target_name' not allowed by registry"
   done <<<"$invalid_targets"
+
+  validate_release_artifacts "$pack_dir"
 
   if [[ -d "$pack_dir/.cursor/agents" ]]; then
     while IFS= read -r file; do

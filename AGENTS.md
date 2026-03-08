@@ -31,6 +31,10 @@ agent-skills/
 │   └── <name>/
 │       ├── pack.json             # Required — pack metadata and install map
 │       ├── README.md             # Recommended — human docs
+│       ├── CHANGELOG.md          # Expected for evolving packs — release history
+│       ├── VERIFICATION.md       # Expected for evolving packs — release evidence
+│       ├── RELEASE-POLICY.md     # Expected for evolving packs — release rules
+│       ├── ROADMAP.md            # Expected for evolving packs — next steps
 │       ├── .cursor/              # Runtime assets to install
 │       ├── guides/               # Optional — user-facing guidance
 │       └── assets/               # Optional — templates and examples
@@ -108,6 +112,12 @@ bash scripts/cursor-pack-restore.sh --backup-dir .work/cursor-pack-backups/<pack
 bash scripts/cursor-pack-version.sh cursor-companion patch|minor|major
 ```
 
+After a pack bump, also update the pack's release artifacts:
+
+- `CHANGELOG.md`
+- `VERIFICATION.md`
+- `ROADMAP.md`
+
 ## Commit Conventions
 
 Conventional Commits with skill name as scope:
@@ -161,3 +171,12 @@ Cursor packs install runtime assets differently by target:
 |--------|-------------|-------|
 | `project-cursor` | `<project>/.cursor/` | Supports subagents, project rules, hooks, and MCP examples |
 | `user-cursor` | `~/.cursor/` | Supports subagents, hooks, and MCP examples; project rules stay project-only |
+
+## Pack Release Artifacts
+
+Maintained packs should commit these root-level files:
+
+- `CHANGELOG.md` — what changed per release
+- `VERIFICATION.md` — how the release was tested and what it proved
+- `RELEASE-POLICY.md` — release and verification expectations
+- `ROADMAP.md` — next improvements and known follow-up work
