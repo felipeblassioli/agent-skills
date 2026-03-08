@@ -1,0 +1,20 @@
+---
+description: "Use hooks for runtime enforcement and auditing: block dangerous shell commands, protect sensitive file reads, and keep hook behavior easy to understand."
+alwaysApply: false
+---
+
+# Hook Guard-Rails
+
+Hooks are the enforcement layer, not a place for vague guidance.
+
+- Use `beforeShellExecution` to block clearly dangerous commands.
+- Use `beforeReadFile` to stop sensitive files from being sent to the model.
+- Use `beforeMCPExecution` for approvals or policy checks on powerful external tools.
+- Use `subagentStart` and `subagentStop` to audit delegation flows.
+
+## Design rules
+
+- Keep hook logic simple and explicit.
+- Return clear denial messages so users know what to do next.
+- Prefer fail-closed behavior only for security-critical checks.
+- Do not use hooks to encode broad authoring style guidance; that belongs in rules.

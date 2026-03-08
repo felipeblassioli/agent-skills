@@ -1,3 +1,6 @@
 .DS_Store
 _references/
-.cursor/plans/
+.cursor
+!packs/**/.cursor/
+!packs/**/.cursor/**
+.work

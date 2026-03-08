@@ -1,0 +1,20 @@
+---
+description: "Configure MCP servers conservatively: trust the source, keep scope narrow, prefer env interpolation, and treat example config separately from live config."
+alwaysApply: false
+---
+
+# MCP Safety
+
+Treat MCP servers as trusted integrations with real access to tools and data.
+
+- Prefer example configuration files over auto-writing live `mcp.json`.
+- Use `${env:NAME}` placeholders for secrets and credentials.
+- Avoid hardcoded absolute paths when `${workspaceFolder}` or `${userHome}` can
+  express the same intent.
+- Keep server scope narrow and explain why each server is installed.
+- Review whether a project needs project-local MCP or user-global MCP.
+
+## Approval policy
+
+If an MCP tool can mutate external systems, require clear intent and review the
+server's permissions before enabling auto-run behavior.

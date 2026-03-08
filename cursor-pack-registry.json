@@ -1,0 +1,37 @@
+{
+  "$schema": "./cursor-pack-registry.schema.json",
+  "packs": {
+    "cursor-companion": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "path": "packs/cursor-companion",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "installPolicy": {
+        "backupOnConflict": true,
+        "defaultProfile": "lite",
+        "projectRules": "project-only",
+        "mcp": "example-only"
+      },
+      "tags": [
+        "cursor",
+        "subagents",
+        "rules",
+        "hooks",
+        "mcp",
+        "guardrails"
+      ],
+      "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, and operational guides."
+    }
+  },
+  "targetPaths": {
+    "project-cursor": ".cursor",
+    "user-cursor": "~/.cursor"
+  }
+}
