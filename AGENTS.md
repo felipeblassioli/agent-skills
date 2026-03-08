@@ -4,9 +4,12 @@ Guidance for AI coding agents (Cursor, Claude Code, Copilot, Codex) working in t
 
 ## Repository Overview
 
-Central registry for versioned Agent Skills. Skills are authored here and
-deployed to global (`~/.cursor/skills/`, `~/.agents/skills/`) or project-local
-(`.cursor/skills/`) paths via `scripts/skill-sync.sh`.
+Central registry for versioned Agent Skills and installable Cursor packs.
+Skills are authored here and deployed to global (`~/.cursor/skills/`,
+`~/.agents/skills/`) or project-local (`.cursor/skills/`) paths via
+`scripts/skill-sync.sh`. Cursor runtime bundles such as subagents, hooks,
+project rules, and MCP templates are authored under `packs/` and installed via
+`scripts/cursor-pack-sync.sh`.
 
 ## Structure
 
@@ -24,11 +27,23 @@ agent-skills/
 │   │   └── rules/                # Optional — rule files (compiled → AGENTS.md)
 │   └── claude.ai/                # Skills targeting claude.ai only
 │       └── vercel-deploy-claimable/
+├── packs/
+│   └── <name>/
+│       ├── pack.json             # Required — pack metadata and install map
+│       ├── README.md             # Recommended — human docs
+│       ├── .cursor/              # Runtime assets to install
+│       ├── guides/               # Optional — user-facing guidance
+│       └── assets/               # Optional — templates and examples
 ├── skill-registry.json           # Central manifest (versions, targets, tags)
+├── cursor-pack-registry.json     # Central manifest for installable Cursor packs
 ├── scripts/
 │   ├── skill-sync.sh             # Deploy skills to target paths
 │   ├── skill-version.sh          # Bump version (registry + metadata + SKILL.md)
 │   └── skill-import.sh           # Import skill from external project
+│   ├── cursor-pack-verify.sh     # Validate pack structure and safety checks
+│   ├── cursor-pack-sync.sh       # Stage + install packs with backups
+│   ├── cursor-pack-restore.sh    # Restore files from a pack backup
+│   └── cursor-pack-version.sh    # Bump pack version (registry + pack.json)
 ├── packages/
 │   └── react-best-practices-build/  # Build tooling for rules-based skills
 ├── .cursor/
@@ -68,6 +83,29 @@ bash scripts/skill-sync.sh --list       # Show versions and drift
 ### Bump a skill version
 ```bash
 bash scripts/skill-version.sh <skill-name> patch|minor|major
+```
+
+## Cursor Pack Workflow
+
+### Verify a pack
+```bash
+bash scripts/cursor-pack-verify.sh --pack=cursor-companion
+```
+
+### Install a pack
+```bash
+bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=project --project-root="$PWD" --profile=strict
+bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=user --profile=lite
+```
+
+### Restore from backup
+```bash
+bash scripts/cursor-pack-restore.sh --backup-dir .work/cursor-pack-backups/<pack>/<target>/<timestamp>
+```
+
+### Bump a pack version
+```bash
+bash scripts/cursor-pack-version.sh cursor-companion patch|minor|major
 ```
 
 ## Commit Conventions
@@ -116,3 +154,10 @@ Skills are deployed via `skill-sync.sh` to these discovery paths:
 | `cursor` | `~/.cursor/skills/<name>/` | Cursor IDE (global) |
 | `agents` | `~/.agents/skills/<name>/` | Claude Code / generic agents |
 | `claude` | `~/.claude/skills/<name>/` | Claude.ai projects |
+
+Cursor packs install runtime assets differently by target:
+
+| Target | Destination | Notes |
+|--------|-------------|-------|
+| `project-cursor` | `<project>/.cursor/` | Supports subagents, project rules, hooks, and MCP examples |
+| `user-cursor` | `~/.cursor/` | Supports subagents, hooks, and MCP examples; project rules stay project-only |

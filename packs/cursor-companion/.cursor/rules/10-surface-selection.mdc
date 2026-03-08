@@ -1,0 +1,22 @@
+---
+description: "Choose the right Cursor surface: skills for knowledge and routing, rules for persistent guidance, subagents for context isolation, hooks for enforcement, and MCP for external capabilities."
+alwaysApply: false
+---
+
+# Surface Selection
+
+Use the lightest viable Cursor surface for the job.
+
+- Use `skills` to teach domain knowledge, routing, and repeatable workflows.
+- Use `rules` to persist project guidance that should stay in context across
+  many conversations.
+- Use `subagents` when work is noisy, parallelizable, or would otherwise bloat
+  the parent context.
+- Use `hooks` when a behavior must be enforced, blocked, or audited at runtime.
+- Use `MCP` when the agent must access external systems or structured data.
+
+## Guard-rail policy
+
+If a requirement is truly non-negotiable, do not rely on a skill or subagent
+prompt alone. Put the runtime enforcement in hooks, and use rules to explain
+the rationale.

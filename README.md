@@ -1,15 +1,20 @@
 # Agent Skills
 
-Personal registry of versioned Agent Skills used across Cursor, generic agents, and Claude environments.
+Personal registry of versioned Agent Skills and Cursor packs used across Cursor,
+generic agents, and Claude environments.
 
-This repository is the source of truth for skill content, metadata, and deployment targets.
+This repository is the source of truth for skill content, pack content,
+metadata, and deployment targets.
 
 ## Repository Purpose
 
 - Maintain skills under `skills/<name>/`
+- Maintain installable Cursor packs under `packs/<name>/`
 - Track versions and targets in `skill-registry.json`
+- Track pack versions and install targets in `cursor-pack-registry.json`
 - Import skills from local repositories/projects
 - Sync skills to discovery paths (for example `~/.cursor/skills/`)
+- Verify, stage, install, and restore Cursor runtime bundles such as subagents, rules, hooks, and MCP templates
 
 ## Current Workflow
 
@@ -38,6 +43,56 @@ bash skills/create-skill-from-refs/scripts/validate-skill.sh skills/<skill-name>
 bash scripts/skill-sync.sh
 ```
 
+## Cursor Pack Workflow
+
+### 1) Verify a pack
+
+```bash
+bash scripts/cursor-pack-verify.sh --pack=cursor-companion
+```
+
+### 2) Dry-run a project install
+
+```bash
+bash scripts/cursor-pack-sync.sh \
+  --pack=cursor-companion \
+  --target=project \
+  --project-root="$PWD" \
+  --profile=strict \
+  --dry-run
+```
+
+### 3) Install a pack
+
+```bash
+bash scripts/cursor-pack-sync.sh \
+  --pack=cursor-companion \
+  --target=project \
+  --project-root="$PWD" \
+  --profile=strict
+```
+
+For a user-level install:
+
+```bash
+bash scripts/cursor-pack-sync.sh \
+  --pack=cursor-companion \
+  --target=user \
+  --profile=lite
+```
+
+### 4) Restore from backup if needed
+
+```bash
+bash scripts/cursor-pack-restore.sh --backup-dir .work/cursor-pack-backups/<pack>/<target>/<timestamp>
+```
+
+### 5) Bump a pack version
+
+```bash
+bash scripts/cursor-pack-version.sh cursor-companion patch
+```
+
 ## PR Quality Standard
 
 Use focused PRs and keep content in English:
@@ -62,6 +117,19 @@ Each skill directory should include:
 - `metadata.json` (required)
 - Optional: `references/`, `assets/`, `scripts/`
 
+## Cursor Pack Layout
+
+Each pack directory should include:
+
+- `pack.json` (required)
+- `README.md` (recommended)
+- runtime assets under `.cursor/`
+- optional `guides/` and `assets/`
+
+Current reference pack:
+
+- `cursor-companion`
+
 ## Selected Skills
 
 This repository currently contains skills including:
@@ -81,6 +149,16 @@ This repository currently contains skills including:
 - `react-best-practices`
 - `react-native-skills`
 - `web-design-guidelines`
+
+## Best-Practice Model
+
+Use the right Cursor surface for the job:
+
+- `skills` teach and route
+- `rules` persist project guidance
+- `subagents` isolate noisy or parallel work
+- `hooks` enforce or audit runtime behavior
+- `MCP` connects external systems and should stay template-driven and secret-safe
 
 ## License
 
