@@ -16,7 +16,7 @@ trust external input — validate and parse before passing to domain logic.
 **Incorrect (trusting raw input):**
 
 ```typescript
-// apps/guard-api/src/routes/events.ts
+// apps/example-api/src/routes/events.ts
 // ❌ Directly using request body without validation
 router.put('/events/:id', async (req, res) => {
   const event = req.body; // Could be anything!

@@ -119,7 +119,7 @@ compatibility:
 metadata:
   domain: testing
   framework: jest
-  project: turbi-guard
+  project: workspace
 ```
 
 **Decision table** — maps input patterns to actions:

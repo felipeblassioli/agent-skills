@@ -16,7 +16,7 @@ context. Observability instrumentation is part of the definition of done.
 **Incorrect (no observability):**
 
 ```typescript
-// apps/guard-api/src/main.ts
+// apps/example-api/src/main.ts
 // ❌ No OTel initialization
 import express from 'express';
 
@@ -38,18 +38,18 @@ console.log(`processEvent took ${Date.now() - startTime}ms`);
 **Correct (OTel SDK initialization):**
 
 ```typescript
-// apps/guard-api/src/otel-init.ts
+// apps/example-api/src/otel-init.ts
 // ✅ OTel setup before app starts
-import { initTelemetry } from '@turbi/shared-observability';
+import { initTelemetry } from '@acme/shared-observability';
 
 initTelemetry({
-  serviceName: 'guard-api',
+  serviceName: 'example-api',
   serviceVersion: process.env['APP_VERSION'] ?? '0.0.0',
 });
 ```
 
 ```typescript
-// apps/guard-api/src/main.ts
+// apps/example-api/src/main.ts
 // ✅ Import OTel before anything else
 import './otel-init.js';
 import express from 'express';
@@ -81,7 +81,7 @@ async function ingestEvent(input: EventInput): Promise<void> {
 }
 ```
 
-The shared `@turbi/shared-observability` lib handles SDK setup, exporters, and
+The shared `@acme/shared-observability` lib handles SDK setup, exporters, and
 common instrumentation.
 
 Reference: [OpenTelemetry JS Documentation](https://opentelemetry.io/docs/languages/js/)

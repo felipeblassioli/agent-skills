@@ -9,22 +9,22 @@ tags: linking, dependencies, package-json, workspaces
 
 **Impact: HIGH (prevents "Cannot find module" errors at runtime)**
 
-If a project imports `@turbi/foo`, its `package.json` MUST declare the
-dependency. npm workspaces will create a symlink in `node_modules/@turbi/foo`
+If a project imports `@acme/foo`, its `package.json` MUST declare the
+dependency. npm workspaces will create a symlink in `node_modules/@acme/foo`
 only if the dependency is declared.
 
 **Incorrect (importing without declaring dependency):**
 
 ```typescript
-// apps/guard-api/src/main.ts
-import { ingestEvent } from '@turbi/guard-ingestion-domain'; // ❌ works in TS but may fail at runtime
+// apps/example-api/src/main.ts
+import { ingestEvent } from '@acme/orders-domain'; // ❌ works in TS but may fail at runtime
 ```
 
 ```json
-// apps/guard-api/package.json
+// apps/example-api/package.json
 {
   "dependencies": {
-    // ❌ @turbi/guard-ingestion-domain not listed
+    // ❌ @acme/orders-domain not listed
     "express": "^4.18.0"
   }
 }
@@ -36,15 +36,15 @@ TypeScript may resolve via project references, but Node.js at runtime uses
 **Correct (dependency declared):**
 
 ```json
-// apps/guard-api/package.json
+// apps/example-api/package.json
 {
   "dependencies": {
-    "@turbi/guard-ingestion-domain": "*",
-    "@turbi/guard-ingestion-data": "*",
+    "@acme/orders-domain": "*",
+    "@acme/orders-data": "*",
     "express": "^4.18.0"
   },
   "devDependencies": {
-    "@turbi/testkit-pg": "*"
+    "@acme/testkit-db": "*"
   }
 }
 ```

@@ -32,7 +32,7 @@ These produce flat strings that can't be queried in log aggregation tools
 **Correct (structured JSON logging):**
 
 ```typescript
-import { logger } from '@turbi/shared-observability';
+import { logger } from '@acme/shared-observability';
 
 // ✅ Structured with contextual fields
 logger.info({ eventId, environmentId }, 'Processing event');

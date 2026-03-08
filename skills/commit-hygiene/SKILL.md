@@ -36,9 +36,9 @@ Never mix these categories in a single commit:
 ### Example sequence
 
 ```
-feat(risk-engine): add plate cooldown window to scoring
-test(risk-engine): add unit tests for plate cooldown scoring
-docs: document plate cooldown scoring in risk engine guide
+feat(scoring): add cooldown window to scoring
+test(scoring): add unit tests for cooldown scoring
+docs: document cooldown scoring behavior
 ```
 
 ### When in doubt

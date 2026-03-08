@@ -1,5 +1,5 @@
 {
-  "name": "@turbi/PACKAGE_NAME",
+  "name": "@acme/PACKAGE_NAME",
   "version": "0.0.0",
   "private": true,
   "type": "module",

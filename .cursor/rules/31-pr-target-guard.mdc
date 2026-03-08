@@ -1,0 +1,30 @@
+---
+description: Prevent PRs from being opened against wrong GitHub repository
+alwaysApply: true
+---
+
+# PR Target Guard
+
+## Repository lock
+- This repository is personal and PRs must target `felipeblassioli/agent-skills`.
+- Never open PRs against `vercel-labs/*` or any upstream repository.
+
+## Required command pattern
+Always pass `--repo felipeblassioli/agent-skills` when using GitHub CLI:
+
+```bash
+gh pr create --repo felipeblassioli/agent-skills --base main ...
+gh pr edit <NUMBER> --repo felipeblassioli/agent-skills ...
+gh pr view <NUMBER> --repo felipeblassioli/agent-skills ...
+```
+
+## Preflight check before PR creation
+Run and verify repo context before any `gh pr create` command:
+
+```bash
+gh repo view --json nameWithOwner -q .nameWithOwner
+```
+
+Expected output: `felipeblassioli/agent-skills`
+
+If output differs, stop and fix command flags before proceeding.

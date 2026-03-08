@@ -62,15 +62,15 @@ export default defineConfig({
 **Correct (depth=2 app):**
 
 ```typescript
-// apps/guard-api/vitest.config.ts
+// apps/example-api/vitest.config.ts
 const workspaceRoot = path.resolve(__dirname, '../..');
 
 export default defineConfig({
   root: workspaceRoot,
   test: {
     include: [
-      'apps/guard-api/src/**/*.spec.ts',
-      'apps/guard-api/src/**/*.test.ts',
+      'apps/example-api/src/**/*.spec.ts',
+      'apps/example-api/src/**/*.test.ts',
     ],
   },
 });

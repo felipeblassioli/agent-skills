@@ -81,7 +81,7 @@ Do NOT reference these guidelines when:
 
 | Error / Symptom | Start Here |
 |-----------------|------------|
-| `Cannot find module '@turbi/...'` | [linking-consumer-deps](references/rules/linking-consumer-deps.md), [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) §4 |
+| `Cannot find module '@acme/...'` | [linking-consumer-deps](references/rules/linking-consumer-deps.md), [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) §4 |
 | `File is not under 'rootDir'` | [build-rootdir-separation](references/rules/build-rootdir-separation.md) |
 | `Referenced project must have composite: true` | [build-composite-tsconfig](references/rules/build-composite-tsconfig.md) |
 | Build order / stale cache | [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) §8 |

@@ -15,6 +15,14 @@ gh pr create --repo felipeblassioli/agent-skills --base main ...
 ```
 NEVER open PRs against `vercel-labs/agent-skills` or any upstream repo.
 
+## Mandatory preflight check
+Before any `gh pr create`, `gh pr edit`, or `gh pr view`, verify CLI repo context:
+```bash
+gh repo view --json nameWithOwner -q .nameWithOwner
+```
+Expected output: `felipeblassioli/agent-skills`
+If output differs, stop and use explicit `--repo felipeblassioli/agent-skills`.
+
 ## Branch naming
 `<type>/<skill-name>-<short-description>` or `<type>/<short-description>`
 
@@ -112,6 +120,7 @@ For complex PRs, stage the body in `.work/body-pr-<slug>.md` and use `--body-fil
 **Create:**
 ```bash
 gh pr create \
+  --repo felipeblassioli/agent-skills \
   --title "type(scope): description" \
   --body-file .work/body-pr-<slug>.md \
   --base main
@@ -119,7 +128,7 @@ gh pr create \
 
 **Update existing:**
 ```bash
-gh pr edit <NUMBER> --body-file .work/body-pr-<slug>.md
+gh pr edit <NUMBER> --repo felipeblassioli/agent-skills --body-file .work/body-pr-<slug>.md
 ```
 
 ### 4. Add proof comments (optional)
@@ -144,10 +153,10 @@ EOF
 
 | Action | Command |
 |--------|---------|
-| List open PRs | `gh pr list --base main --state open` |
-| View PR body | `gh pr view <N> --json body -q .body` |
-| Create PR | `gh pr create --title "..." --body-file .work/body-pr-<slug>.md` |
-| Update PR body | `gh pr edit <N> --body-file .work/body-pr-<slug>.md` |
-| Add comment | `gh pr comment <N> --body "..."` |
-| Check CI status | `gh pr checks <N>` |
+| List open PRs | `gh pr list --repo felipeblassioli/agent-skills --base main --state open` |
+| View PR body | `gh pr view <N> --repo felipeblassioli/agent-skills --json body -q .body` |
+| Create PR | `gh pr create --repo felipeblassioli/agent-skills --title "..." --body-file .work/body-pr-<slug>.md` |
+| Update PR body | `gh pr edit <N> --repo felipeblassioli/agent-skills --body-file .work/body-pr-<slug>.md` |
+| Add comment | `gh pr comment <N> --repo felipeblassioli/agent-skills --body "..."` |
+| Check CI status | `gh pr checks <N> --repo felipeblassioli/agent-skills` |
 | Validate skill | `bash skills/create-skill-from-refs/scripts/validate-skill.sh skills/<name>` |

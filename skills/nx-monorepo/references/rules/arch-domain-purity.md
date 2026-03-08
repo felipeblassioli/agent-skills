@@ -26,7 +26,7 @@ This ensures domain logic is:
 ```json
 // libs/guard/ingestion/domain/package.json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "dependencies": {
     "kysely": "^0.27.0",     // ❌ database framework in domain
     "express": "^4.18.0",    // ❌ web framework in domain
@@ -50,7 +50,7 @@ export function ingestEvent(db: Kysely<any>, input: EventInput) {
 ```json
 // libs/guard/ingestion/domain/package.json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "dependencies": {
     "tslib": "^2.6.0"  // ✅ only pure utilities allowed
   }

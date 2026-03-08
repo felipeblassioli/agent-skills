@@ -80,7 +80,7 @@ The Nx project graph is the canonical map of the system. All code must live as T
 
 | Directory | Role | Tag | Example |
 |-----------|------|-----|---------|
-| `apps/` | Thin deployable shells (composition roots) | `type:api` | `apps/guard-api` |
+| `apps/` | Thin deployable shells (composition roots) | `type:api` | `apps/example-api` |
 | `libs/` | Business logic, data access, shared utilities | `type:domain`, `type:data`, `type:util` | `libs/guard/ingestion/domain` |
 | `tools/` | Dev-time tooling only (CLIs, generators) | `type:tool` | `tools/gcp-dev` |
 
@@ -93,7 +93,7 @@ project-root/
 ├── helpers/
 │   └── package.json    ← NOT under apps/, libs/, or tools/
 └── apps/
-    └── guard-api/
+    └── example-api/
 ```
 
 **Correct (all projects under standard directories):**
@@ -101,7 +101,7 @@ project-root/
 ```
 project-root/
 ├── apps/
-│   └── guard-api/          ← type:api
+│   └── example-api/        ← type:api
 ├── libs/
 │   ├── guard/ingestion/
 │   │   ├── domain/         ← type:domain
@@ -125,7 +125,7 @@ Apps wire domain + data + shared libs — they do NOT contain business logic.
 **Incorrect (business logic in app code):**
 
 ```typescript
-// apps/guard-api/src/routes/events.ts
+// apps/example-api/src/routes/events.ts
 import { Router } from 'express';
 import { db } from '../db.js';
 
@@ -148,9 +148,9 @@ export function ingestEvent(input: EventInput, deps: IngestDeps): IngestResult {
   return { ...input, hash, bufferedAt: deps.clock.now() };
 }
 
-// apps/guard-api/src/routes/events.ts
-import { ingestEvent } from '@turbi/guard-ingestion-domain';
-import { RawEventsRepo } from '@turbi/guard-ingestion-data';
+// apps/example-api/src/routes/events.ts
+import { ingestEvent } from '@acme/orders-domain';
+import { RawEventsRepo } from '@acme/orders-data';
 
 router.put('/events/:id', async (req, res) => {
   const result = ingestEvent(validated, { clock: systemClock });
@@ -185,7 +185,7 @@ type:api (app)  →  type:domain (lib)  ←  type:data (lib)
 
 ```typescript
 // libs/guard/ingestion/domain/src/event-ingestion.usecase.ts
-import { KyselyRawEventsRepo } from '@turbi/guard-ingestion-data';
+import { KyselyRawEventsRepo } from '@acme/orders-data';
 
 export function ingestEvent(input: EventInput) {
   const repo = new KyselyRawEventsRepo();
@@ -211,7 +211,7 @@ export function ingestEvent(
 }
 
 // libs/guard/ingestion/data/src/raw-events.repository.ts
-import type { EventRepository } from '@turbi/guard-ingestion-domain';
+import type { EventRepository } from '@acme/orders-domain';
 
 export class KyselyRawEventsRepo implements EventRepository {
   async create(event: BufferedEvent): Promise<void> { /* Kysely insert */ }
@@ -228,7 +228,7 @@ Domain libraries (`type:domain`) contain pure business logic only. They MUST NOT
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "dependencies": {
     "kysely": "^0.27.0",
     "express": "^4.18.0",
@@ -241,7 +241,7 @@ Domain libraries (`type:domain`) contain pure business logic only. They MUST NOT
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "dependencies": {
     "tslib": "^2.6.0"
   }
@@ -283,8 +283,8 @@ router.put('/events/:id', async (req, res) => {
 **Correct (app wires libs together):**
 
 ```typescript
-import { ingestEvent } from '@turbi/guard-ingestion-domain';
-import { KyselyRawEventsRepo } from '@turbi/guard-ingestion-data';
+import { ingestEvent } from '@acme/orders-domain';
+import { KyselyRawEventsRepo } from '@acme/orders-data';
 
 export function createEventRoutes(deps: { repo: KyselyRawEventsRepo }) {
   const router = Router();
@@ -318,7 +318,7 @@ Every `package.json` in the workspace (root and per-project) MUST declare `"type
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/src/index.js"
@@ -329,7 +329,7 @@ Every `package.json` in the workspace (root and per-project) MUST declare `"type
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -533,7 +533,7 @@ Every library's `package.json` MUST have an `exports` field with the `@nx/source
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "main": "./dist/src/index.js"
 }
 ```
@@ -542,7 +542,7 @@ Every library's `package.json` MUST have an `exports` field with the `@nx/source
 
 ```json
 {
-  "name": "@turbi/guard-ingestion-domain",
+  "name": "@acme/orders-domain",
   "type": "module",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
@@ -562,13 +562,13 @@ Every library's `package.json` MUST have an `exports` field with the `@nx/source
 
 **Impact: HIGH (prevents "Cannot find module" errors at runtime)**
 
-If a project imports `@turbi/foo`, its `package.json` MUST declare the dependency with `"*"` version.
+If a project imports `@acme/foo`, its `package.json` MUST declare the dependency with `"*"` version.
 
 **Incorrect:**
 
 ```json
 { "dependencies": { "express": "^4.18.0" } }
-// @turbi/guard-ingestion-domain not listed but imported
+// @acme/orders-domain not listed but imported
 ```
 
 **Correct:**
@@ -576,8 +576,8 @@ If a project imports `@turbi/foo`, its `package.json` MUST declare the dependenc
 ```json
 {
   "dependencies": {
-    "@turbi/guard-ingestion-domain": "*",
-    "@turbi/guard-ingestion-data": "*",
+    "@acme/orders-domain": "*",
+    "@acme/orders-data": "*",
     "express": "^4.18.0"
   }
 }
@@ -594,13 +594,13 @@ Workspace dependencies MUST use `"*"`. Never use `file:`, `link:`, or relative p
 **Incorrect:**
 
 ```json
-{ "@turbi/domain": "file:../../libs/guard/ingestion/domain" }
+{ "@acme/orders-domain": "file:../../libs/orders/domain" }
 ```
 
 **Correct:**
 
 ```json
-{ "@turbi/domain": "*" }
+{ "@acme/orders-domain": "*" }
 ```
 
 ### 4.4 Never Use Root-Level TS Path Aliases for Workspace Libs
@@ -612,7 +612,7 @@ Do not use `paths` in `tsconfig.base.json` for workspace packages. Rely on npm w
 **Incorrect:**
 
 ```json
-{ "paths": { "@turbi/*": ["libs/*/src"] } }
+{ "paths": { "@acme/*": ["libs/*/src"] } }
 ```
 
 **Correct:**

@@ -18,7 +18,7 @@
 #   explore-log-entry.sh --project my-proj --resource-type cloud_run_revision --label service_name=api
 #
 #   # Discover structure for a Firebase function
-#   explore-log-entry.sh --project my-proj --resource-type cloud_function --label function_name=riskEngine
+#   explore-log-entry.sh --project my-proj --resource-type cloud_function --label function_name=FUNCTION_NAME
 #
 #   # Custom filter
 #   explore-log-entry.sh --project my-proj --filter 'resource.type="k8s_container" resource.labels.cluster_name="prod"'

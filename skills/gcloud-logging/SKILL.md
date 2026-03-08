@@ -30,9 +30,9 @@ disable-model-invocation: true
 
 ## Delegate to the `log-reader` subagent when sensible
 
-A companion subagent exists at `.cursor/agents/log-reader.md`. It runs in an isolated
-context and returns a structured summary — keeping verbose JSON output out of the main
-conversation.
+If the `gcp-log-investigation` pack is installed, a companion subagent exists at
+`.cursor/agents/log-reader.md`. It runs in an isolated context and returns a structured
+summary — keeping verbose JSON output out of the main conversation.
 
 **Delegate** (use the subagent) when:
 - The investigation requires multiple iterative queries (discover shape → filter → refine → correlate)
@@ -50,13 +50,15 @@ conversation.
 Pass the subagent enough context to work independently:
 
 ```
-/log-reader Investigate 500 errors on Cloud Run service "risk-engine"
-in project "turbi-guard-dev", region us-central1, last 2 hours.
+/log-reader Investigate 500 errors on Cloud Run service "SERVICE_NAME"
+in project "PROJECT_ID", region us-central1, last 2 hours.
 Look for stack traces and correlate with request logs via trace ID.
 ```
 
-The subagent will use the scripts and recipes from this skill and return a
-structured summary (log shape, filters used, key findings, root cause, next steps).
+The subagent follows the same discovery, filtering, and correlation approach from this
+skill. When this skill is available in the current environment, it can reuse the
+scripts and recipes here; otherwise it still works with direct `gcloud logging read`
+and `jq` workflows.
 
 ## Core workflow
 

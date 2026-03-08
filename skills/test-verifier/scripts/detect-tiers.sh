@@ -88,8 +88,8 @@ for raw_path in "${FILES[@]}"; do
 
   matched=false
 
-  # domain/services/riskEngine/* → unit + functional
-  if [[ "$path" =~ ^domain/services/riskEngine/ ]]; then
+  # domain/services/scoring/* → unit + functional
+  if [[ "$path" =~ ^domain/services/scoring/ ]]; then
     TIER_SET[unit]=1
     TIER_SET[functional]=1
     matched=true

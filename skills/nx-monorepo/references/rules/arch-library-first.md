@@ -19,7 +19,7 @@ Apps wire domain + data + shared libs — they do NOT contain business logic.
 **Incorrect (business logic in app code):**
 
 ```typescript
-// apps/guard-api/src/routes/events.ts
+// apps/example-api/src/routes/events.ts
 // ❌ Business logic implemented directly in the route handler
 import { Router } from 'express';
 import { db } from '../db.js';

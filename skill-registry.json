@@ -235,6 +235,20 @@
       ],
       "description": "Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package. Use when the user asks to create a skill, write a SKILL.md, or package domain knowledge into a reusable skill — especially when they provide reference documents or code as context. Invoke explicitly via /create-skill-from-refs."
     },
+    "create-cursor-pack-from-refs": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "cursor-pack"
+      ],
+      "description": "Create Cursor packs from user-provided reference material and repo context. Guides through intake, pack archetype selection, pack scaffolding under `packs/<name>/`, registry updates, and verification against this repository's pack conventions. Use when the user asks to create a Cursor pack, author `pack.json`, scaffold pack runtime assets, or package subagents, rules, hooks, MCP examples, and guides into an installable Cursor bundle."
+    },
     "firebase-functions-node": {
       "version": "1.0.0",
       "author": "felipeblassioli",
@@ -310,9 +324,9 @@
       "tags": [
         "github",
         "pr",
-        "turbiteam"
+        "github-cli"
       ],
-      "description": "Create and update GitHub pull requests using gh CLI for turbiteam repositories. PRs are written in Brazilian Portuguese following the repo's pull_request_template.md with comment markers. Uses a .work/ staging directory for body files. Use when the user asks to create a PR, open a PR, update a PR description, or prepare a PR body."
+      "description": "Create and update GitHub pull requests using gh CLI for repositories that use a `.github/pull_request_template.md` with comment markers. PRs are written in Brazilian Portuguese and use `.work/` staging files for the body."
     },
     "test-verifier": {
       "version": "1.0.0",
@@ -325,7 +339,7 @@
         "testing",
         "verification",
         "coverage",
-        "turbi"
+        "multi-tier"
       ],
       "description": ""
     },

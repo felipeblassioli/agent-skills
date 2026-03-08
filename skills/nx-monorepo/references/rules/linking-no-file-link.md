@@ -18,7 +18,7 @@ create fragile, non-portable configurations.
 ```json
 {
   "dependencies": {
-    "@turbi/guard-ingestion-domain": "file:../../libs/guard/ingestion/domain"
+    "@acme/orders-domain": "file:../../libs/orders/domain"
   }
 }
 ```
@@ -28,7 +28,7 @@ create fragile, non-portable configurations.
 ```json
 {
   "dependencies": {
-    "@turbi/guard-ingestion-domain": "link:../../libs/guard/ingestion/domain"
+    "@acme/orders-domain": "link:../../libs/orders/domain"
   }
 }
 ```
@@ -38,7 +38,7 @@ create fragile, non-portable configurations.
 ```json
 {
   "dependencies": {
-    "@turbi/guard-ingestion-domain": "../../libs/guard/ingestion/domain"
+    "@acme/orders-domain": "../../libs/orders/domain"
   }
 }
 ```
@@ -51,12 +51,12 @@ These approaches bypass npm's workspace resolution, create duplicate
 ```json
 {
   "dependencies": {
-    "@turbi/guard-ingestion-domain": "*"
+    "@acme/orders-domain": "*"
   }
 }
 ```
 
 npm workspaces automatically resolves `"*"` to the local workspace package and
-creates a symlink in `node_modules/@turbi/guard-ingestion-domain`.
+creates a symlink in `node_modules/@acme/orders-domain`.
 
 Reference: [npm Workspaces](https://docs.npmjs.com/cli/using-npm/workspaces)

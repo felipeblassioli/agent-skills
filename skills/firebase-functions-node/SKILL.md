@@ -82,4 +82,4 @@ confirmation. Present proposed code as diffs and wait for approval.
 
 - **tdd-classicist** — Test methodology, tier selection, test double taxonomy
 - **test-verifier** — Run the project's multi-tier test suite and collect coverage
-- **migrate-turbi-libs** — Migrate deprecated @turbi/* libraries when editing function code
+- **migrate-workspace-libs** — Migrate deprecated workspace libraries when editing function code

@@ -21,9 +21,9 @@ custom condition.
 {
   "compilerOptions": {
     "paths": {
-      "@turbi/guard-ingestion-domain": ["libs/guard/ingestion/domain/src/index.ts"],
-      "@turbi/guard-ingestion-data": ["libs/guard/ingestion/data/src/index.ts"],
-      "@turbi/*": ["libs/*/src"]
+      "@acme/orders-domain": ["libs/orders/domain/src/index.ts"],
+      "@acme/orders-data": ["libs/orders/data/src/index.ts"],
+      "@acme/*": ["libs/*/src"]
     }
   }
 }
@@ -57,7 +57,7 @@ fragility.
 ```
 
 This works because:
-1. npm workspaces creates a symlink `node_modules/@turbi/domain` → `libs/.../domain`
+1. npm workspaces creates a symlink `node_modules/@acme/orders-domain` → `libs/.../domain`
 2. `@nx/source` condition resolves to `./src/index.ts` during dev/test
 3. At production runtime, `import` condition resolves to `./dist/src/index.js`
 
