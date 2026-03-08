@@ -358,6 +358,22 @@
         "api"
       ],
       "description": "Write, execute, and assert HTTP requests safely using Hurl text files."
+    },
+    "kysely-typescript": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "typescript",
+        "kysely",
+        "sql",
+        "typesafe"
+      ],
+      "description": "Type-safe SQL query building in TypeScript using Kysely"
     }
   },
   "targetPaths": {
