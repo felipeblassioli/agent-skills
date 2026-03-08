@@ -142,6 +142,7 @@ Maintained packs should also commit:
 Current reference pack:
 
 - `cursor-companion`
+- `gcp-log-investigation`
 
 ## Selected Skills
 

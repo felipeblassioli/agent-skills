@@ -28,6 +28,34 @@
         "guardrails"
       ],
       "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, and operational guides."
+    },
+    "gcp-log-investigation": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "path": "packs/gcp-log-investigation",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "installPolicy": {
+        "backupOnConflict": true,
+        "defaultProfile": "lite",
+        "projectRules": "project-only",
+        "mcp": "none"
+      },
+      "tags": [
+        "cursor",
+        "gcp",
+        "logging",
+        "observability",
+        "subagents",
+        "safety"
+      ],
+      "description": "Portable GCP log-investigation pack with a reusable log-reader subagent and production-safe guidance for Cloud Run, Cloud Functions, and GKE logs."
     }
   },
   "targetPaths": {
