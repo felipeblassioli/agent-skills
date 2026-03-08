@@ -99,6 +99,62 @@ After a pack bump, update the committed release artifacts in the pack root:
 - `VERIFICATION.md`
 - `ROADMAP.md`
 
+## Release Workflow
+
+This repository uses independent, registry-driven releases for skills and
+Cursor packs.
+
+### Release units
+
+- Skills release from `skills/<name>`
+- Packs release from `packs/<name>`
+- Versions remain authoritative in `skill-registry.json` and
+  `cursor-pack-registry.json`
+
+### Git tags and GitHub Releases
+
+Create one tag and one GitHub Release per released unit:
+
+- Skills: `skill-<name>@<version>`
+- Packs: `pack-<name>@<version>`
+
+Pushed tags matching those patterns trigger `.github/workflows/release-units.yml`,
+which:
+
+1. resolves the tagged release unit from the registry
+2. validates the unit and its version metadata
+3. builds a module-scoped archive asset
+4. generates release notes
+5. publishes a GitHub Release for the tag
+
+### Maintainer release flow
+
+1. prepare a focused release PR with only the version bumps and release-doc
+   updates needed for the units you want to ship
+2. validate the released units locally
+3. merge the release PR
+4. create and push the matching `skill-...` or `pack-...` tag
+
+Example skill release validation:
+
+```bash
+bash scripts/skill-sync.sh --skill=tdd-classicist --dry-run
+```
+
+Example pack release validation:
+
+```bash
+bash scripts/cursor-pack-verify.sh --pack=cursor-companion
+bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=project --project-root="$PWD" --profile=strict --dry-run
+```
+
+### Release documentation
+
+See:
+
+- `docs/specs/release-workflow.md`
+- `docs/ADR/ADR-0001-registry-driven-releases-for-skills-and-packs.md`
+
 ## PR Quality Standard
 
 Use focused PRs and keep content in English:
