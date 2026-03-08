@@ -27,9 +27,10 @@ for arg in "$@"; do
 done
 
 if [[ -n "$TAG" ]]; then
-  KIND="$(jq -r '.kind' <<<"$(release_unit_parse_tag "$TAG")")"
-  NAME="$(jq -r '.name' <<<"$(release_unit_parse_tag "$TAG")")"
-  VERSION="$(jq -r '.version' <<<"$(release_unit_parse_tag "$TAG")")"
+  parsed="$(release_unit_parse_tag "$TAG")"
+  KIND="$(jq -r '.kind' <<<"$parsed")"
+  NAME="$(jq -r '.name' <<<"$parsed")"
+  VERSION="$(jq -r '.version' <<<"$parsed")"
 fi
 
 [[ -n "$KIND" ]] || release_unit_die "Missing --tag or --kind"

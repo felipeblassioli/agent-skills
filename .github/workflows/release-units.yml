@@ -22,7 +22,7 @@ jobs:
       - name: Resolve release unit
         id: resolve
         run: |
-          metadata="$(bash scripts/release-unit-resolve.sh --tag "$GITHUB_REF_NAME")"
+          metadata="$(bash scripts/release-unit-resolve.sh --tag="${{ github.ref_name }}")"
           printf '%s\n' "$metadata" > "$RUNNER_TEMP/release-unit.json"
 
           echo "kind=$(jq -r '.kind' "$RUNNER_TEMP/release-unit.json")" >> "$GITHUB_OUTPUT"
@@ -31,19 +31,19 @@ jobs:
           echo "title=$(jq -r '.title' "$RUNNER_TEMP/release-unit.json")" >> "$GITHUB_OUTPUT"
 
       - name: Verify release unit
-        run: bash scripts/release-unit-verify.sh --tag "$GITHUB_REF_NAME"
+        run: bash scripts/release-unit-verify.sh --tag="${{ github.ref_name }}"
 
       - name: Build release archive
         id: archive
         run: |
-          archive_path="$(bash scripts/release-unit-archive.sh --tag "$GITHUB_REF_NAME" --output-dir "$RUNNER_TEMP/release-assets")"
+          archive_path="$(bash scripts/release-unit-archive.sh --tag="${{ github.ref_name }}" --output-dir="$RUNNER_TEMP/release-assets")"
           echo "path=$archive_path" >> "$GITHUB_OUTPUT"
 
       - name: Generate release notes
         id: notes
         run: |
           notes_path="$RUNNER_TEMP/release-notes.md"
-          bash scripts/release-unit-notes.sh --tag "$GITHUB_REF_NAME" --output "$notes_path" >/dev/null
+          bash scripts/release-unit-notes.sh --tag="${{ github.ref_name }}" --output="$notes_path" >/dev/null
           echo "path=$notes_path" >> "$GITHUB_OUTPUT"
 
       - name: Publish GitHub Release

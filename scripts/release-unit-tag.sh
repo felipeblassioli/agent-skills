@@ -12,16 +12,20 @@ REMOTE="origin"
 PUSH=false
 ALLOW_DIRTY=false
 DRY_RUN=false
+SAW_SKILL=false
+SAW_PACK=false
 
 for arg in "$@"; do
   case "$arg" in
     --skill=*)
       KIND="skill"
       NAME="${arg#--skill=}"
+      SAW_SKILL=true
       ;;
     --pack=*)
       KIND="pack"
       NAME="${arg#--pack=}"
+      SAW_PACK=true
       ;;
     --version=*)
       VERSION="${arg#--version=}"
@@ -47,6 +51,10 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+if [[ "$SAW_SKILL" == true && "$SAW_PACK" == true ]]; then
+  release_unit_die "Pass exactly one of --skill or --pack, not both"
+fi
 
 [[ -n "$KIND" ]] || release_unit_die "Pass exactly one of --skill or --pack"
 [[ -n "$NAME" ]] || release_unit_die "Release unit name is required"
@@ -80,6 +88,12 @@ bash "$SCRIPT_DIR/release-unit-verify.sh" --kind="$KIND" --name="$NAME" --versio
 
 if git -C "$RELEASE_UNIT_REPO_ROOT" rev-parse "$tag_name" >/dev/null 2>&1; then
   release_unit_die "Tag already exists locally: $tag_name"
+fi
+
+if [[ "$PUSH" == true ]]; then
+  if git -C "$RELEASE_UNIT_REPO_ROOT" ls-remote --exit-code "$REMOTE" "refs/tags/$tag_name" >/dev/null 2>&1; then
+    release_unit_die "Tag already exists on remote $REMOTE: $tag_name"
+  fi
 fi
 
 if [[ "$DRY_RUN" == true ]]; then

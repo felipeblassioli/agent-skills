@@ -128,7 +128,7 @@ Skills receive a lightweight release treatment:
 
 - module-scoped tag
 - one GitHub Release per tag
-- optional versioned archive asset
+- one versioned archive asset (same as packs)
 - release body generated from registry metadata and release context
 
 Skills do not need pack-style changelog artifacts in phase 1.
@@ -150,13 +150,14 @@ A skill release body should include:
 
 ### Pack release body
 
-A pack release body should include:
+The generated pack release body includes:
 
-- pack description
-- supported targets
-- supported profiles
-- the changelog section for the released version when available
-- a pointer to `VERIFICATION.md`
+- pack description, targets, and profiles
+- the changelog section for the released version from `CHANGELOG.md` when present
+- a pointer to `VERIFICATION.md` for committed verification evidence
+
+Committed pack docs `RELEASE-POLICY.md` and `ROADMAP.md` are not included in the
+generated body; they remain the source of process and roadmap expectations.
 
 ### Release assets
 
