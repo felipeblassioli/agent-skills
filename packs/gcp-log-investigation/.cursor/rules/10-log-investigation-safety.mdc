@@ -1,0 +1,14 @@
+---
+description: "Production and sensitive-data guardrails for GCP log investigations: discovery-first queries, bounded windows, redaction, and concise summaries."
+alwaysApply: false
+---
+
+# Log Investigation Safety
+
+Use a discovery-first and data-minimizing approach for GCP log analysis.
+
+- Start with a sample entry before broadening the query.
+- Bound production queries by time and resource labels before text search.
+- Prefer trace IDs, request IDs, counts, and short redacted excerpts over raw payload dumps.
+- Do not surface tokens, credentials, cookies, authorization headers, or full sensitive payloads unless the user explicitly asks and the excerpt is minimized.
+- If a broad raw dump of production logs seems necessary, pause and ask for confirmation first.

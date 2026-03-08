@@ -1,0 +1,59 @@
+{
+  "$schema": "../../cursor-pack.schema.json",
+  "name": "gcp-log-investigation",
+  "version": "0.1.0",
+  "description": "Cursor pack with a portable log-reader subagent and production-safe guidance for investigating Google Cloud application logs across Cloud Run, Cloud Functions, and GKE.",
+  "author": "felipeblassioli",
+  "targets": [
+    "project-cursor",
+    "user-cursor"
+  ],
+  "profiles": {
+    "lite": {
+      "description": "Installs the reusable log-reader subagent and usage guides without persistent project rules."
+    },
+    "strict": {
+      "description": "Installs the log-reader plus project-only safety guidance for production and sensitive-data handling."
+    }
+  },
+  "artifacts": [
+    {
+      "id": "agents",
+      "source": ".cursor/agents",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "projectPath": ".cursor/agents",
+      "userPath": "agents"
+    },
+    {
+      "id": "rules",
+      "source": ".cursor/rules",
+      "targets": [
+        "project-cursor"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "projectPath": ".cursor/rules",
+      "notes": [
+        "Strict installs add persistent project guidance for bounded queries, redaction, and concise summaries.",
+        "User installs skip rules because Cursor user rules are managed in settings rather than a ~/.cursor/rules directory."
+      ]
+    }
+  ],
+  "install": {
+    "defaultProfile": "lite",
+    "backupOnConflict": true,
+    "stageRoot": ".work/cursor-pack-staging",
+    "backupRoot": ".work/cursor-pack-backups",
+    "manifestFile": ".cursor-pack-manifest.json",
+    "conflictPolicy": "backup-and-overwrite",
+    "mcpPolicy": "none"
+  }
+}
