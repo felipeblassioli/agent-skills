@@ -52,6 +52,12 @@ fi
 case "$KIND" in
   skill)
     TAGS="$(jq -r '.tags | join(", ")' <<<"$metadata")"
+    CHANGELOG_FILE="$RELEASE_UNIT_REPO_ROOT/$SOURCE_REL/CHANGELOG.md"
+    CHANGELOG_SECTION=""
+    if [[ -f "$CHANGELOG_FILE" ]]; then
+      CHANGELOG_SECTION="$(release_unit_latest_changelog_section "$CHANGELOG_FILE" "$VERSION")"
+    fi
+
     cat >"$notes_path" <<EOF
 # $NAME v$VERSION
 
@@ -69,6 +75,22 @@ $DESCRIPTION
 
 This release publishes the current contents of \`$SOURCE_REL\` as an
 independent skill release for the repository registry.
+
+## Changes
+
+EOF
+
+    if [[ -n "$CHANGELOG_SECTION" ]]; then
+      printf '%s\n' "$CHANGELOG_SECTION" >>"$notes_path"
+    else
+      cat >>"$notes_path" <<EOF
+This skill currently uses the lightweight release-note path. If the skill later
+adds a local \`CHANGELOG.md\`, matching version entries will automatically be
+included in future GitHub Releases.
+EOF
+    fi
+
+    cat >>"$notes_path" <<EOF
 
 ## Metadata
 

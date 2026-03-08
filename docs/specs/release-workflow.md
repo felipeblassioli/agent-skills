@@ -133,6 +133,9 @@ Skills receive a lightweight release treatment:
 
 Skills do not need pack-style changelog artifacts in phase 1.
 
+If a skill later adds `skills/<name>/CHANGELOG.md`, the release-note generator
+should include the matching version section automatically.
+
 ## GitHub Release Contract
 
 ### Skill release body
@@ -183,6 +186,9 @@ Release PRs are the batching point. A release PR should:
 - include validation evidence for every released unit
 - state the exact tags that will be created after merge
 
+After the release PR is merged, maintainers may create the matching tags with
+`scripts/release-unit-tag.sh`.
+
 ### Skill validation inside release PRs
 
 At minimum:
@@ -218,6 +224,17 @@ GitHub Actions should react to pushed tags matching:
 4. Build a module-scoped archive asset.
 5. Generate release notes.
 6. Create or update the GitHub Release for that tag.
+
+### Tag helper
+
+Maintainers may use a helper script to create release tags from current registry
+versions:
+
+- `bash scripts/release-unit-tag.sh --skill=<name> --dry-run`
+- `bash scripts/release-unit-tag.sh --pack=<name> --push`
+
+The helper should verify the unit before tagging and should refuse to tag a
+dirty working tree unless explicitly overridden.
 
 ## Changesets Position
 

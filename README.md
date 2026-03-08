@@ -135,11 +135,24 @@ which:
 3. merge the release PR
 4. create and push the matching `skill-...` or `pack-...` tag
 
+Use the helper script to create tags from the current registry version:
+
+```bash
+bash scripts/release-unit-tag.sh --skill=tdd-classicist --dry-run
+bash scripts/release-unit-tag.sh --pack=cursor-companion --push
+```
+
 Example skill release validation:
 
 ```bash
 bash scripts/skill-sync.sh --skill=tdd-classicist --dry-run
 ```
+
+Optional richer skill release notes:
+
+- if a skill includes `skills/<name>/CHANGELOG.md`, the matching version section
+  is included automatically in generated GitHub Release notes
+- if no skill changelog exists, the workflow keeps the lightweight note format
 
 Example pack release validation:
 
