@@ -1,0 +1,56 @@
+name: Release Units
+
+on:
+  push:
+    tags:
+      - 'skill-*'
+      - 'pack-*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-${{ github.ref_name }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Resolve release unit
+        id: resolve
+        run: |
+          metadata="$(bash scripts/release-unit-resolve.sh --tag="${{ github.ref_name }}")"
+          printf '%s\n' "$metadata" > "$RUNNER_TEMP/release-unit.json"
+
+          echo "kind=$(jq -r '.kind' "$RUNNER_TEMP/release-unit.json")" >> "$GITHUB_OUTPUT"
+          echo "name=$(jq -r '.name' "$RUNNER_TEMP/release-unit.json")" >> "$GITHUB_OUTPUT"
+          echo "version=$(jq -r '.version' "$RUNNER_TEMP/release-unit.json")" >> "$GITHUB_OUTPUT"
+          echo "title=$(jq -r '.title' "$RUNNER_TEMP/release-unit.json")" >> "$GITHUB_OUTPUT"
+
+      - name: Verify release unit
+        run: bash scripts/release-unit-verify.sh --tag="${{ github.ref_name }}"
+
+      - name: Build release archive
+        id: archive
+        run: |
+          archive_path="$(bash scripts/release-unit-archive.sh --tag="${{ github.ref_name }}" --output-dir="$RUNNER_TEMP/release-assets")"
+          echo "path=$archive_path" >> "$GITHUB_OUTPUT"
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          notes_path="$RUNNER_TEMP/release-notes.md"
+          bash scripts/release-unit-notes.sh --tag="${{ github.ref_name }}" --output="$notes_path" >/dev/null
+          echo "path=$notes_path" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ steps.resolve.outputs.title }}
+          body_path: ${{ steps.notes.outputs.path }}
+          files: ${{ steps.archive.outputs.path }}
+          fail_on_unmatched_files: true
