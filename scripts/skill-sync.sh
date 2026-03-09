@@ -201,9 +201,9 @@ sync_skills() {
     for target in $targets; do
       if [[ -n "$FILTER_TARGET" && "$target" != "$FILTER_TARGET" ]]; then continue; fi
       if deploy_skill "$skill_name" "$target" "$source_dir"; then
-        ((deployed++))
+        deployed=$((deployed + 1))
       else
-        ((errors++))
+        errors=$((errors + 1))
       fi
     done
   done
