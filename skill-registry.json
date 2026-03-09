@@ -376,7 +376,7 @@
       "description": "Type-safe SQL query building in TypeScript using Kysely"
     },
     "nested-agents-routing": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [

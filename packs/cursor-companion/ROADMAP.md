@@ -4,6 +4,7 @@
 
 - keep the reference pack aligned with the new committed release-artifact policy
 - add stronger examples for when to choose packs versus skills or rules alone
+- validate the new nested `AGENTS.md` templates against real project adoption
 - keep verification notes current as install and guardrail behavior evolves
 
 ## Medium term

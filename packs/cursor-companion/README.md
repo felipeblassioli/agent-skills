@@ -1,6 +1,6 @@
 ---
 name: cursor-companion
-version: "0.1.0"
+version: "0.1.1"
 description: Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, and operational guides.
 ---
 

@@ -4,6 +4,8 @@ All notable changes to `cursor-companion` should be recorded here.
 
 ## Unreleased
 
+## 0.1.1 - 2026-03-09
+
 ### Added
 
 - guide for structuring root and nested `AGENTS.md` files alongside pack-owned
