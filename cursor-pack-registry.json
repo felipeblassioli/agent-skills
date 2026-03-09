@@ -2,7 +2,7 @@
   "$schema": "./cursor-pack-registry.schema.json",
   "packs": {
     "cursor-companion": {
-      "version": "0.1.1",
+      "version": "0.1.2",
       "author": "felipeblassioli",
       "path": "packs/cursor-companion",
       "targets": [

@@ -1,6 +1,6 @@
 ---
 name: cursor-companion
-version: "0.1.1"
+version: "0.1.2"
 description: Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, and operational guides.
 ---
 
@@ -42,6 +42,7 @@ User installs skip rules because Cursor user rules are managed in settings rathe
 ## Guides
 
 - [guides/installation.md](guides/installation.md)
+- [guides/verify-and-use.md](guides/verify-and-use.md)
 - [guides/usage-patterns.md](guides/usage-patterns.md)
 - [guides/nested-agents-strategy.md](guides/nested-agents-strategy.md)
 - [guides/security-and-guardrails.md](guides/security-and-guardrails.md)

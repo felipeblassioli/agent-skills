@@ -4,6 +4,16 @@ All notable changes to `cursor-companion` should be recorded here.
 
 ## Unreleased
 
+## 0.1.2 - 2026-03-09
+
+### Added
+
+- **guides/verify-and-use.md**: step-by-step verification for project installs (manifest check, expected files, one-liner sanity check)
+
+### Changed
+
+- README: linked verify-and-use in guides section
+
 ## 0.1.1 - 2026-03-09
 
 ### Added
