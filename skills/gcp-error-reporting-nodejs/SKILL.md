@@ -47,6 +47,7 @@ Do NOT apply when:
 | “How do I configure @google-cloud/error-reporting options?” | [nodejs-config quickref](assets/quickref/nodejs-config.md) |
 | “How do I manually report errors from Node.js?” | [nodejs-client-library](references/nodejs-client-library.md) |
 | “How should I format Cloud Logging entries so Error Reporting ingests them?” | [logentry-formatting](references/logentry-formatting.md) |
+| “How do I populate the Error Reporting response code for HTTP handlers?” | [logentry-formatting](references/logentry-formatting.md) |
 | “Which jsonPayload fields does Error Reporting look at?” | [logentry fields quickref](assets/quickref/logentry-fields.md) |
 
 ## Procedure
@@ -63,6 +64,8 @@ Do NOT apply when:
    credentials out of source code.
 5. **Validate safely.** Generate a test error (in a non-production environment) and confirm it
    appears in Error Reporting and/or in Cloud Logging with expected payload shape.
+6. **Distinguish HTTP from non-HTTP workloads.** Only populate Error Reporting HTTP context when the
+   error belongs to an actual HTTP request/response flow.
 
 ## Confirmation Policy
 

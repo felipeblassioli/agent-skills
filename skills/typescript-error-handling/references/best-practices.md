@@ -36,3 +36,9 @@ if (failures.length > 0) {
 ## 3. Keep Domain Errors Clean
 
 Do not leak HTTP status codes or infrastructure concerns into domain errors. A `UserNotFound` domain error should not know about `404`. Map domain errors to HTTP responses at the edge (the controller/router layer).
+
+When the transport boundary also emits observability data, keep that mapping at the same edge:
+
+- Map domain errors to HTTP status codes in the router/controller or framework adapter.
+- Populate logging and error-reporting HTTP fields there as well.
+- Do not store Error Reporting-specific fields like `responseStatusCode` inside domain error types.

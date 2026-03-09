@@ -8,7 +8,8 @@ If multiple exist, Error Reporting evaluates in this order: `stack_trace` > `exc
 
 ## Recommended Error Log Pattern
 
-To ensure logs are caught by Error Reporting and correlated with the active trace, use the following pattern:
+To ensure logs are caught by Error Reporting and correlated with the active trace, use the following
+pattern for HTTP handlers:
 
 ```typescript
 import { context, trace } from '@opentelemetry/api';
@@ -29,7 +30,20 @@ function currentTraceFields(projectId: string) {
   };
 }
 
-export function logError(err: Error, extra: Record<string, unknown> = {}) {
+type HttpRequestContext = {
+  method: string;
+  url: string;
+  responseStatusCode: number;
+  userAgent?: string;
+  remoteIp?: string;
+  referrer?: string;
+};
+
+export function logHttpError(
+  err: Error,
+  httpRequest: HttpRequestContext,
+  extra: Record<string, unknown> = {},
+) {
   const projectId = process.env.GCLOUD_PROJECT ?? 'unknown-project';
   const traceFields = currentTraceFields(projectId);
 
@@ -45,6 +59,9 @@ export function logError(err: Error, extra: Record<string, unknown> = {}) {
         service: process.env.K_SERVICE ?? 'unknown',
         version: process.env.K_REVISION ?? 'unknown',
       },
+      context: {
+        httpRequest,
+      },
       errorName: err.name,
       ...extra,
     },
@@ -53,6 +70,11 @@ export function logError(err: Error, extra: Record<string, unknown> = {}) {
   process.stderr.write(JSON.stringify(entry) + '\n');
 }
 ```
+
+For HTTP-triggered services, `jsonPayload.context.httpRequest.responseStatusCode` is the field that
+backs Error Reporting's response-code display. Keep emitting top-level Cloud Logging `httpRequest`
+objects on request-summary logs as well, but don't confuse that envelope with the Error Reporting
+payload shape.
 
 ## Special Cases
 
@@ -66,3 +88,6 @@ If you need Error Reporting to capture a plain text message even when there is n
 ```
 
 However, if a stack trace is provided in `message` or `exception` within `jsonPayload`, this explicit `@type` is not required.
+
+For background workers or non-HTTP code paths, omit `context.httpRequest` instead of inventing a
+response code.
