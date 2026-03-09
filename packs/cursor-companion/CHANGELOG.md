@@ -2,6 +2,21 @@
 
 All notable changes to `cursor-companion` should be recorded here.
 
+## Unreleased
+
+### Added
+
+- guide for structuring root and nested `AGENTS.md` files alongside pack-owned
+  `.cursor/` assets
+- root and package `AGENTS.md` templates for repository-local customization
+
+### Changed
+
+- clarified that repo-specific nested `AGENTS.md` files are project-authored,
+  while the pack provides templates and guidance
+- updated surface-selection guidance to distinguish `AGENTS.md`,
+  `.cursor/rules`, skills, and packs more clearly
+
 ## 0.1.0 - 2026-03-08
 
 Initial reference release of the pack.

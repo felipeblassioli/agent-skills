@@ -16,6 +16,10 @@ It packages the runtime pieces that do not belong inside `skills/`:
 - MCP configuration examples in `.cursor/mcp.example.json`
 - usage guides and authoring templates for teams adopting the pack
 
+It does not treat repo-specific nested `AGENTS.md` files as pack-managed runtime
+assets. Instead, the pack teaches that pattern through guides and templates while
+leaving the actual repository-local `AGENTS.md` files to the project.
+
 ## Profiles
 
 - `lite`: install reusable subagents and MCP examples without active hooks
@@ -39,6 +43,7 @@ User installs skip rules because Cursor user rules are managed in settings rathe
 
 - [guides/installation.md](guides/installation.md)
 - [guides/usage-patterns.md](guides/usage-patterns.md)
+- [guides/nested-agents-strategy.md](guides/nested-agents-strategy.md)
 - [guides/security-and-guardrails.md](guides/security-and-guardrails.md)
 - [guides/authoring-companion-subagents.md](guides/authoring-companion-subagents.md)
 

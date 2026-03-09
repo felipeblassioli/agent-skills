@@ -374,6 +374,22 @@
         "typesafe"
       ],
       "description": "Type-safe SQL query building in TypeScript using Kysely"
+    },
+    "nested-agents-routing": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "agents-md",
+        "cursor",
+        "monorepo",
+        "routing"
+      ],
+      "description": "Design repository-local agent guidance using root and nested AGENTS.md files, scoped Cursor rules, reusable skills, and pack-owned runtime assets."
     }
   },
   "targetPaths": {
