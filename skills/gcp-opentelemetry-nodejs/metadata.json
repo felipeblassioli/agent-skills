@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "felipeblassioli",
-  "date": "2026-03-06",
+  "date": "2026-03-09",
   "abstract": "Explicit OpenTelemetry JS instrumentation for GCP (Cloud Run/Firebase), structured LogEntry formatting, trace/log correlation, and Error Reporting integration."
 }
