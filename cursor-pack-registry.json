@@ -56,6 +56,34 @@
         "safety"
       ],
       "description": "Portable GCP log-investigation pack with a reusable log-reader subagent and production-safe guidance for Cloud Run, Cloud Functions, and GKE logs."
+    },
+    "node-test-verifier": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "path": "packs/node-test-verifier",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "installPolicy": {
+        "backupOnConflict": true,
+        "defaultProfile": "lite",
+        "projectRules": "project-only",
+        "mcp": "none"
+      },
+      "tags": [
+        "cursor",
+        "testing",
+        "jest",
+        "node",
+        "coverage",
+        "subagents"
+      ],
+      "description": "Portable Node and Jest verifier pack with a reusable subagent for low-noise test execution, tier-aware routing, and compact coverage summaries."
     }
   },
   "targetPaths": {

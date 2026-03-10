@@ -1,0 +1,28 @@
+---
+description: "After substantive Node or Jest changes, prefer low-noise, tier-aware verification with the installed test-verifier subagent and explicit prerequisite handling."
+alwaysApply: false
+---
+
+# Verify After Change
+
+Use the installed `test-verifier` subagent when Node or Jest changes need
+structured verification without flooding the main conversation.
+
+If the repository does not yet have a clear repo-local verifier contract, use
+`test-verifier-bootstrapper` first to inspect `package.json`, local `AGENTS.md`,
+and relevant `.cursor/rules/`, then create or update repo-local overlay files.
+
+- Prefer the smallest meaningful set of tiers based on the repository's
+  changed-file routing rules.
+- Provide the verifier with the repository's working directory, package manager,
+  tier command matrix, prerequisite steps, and coverage-summary paths.
+- Do not assume script names such as `test`, `test:coverage`, or
+  `test:integration`; read the repository's docs or `package.json`.
+- Prefer quiet execution forms such as `npm --silent run ...` when the project
+  uses npm and supports appended Jest flags.
+- Report failures and coverage as a concise verification summary instead of
+  pasting raw Jest output.
+- Treat Docker, emulator, build, and environment prerequisites as explicit
+  checks before running environment-backed tiers.
+- Keep repo-specific commands and routing in local overlays, not in the reusable
+  pack assets.
