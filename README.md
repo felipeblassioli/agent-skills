@@ -166,6 +166,7 @@ bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=project --proj
 See:
 
 - `docs/specs/release-workflow.md`
+- `docs/specs/vercel-skills-compatibility.md`
 - `docs/ADR/ADR-0001-registry-driven-releases-for-skills-and-packs.md`
 
 ## PR Quality Standard
