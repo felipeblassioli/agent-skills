@@ -47,6 +47,44 @@ Reporting treats it as a `ReportedErrorEvent`:
 If you omit `@type` (or set it to a different value), Cloud Logging searches for a field labeled
 `serviceContext` to determine whether the payload is a `ReportedErrorEvent`.
 
+## Populate the Error Reporting response code for HTTP handlers
+
+When the error happened while serving an HTTP request, add HTTP context under the
+`ReportedErrorEvent` shape:
+
+```json
+"jsonPayload": {
+  "serviceContext": {
+    "service": "payments-api",
+    "version": "2026-03-09"
+  },
+  "message": "Error: request failed\n    at ...",
+  "context": {
+    "httpRequest": {
+      "method": "POST",
+      "url": "https://api.example.com/payments",
+      "responseStatusCode": 500,
+      "userAgent": "curl/8.7.1"
+    }
+  },
+  "errorCode": "PAYMENT_PROVIDER_TIMEOUT"
+}
+```
+
+Use `context.httpRequest.responseStatusCode` to populate the Error Reporting UI's response-code
+column. This value should be the actual HTTP response status you returned, such as `400`, `404`,
+`409`, or `500`.
+
+Keep these boundaries clear:
+
+- `context.httpRequest.responseStatusCode` is for Error Reporting's HTTP context.
+- Top-level `httpRequest.status` is for Cloud Logging request-summary logs and log queries.
+- Application-specific or provider-specific error identifiers belong in separate payload fields such
+  as `errorCode`, not in `responseStatusCode`.
+
+If the error is not associated with an HTTP response, leave `context.httpRequest` unset instead of
+inventing a response code.
+
 ## Monitored resource type
 
 Set `resource.type` to a monitored resource type supported by Error Reporting (for example,
