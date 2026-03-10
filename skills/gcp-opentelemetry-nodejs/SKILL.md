@@ -29,6 +29,7 @@ Apply this skill when ANY of the following are true:
 | "How do I bootstrap OpenTelemetry and Google Cloud exporters?" | [references/otel-bootstrap.md](references/otel-bootstrap.md) |
 | "How do I manually instrument an HTTP request?" | [references/http-instrumentation.md](references/http-instrumentation.md) |
 | "How do I format logs so they correlate with traces in GCP?" | [references/structured-logging.md](references/structured-logging.md) |
+| "How do I group long-running workflow logs (operation field)?" | [references/operation-field.md](references/operation-field.md) |
 | "How do I format error logs for Cloud Error Reporting?" | [references/error-reporting.md](references/error-reporting.md) |
 
 ## Procedure

@@ -98,6 +98,10 @@ support `textPayload` (for example `global`).
 - If your stack trace is in an **unsupported format**, Error Reporting may not capture it even if
   it looks “stack-ish”.
 
+## Other LogEntry fields
+
+`LogEntry.operation` (and `logging.googleapis.com/operation` in structured JSON) is for grouping long-running workflow logs in Logs Explorer. It is orthogonal to Error Reporting ingestion: Error Reporting groups by stack trace and context, not by `operation`. You can set both when a workflow boundary log is also an error.
+
 ## See also
 
 - [Quick reference: which fields are evaluated](../assets/quickref/logentry-fields.md)
