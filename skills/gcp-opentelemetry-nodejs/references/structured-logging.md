@@ -9,6 +9,8 @@ Cloud Logging defines `LogEntry` as the durable schema for application logs. Log
 3. Put correlation data in exact fields: `trace`, `spanId`, and `traceSampled`.
 4. Use one request-summary log near response completion. Avoid emitting a full `httpRequest` object on every internal log line.
 
+For **request and span correlation**, use only `trace`, `spanId`, and `traceSampled`. For **grouping long-running workflow logs** (batch jobs, sagas, reconciliations), use the `LogEntry.operation` field; see [operation-field.md](operation-field.md).
+
 ## Extracting Trace Fields
 
 To correctly link logs to OpenTelemetry traces in GCP, extract the active span:
