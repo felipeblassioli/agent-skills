@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Verify whether a GitHub issue is implemented in the current codebase by collecting evidence from the issue, git history, docs, code, and tests, then producing a structured report with verdict, proof, gaps, confidence, and scope-clarity doubts. Use when the user asks whether an issue was resolved or whether a branch or PR truly satisfies an issue. Strictly observational; does not fix code or plan implementation."
+}
