@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-03-11",
+  "abstract": "Production-grade Deno guidance centered on least-privilege permissions, ESM-first dependency strategy, Deno-native testing and style conventions, and deliberate Node/npm interoperability."
+}

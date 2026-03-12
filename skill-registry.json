@@ -221,6 +221,23 @@
       ],
       "description": "Commit hygiene and self-contained pull requests. Highlights production impact, uses gh CLI for opening/updating PRs, and adding proof comments (test runs, coverage reports)."
     },
+    "deno-production-practices": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "deno",
+        "typescript",
+        "runtime",
+        "security",
+        "interop"
+      ],
+      "description": "Production-grade Deno guidance centered on least-privilege permissions, ESM-first dependency strategy, Deno-native testing and style conventions, and deliberate Node/npm interoperability."
+    },
     "create-skill-from-refs": {
       "version": "1.0.0",
       "author": "felipeblassioli",
