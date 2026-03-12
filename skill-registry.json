@@ -235,6 +235,22 @@
       ],
       "description": "Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package. Use when the user asks to create a skill, write a SKILL.md, or package domain knowledge into a reusable skill — especially when they provide reference documents or code as context. Invoke explicitly via /create-skill-from-refs."
     },
+    "cursor-skill-creator": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "cursor",
+        "skill-creation",
+        "quality"
+      ],
+      "description": "Create Cursor skills through Socratic discovery, boundary clarification, strict scope control, and quality-gated scaffolding. Use when the user wants to create or refactor a Cursor skill, define a skill's job and triggers, or turn best practices into a reusable skill package. Invoke explicitly via /cursor-skill-creator."
+    },
     "create-cursor-pack-from-refs": {
       "version": "1.0.0",
       "author": "felipeblassioli",
