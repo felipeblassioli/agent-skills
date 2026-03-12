@@ -83,7 +83,9 @@ This skill supports both issue-only verification and issue-vs-branch-or-PR verif
 
 Default path:
 
-1. Run `scripts/collect-evidence.sh --issue <number>` (from skill root; or from repo root: `skills/gh-issue-verifier/scripts/collect-evidence.sh`).
+1. Run the collector from the target repository root when possible:
+   - `bash skills/gh-issue-verifier/scripts/collect-evidence.sh --issue <number>`
+   - If running from the installed skill directory, pass `--repo-root /path/to/repo`
 2. Inspect at most 5 candidate implementation files first.
 3. Inspect at most 3 candidate test files first.
 4. Decide whether more code or history needs to be opened.

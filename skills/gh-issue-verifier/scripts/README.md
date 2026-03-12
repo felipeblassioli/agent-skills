@@ -9,12 +9,18 @@ Scripts in this directory should gather compact facts and emit machine-readable 
 
 ## Run Model
 
-Prefer direct execution from the repository root:
+Prefer direct execution from the target repository root.
 
-From skill root (e.g. `~/.cursor/skills/gh-issue-verifier/` or `skills/gh-issue-verifier/`):
+From the target repository root:
 
 ```bash
-bash scripts/collect-evidence.sh --issue 123
+bash skills/gh-issue-verifier/scripts/collect-evidence.sh --issue 123
+```
+
+From skill root (for example `~/.cursor/skills/gh-issue-verifier/`) provide `--repo-root`:
+
+```bash
+bash scripts/collect-evidence.sh --repo-root /path/to/repo --issue 123
 ```
 
 Example with repo and PR context:
@@ -36,6 +42,7 @@ Scripts should emit JSON to stdout with fields like:
 ```json
 {
   "repo_detected": "owner/name",
+  "repo_root_detected": "/path/to/repo",
   "repo_autodetected": true,
   "issue": {
     "number": 123,
@@ -75,6 +82,7 @@ Scripts should emit JSON to stdout with fields like:
 - Use the script before falling back to raw `gh` commands.
 - Treat script output as a starting point, not final proof.
 - If `has_more_candidate_files`, `has_more_candidate_tests`, or `api_errors` are present, treat the collection as bounded or incomplete.
+- If you run from outside the target repository, pass `--repo-root` and usually `--repo`.
 
 ## Cross-Links
 

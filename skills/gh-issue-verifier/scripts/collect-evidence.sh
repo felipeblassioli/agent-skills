@@ -5,12 +5,34 @@ issue=""
 repo=""
 pr=""
 branch=""
+repo_root=""
 history_days="90"
 repo_autodetected="false"
 linked_prs_cap="3"
 candidate_file_limit="40"
 candidate_test_limit="20"
 api_errors=()
+
+sanitize_error() {
+  tr '\n' ' ' < "$1" | sed 's/[[:space:]]\+/ /g' | sed "s/\"/'/g"
+}
+
+emit_error_json() {
+  local message="$1"
+  jq -n \
+    --arg error "$message" \
+    --arg repo "${repo:-}" \
+    --arg issue "${issue:-}" \
+    --arg repo_root "${repo_root:-}" '
+      {
+        error: $error,
+        repo_detected: (if $repo == "" then null else $repo end),
+        repo_root_detected: (if $repo_root == "" then null else $repo_root end),
+        issue: (if $issue == "" then null else $issue end)
+      }
+    '
+  exit 1
+}
 
 join_json_arrays() {
   jq -sc 'add | unique'
@@ -34,51 +56,92 @@ while [[ $# -gt 0 ]]; do
       branch="${2:-}"
       shift 2
       ;;
+    --repo-root)
+      repo_root="${2:-}"
+      shift 2
+      ;;
     --history-days)
       history_days="${2:-}"
       shift 2
       ;;
     *)
       echo "Unknown argument: $1" >&2
-      echo "Usage: collect-evidence.sh --issue <number> [--repo owner/name] [--pr <number>] [--branch <name>] [--history-days <days>]" >&2
+      echo "Usage: collect-evidence.sh --issue <number|issue-url> [--repo owner/name] [--repo-root /path/to/repo] [--pr <number>] [--branch <name>] [--history-days <days>]" >&2
       exit 1
       ;;
   esac
 done
 
+if [[ "$issue" =~ /issues/[0-9]+([/?#].*)?$ ]]; then
+  issue="$(sed -E 's#^.*/issues/([0-9]+)([/?#].*)?$#\1#' <<<"$issue")"
+fi
+
 if [[ -z "$issue" ]]; then
-  echo "Usage: collect-evidence.sh --issue <number> [--repo owner/name] [--pr <number>] [--branch <name>] [--history-days <days>]" >&2
+  echo "Usage: collect-evidence.sh --issue <number|issue-url> [--repo owner/name] [--repo-root /path/to/repo] [--pr <number>] [--branch <name>] [--history-days <days>]" >&2
   exit 1
+fi
+
+if [[ ! "$issue" =~ ^[0-9]+$ ]]; then
+  emit_error_json "issue must be a numeric issue number or a GitHub issue URL"
 fi
 
 if ! command -v gh >/dev/null 2>&1; then
-  echo '{"error":"gh CLI is required"}' >&2
-  exit 1
+  emit_error_json "gh CLI is required"
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo '{"error":"jq is required"}' >&2
-  exit 1
+  emit_error_json "jq is required"
 fi
 
 if ! gh auth status >/dev/null 2>&1; then
-  echo '{"error":"gh auth status failed; authenticate before running this script"}' >&2
-  exit 1
+  emit_error_json "gh auth status failed; authenticate before running this script"
+fi
+
+git_cmd=(git)
+if [[ -n "$repo_root" ]]; then
+  if ! resolved_repo_root="$(git -C "$repo_root" rev-parse --show-toplevel 2>/dev/null)"; then
+    emit_error_json "repo_root is not a git repository: $repo_root"
+  fi
+  repo_root="$resolved_repo_root"
+elif resolved_repo_root="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+  repo_root="$resolved_repo_root"
+fi
+
+if [[ -n "$repo_root" ]]; then
+  git_cmd=(git -C "$repo_root")
 fi
 
 if [[ -z "$repo" ]]; then
-  repo="$(gh repo view --json nameWithOwner -q '.nameWithOwner')"
+  if [[ -n "$repo_root" ]]; then
+    if ! repo="$(cd "$repo_root" && gh repo view --json nameWithOwner -q '.nameWithOwner' 2>/dev/null)"; then
+      emit_error_json "could not auto-detect GitHub repository from repo_root; pass --repo explicitly"
+    fi
+  elif ! repo="$(gh repo view --json nameWithOwner -q '.nameWithOwner' 2>/dev/null)"; then
+    emit_error_json "could not auto-detect GitHub repository from the current directory; pass --repo explicitly"
+  fi
   repo_autodetected="true"
 fi
 
-default_branch="$(gh repo view "$repo" --json defaultBranchRef -q '.defaultBranchRef.name')"
+default_branch_error_file="$(mktemp)"
+if ! default_branch="$(gh repo view "$repo" --json defaultBranchRef -q '.defaultBranchRef.name' 2>"$default_branch_error_file")"; then
+  error_message="$(sanitize_error "$default_branch_error_file")"
+  rm -f "$default_branch_error_file"
+  emit_error_json "failed to resolve default branch for $repo: $error_message"
+fi
+rm -f "$default_branch_error_file"
 
-issue_json="$(gh issue view "$issue" --repo "$repo" --json number,title,body,url,state,labels,author)"
+issue_error_file="$(mktemp)"
+if ! issue_json="$(gh issue view "$issue" --repo "$repo" --json number,title,body,url,state,labels,author 2>"$issue_error_file")"; then
+  error_message="$(sanitize_error "$issue_error_file")"
+  rm -f "$issue_error_file"
+  emit_error_json "failed to fetch issue #$issue from $repo: $error_message"
+fi
+rm -f "$issue_error_file"
 
 timeline_json='[]'
 timeline_error_file="$(mktemp)"
 if ! timeline_json="$(gh api -H "Accept: application/vnd.github+json" "repos/$repo/issues/$issue/timeline?per_page=100" 2>"$timeline_error_file")"; then
-  api_errors+=("issue timeline API failed: $(tr '\n' ' ' < "$timeline_error_file" | sed 's/[[:space:]]\\+/ /g' | sed 's/\"/'"'"'/g')")
+  api_errors+=("issue timeline API failed: $(sanitize_error "$timeline_error_file")")
   timeline_json='[]'
 fi
 rm -f "$timeline_error_file"
@@ -121,7 +184,7 @@ search_prs_json="$(
   if gh search prs "\"#$issue\" repo:$repo" --limit 10 --json number,title,url,state,mergedAt,headRefName,baseRefName 2>"$search_error_file"; then
     :
   else
-    api_errors+=("PR search failed: $(tr '\n' ' ' < "$search_error_file" | sed 's/[[:space:]]\\+/ /g' | sed 's/\"/'"'"'/g')")
+    api_errors+=("PR search failed: $(sanitize_error "$search_error_file")")
     echo '[]'
   fi
   rm -f "$search_error_file"
@@ -129,9 +192,9 @@ search_prs_json="$(
 
 recent_commits_json='[]'
 recent_commit_files_json='[]'
-if git rev-parse --show-toplevel >/dev/null 2>&1; then
+if [[ -n "$repo_root" ]]; then
   all_recent_commits_raw="$(
-    git log --since="${history_days} days ago" --no-merges --format='%H%x09%s' 2>/dev/null || true
+    "${git_cmd[@]}" log --since="${history_days} days ago" --no-merges --format='%H%x09%s' 2>/dev/null || true
   )"
   recent_commits_json="$(
     printf '%s\n' "$all_recent_commits_raw" \
@@ -160,7 +223,7 @@ if git rev-parse --show-toplevel >/dev/null 2>&1; then
     recent_commit_files_json="$(
       while IFS=$'\t' read -r commit_sha _subject; do
         [[ -z "$commit_sha" ]] && continue
-        git show --pretty='' --name-only "$commit_sha" 2>/dev/null || true
+        "${git_cmd[@]}" show --pretty='' --name-only "$commit_sha" 2>/dev/null || true
       done <<<"$recent_commits_raw" \
         | jq -Rsc 'split("\n") | map(select(length > 0)) | unique'
     )"
@@ -175,7 +238,7 @@ if [[ -n "$pr" ]]; then
     gh pr view "$pr" --repo "$repo" \
       --json number,title,url,state,isDraft,mergedAt,headRefName,baseRefName,files 2>"$pr_error_file"
   )"; then
-    api_errors+=("target PR lookup failed: $(tr '\n' ' ' < "$pr_error_file" | sed 's/[[:space:]]\\+/ /g' | sed 's/\"/'"'"'/g')")
+    api_errors+=("target PR lookup failed: $(sanitize_error "$pr_error_file")")
     pr_target_json='null'
   fi
   rm -f "$pr_error_file"
@@ -186,23 +249,23 @@ fi
 
 branch_files_json='[]'
 branch_gap=""
-if [[ -n "$branch" ]] && git rev-parse --show-toplevel >/dev/null 2>&1; then
+if [[ -n "$branch" ]] && [[ -n "$repo_root" ]]; then
   base_ref=""
-  if git rev-parse --verify "origin/$default_branch" >/dev/null 2>&1; then
+  if "${git_cmd[@]}" rev-parse --verify "origin/$default_branch" >/dev/null 2>&1; then
     base_ref="origin/$default_branch"
-  elif git rev-parse --verify "$default_branch" >/dev/null 2>&1; then
+  elif "${git_cmd[@]}" rev-parse --verify "$default_branch" >/dev/null 2>&1; then
     base_ref="$default_branch"
   fi
 
   if [[ -z "$base_ref" ]]; then
     branch_gap="default branch ref not found locally for branch comparison"
-  elif ! git rev-parse --verify "$branch" >/dev/null 2>&1; then
+  elif ! "${git_cmd[@]}" rev-parse --verify "$branch" >/dev/null 2>&1; then
     branch_gap="target branch '$branch' not found locally"
   else
-    merge_base="$(git merge-base "$branch" "$base_ref" 2>/dev/null || true)"
+    merge_base="$("${git_cmd[@]}" merge-base "$branch" "$base_ref" 2>/dev/null || true)"
     if [[ -n "$merge_base" ]]; then
       branch_files_json="$(
-        git diff --name-only "$merge_base...$branch" \
+        "${git_cmd[@]}" diff --name-only "$merge_base...$branch" \
           | jq -Rsc 'split("\n") | map(select(length > 0)) | unique'
       )"
     else
@@ -224,7 +287,7 @@ while IFS= read -r linked_pr_number; do
   [[ -z "$linked_pr_number" || "$linked_pr_number" == "null" ]] && continue
   linked_pr_error_file="$(mktemp)"
   if ! pr_paths="$(gh pr view "$linked_pr_number" --repo "$repo" --json files --jq '[.files[].path] | unique' 2>"$linked_pr_error_file")"; then
-    api_errors+=("linked PR file lookup failed for #$linked_pr_number: $(tr '\n' ' ' < "$linked_pr_error_file" | sed 's/[[:space:]]\\+/ /g' | sed 's/\"/'"'"'/g')")
+    api_errors+=("linked PR file lookup failed for #$linked_pr_number: $(sanitize_error "$linked_pr_error_file")")
     pr_paths='[]'
   fi
   rm -f "$linked_pr_error_file"
@@ -316,6 +379,7 @@ api_errors_json="$(
 
 jq -n \
   --arg repo "$repo" \
+  --arg repo_root "$repo_root" \
   --arg repo_autodetected "$repo_autodetected" \
   --arg linked_prs_cap "$linked_prs_cap" \
   --argjson all_candidate_prs_count "$all_candidate_prs_count" \
@@ -339,6 +403,7 @@ jq -n \
   --argjson gaps "$gaps_json" '
     {
       repo_detected: $repo,
+      repo_root_detected: (if $repo_root == "" then null else $repo_root end),
       repo_autodetected: ($repo_autodetected == "true"),
       issue: ($issue + {repo: $repo}),
       target: {
