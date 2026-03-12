@@ -35,20 +35,33 @@ Scripts should emit JSON to stdout with fields like:
 
 ```json
 {
+  "repo_detected": "owner/name",
+  "repo_autodetected": true,
   "issue": {
     "number": 123,
     "title": "Example issue",
-    "body_excerpt": "First meaningful lines only"
+    "body_excerpt": "First meaningful lines only",
+    "body_truncated": false
   },
   "target": {
     "mode": "issue-vs-pr"
   },
   "linked_prs": [],
+  "all_candidate_prs_count": 2,
+  "linked_prs_cap": 3,
+  "has_more_candidate_prs": false,
   "referenced_prs": [],
   "linked_commits": [],
   "recent_commits": [],
+  "candidate_file_limit": 40,
+  "candidate_test_limit": 20,
+  "candidate_file_count_total": 7,
+  "candidate_test_count_total": 2,
+  "has_more_candidate_files": false,
+  "has_more_candidate_tests": false,
   "candidate_files": [],
   "candidate_tests": [],
+  "api_errors": [],
   "gaps": [],
   "notes": []
 }
@@ -61,6 +74,7 @@ Scripts should emit JSON to stdout with fields like:
 - Do not make verdict decisions inside scripts unless explicitly designed for that purpose.
 - Use the script before falling back to raw `gh` commands.
 - Treat script output as a starting point, not final proof.
+- If `has_more_candidate_files`, `has_more_candidate_tests`, or `api_errors` are present, treat the collection as bounded or incomplete.
 
 ## Cross-Links
 

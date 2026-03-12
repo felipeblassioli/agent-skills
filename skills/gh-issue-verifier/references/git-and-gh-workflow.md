@@ -7,14 +7,15 @@ Use `gh` as the primary source for issue, PR, and repository context, then use g
 ## Primary Workflow
 
 1. Run the evidence collector script first.
-2. Read the issue body, labels, timeline clues, linked PRs, and linked commits.
-3. Determine the verification mode:
+2. Confirm `repo_detected`, `repo_autodetected`, and any `api_errors` or truncation flags in the script output.
+3. Read the issue body, labels, timeline clues, linked PRs, and linked commits.
+4. Determine the verification mode:
    - issue-only
    - issue-vs-branch
    - issue-vs-pr
-4. Inspect the target PR or branch if one is provided.
-5. Inspect recent git history for related commits and touched files.
-6. Open the most relevant code, docs, and tests for direct inspection.
+5. Inspect the target PR or branch if one is provided.
+6. Inspect recent git history for related commits and touched files.
+7. Open the most relevant code, docs, and tests for direct inspection.
 
 ## Command Strategy
 
@@ -36,6 +37,17 @@ gh api repos/owner/name/issues/123/timeline?per_page=100 -H "Accept: application
 ```
 
 Use `jq` projections to keep output compact.
+
+When the script reports:
+
+- `repo_autodetected: true`
+  confirm the repository matches the intended target before trusting the rest of the output
+- `has_more_candidate_prs: true`
+  treat linked-PR-derived file discovery as bounded, not exhaustive
+- `has_more_candidate_files: true` or `has_more_candidate_tests: true`
+  widen carefully instead of assuming the current candidate set is exhaustive
+- `api_errors`
+  treat missing evidence as potentially inaccessible, not necessarily absent
 
 Use `gh` for:
 
@@ -67,6 +79,7 @@ In issue-only mode:
 - verify whether the current codebase state appears to satisfy the issue
 - inspect likely changed areas even if there is no linked PR
 - do not assume current behavior from repository metadata alone
+- if candidate files are empty, extract issue fingerprints and search with `rg` before widening to broad exploration
 
 ## Issue-vs-Branch Or PR Mode
 

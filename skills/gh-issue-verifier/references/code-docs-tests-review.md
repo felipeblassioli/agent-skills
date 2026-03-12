@@ -42,7 +42,7 @@ Report one of:
 
 - Prefer tests that directly target the issue scenario.
 - A meaningful test should fail before the fix and pass after it.
-- Tests that only touch the same file are not enough.
+- Co-located tests can still be strong evidence if they clearly exercise the issue scenario.
 - If only snapshot or smoke coverage exists, mark that as weak evidence.
 - Note whether new tests were added or existing tests were extended.
 

@@ -6,6 +6,11 @@ repo=""
 pr=""
 branch=""
 history_days="90"
+repo_autodetected="false"
+linked_prs_cap="3"
+candidate_file_limit="40"
+candidate_test_limit="20"
+api_errors=()
 
 join_json_arrays() {
   jq -sc 'add | unique'
@@ -63,13 +68,20 @@ fi
 
 if [[ -z "$repo" ]]; then
   repo="$(gh repo view --json nameWithOwner -q '.nameWithOwner')"
+  repo_autodetected="true"
 fi
 
 default_branch="$(gh repo view "$repo" --json defaultBranchRef -q '.defaultBranchRef.name')"
 
 issue_json="$(gh issue view "$issue" --repo "$repo" --json number,title,body,url,state,labels,author)"
 
-timeline_json="$(gh api -H "Accept: application/vnd.github+json" "repos/$repo/issues/$issue/timeline?per_page=100")"
+timeline_json='[]'
+timeline_error_file="$(mktemp)"
+if ! timeline_json="$(gh api -H "Accept: application/vnd.github+json" "repos/$repo/issues/$issue/timeline?per_page=100" 2>"$timeline_error_file")"; then
+  api_errors+=("issue timeline API failed: $(tr '\n' ' ' < "$timeline_error_file" | sed 's/[[:space:]]\\+/ /g' | sed 's/\"/'"'"'/g')")
+  timeline_json='[]'
+fi
+rm -f "$timeline_error_file"
 
 linked_prs_json="$(
   jq '
@@ -105,29 +117,44 @@ linked_commits_json="$(
 )"
 
 search_prs_json="$(
-  gh search prs "\"#$issue\" repo:$repo" --limit 10 --json number,title,url,state,mergedAt,headRefName,baseRefName 2>/dev/null \
-    || echo '[]'
+  search_error_file="$(mktemp)"
+  if gh search prs "\"#$issue\" repo:$repo" --limit 10 --json number,title,url,state,mergedAt,headRefName,baseRefName 2>"$search_error_file"; then
+    :
+  else
+    api_errors+=("PR search failed: $(tr '\n' ' ' < "$search_error_file" | sed 's/[[:space:]]\\+/ /g' | sed 's/\"/'"'"'/g')")
+    echo '[]'
+  fi
+  rm -f "$search_error_file"
 )"
 
 recent_commits_json='[]'
 recent_commit_files_json='[]'
 if git rev-parse --show-toplevel >/dev/null 2>&1; then
-  recent_commits_raw="$(
-    git log --since="${history_days} days ago" --no-merges --regexp-ignore-case --grep="#$issue" \
-      --format='%H%x09%s' 2>/dev/null || true
+  all_recent_commits_raw="$(
+    git log --since="${history_days} days ago" --no-merges --format='%H%x09%s' 2>/dev/null || true
   )"
-  if [[ -n "$recent_commits_raw" ]]; then
+  recent_commits_json="$(
+    printf '%s\n' "$all_recent_commits_raw" \
+      | jq -Rsc --arg issue "$issue" '
+          split("\n")
+          | map(select(length > 0))
+          | map(split("\t"))
+          | map({
+              sha: .[0][0:12],
+              subject: .[1]
+            })
+          | map(select(
+              (.subject | test("(^|[^0-9])#" + $issue + "([^0-9]|$)"; "i"))
+              or (.subject | test("\\(#" + $issue + "\\)"; "i"))
+              or (.subject | test("(close[sd]?|fix(e[sd])?|resolve[sd]?)[: ]+?#" + $issue + "([^0-9]|$)"; "i"))
+            ))
+        '
+  )"
+
+  if [[ "$(jq 'length' <<<"$recent_commits_json")" -gt 0 ]]; then
+    recent_commits_raw="$(jq -r '.[] | [.sha, .subject] | @tsv' <<<"$recent_commits_json")"
     recent_commits_json="$(
-      printf '%s\n' "$recent_commits_raw" \
-        | jq -Rsc '
-            split("\n")
-            | map(select(length > 0))
-            | map(split("\t"))
-            | map({
-                sha: .[0][0:12],
-                subject: .[1]
-              })
-          '
+      jq '.' <<<"$recent_commits_json"
     )"
 
     recent_commit_files_json="$(
@@ -143,11 +170,18 @@ fi
 pr_target_json='null'
 pr_files_json='[]'
 if [[ -n "$pr" ]]; then
-  pr_target_json="$(
+  pr_error_file="$(mktemp)"
+  if ! pr_target_json="$(
     gh pr view "$pr" --repo "$repo" \
-      --json number,title,url,state,isDraft,mergedAt,headRefName,baseRefName,files
-  )"
-  pr_files_json="$(jq '[.files[].path] | unique' <<<"$pr_target_json")"
+      --json number,title,url,state,isDraft,mergedAt,headRefName,baseRefName,files 2>"$pr_error_file"
+  )"; then
+    api_errors+=("target PR lookup failed: $(tr '\n' ' ' < "$pr_error_file" | sed 's/[[:space:]]\\+/ /g' | sed 's/\"/'"'"'/g')")
+    pr_target_json='null'
+  fi
+  rm -f "$pr_error_file"
+  if [[ "$pr_target_json" != "null" ]]; then
+    pr_files_json="$(jq '[.files[].path] | unique' <<<"$pr_target_json")"
+  fi
 fi
 
 branch_files_json='[]'
@@ -184,36 +218,57 @@ all_candidate_prs_json="$(
     "$(jq '[.[] | {number, title, url, state}]' <<<"$search_prs_json")" \
     | join_json_arrays
 )"
+all_candidate_prs_count="$(jq 'length' <<<"$all_candidate_prs_json")"
 
 while IFS= read -r linked_pr_number; do
   [[ -z "$linked_pr_number" || "$linked_pr_number" == "null" ]] && continue
-  pr_paths="$(gh pr view "$linked_pr_number" --repo "$repo" --json files --jq '[.files[].path] | unique' 2>/dev/null || echo '[]')"
+  linked_pr_error_file="$(mktemp)"
+  if ! pr_paths="$(gh pr view "$linked_pr_number" --repo "$repo" --json files --jq '[.files[].path] | unique' 2>"$linked_pr_error_file")"; then
+    api_errors+=("linked PR file lookup failed for #$linked_pr_number: $(tr '\n' ' ' < "$linked_pr_error_file" | sed 's/[[:space:]]\\+/ /g' | sed 's/\"/'"'"'/g')")
+    pr_paths='[]'
+  fi
+  rm -f "$linked_pr_error_file"
   linked_pr_file_sets="$(
     printf '%s\n%s\n' "$linked_pr_file_sets" "$pr_paths" | join_json_arrays
   )"
 done < <(jq -r '.[].number // empty' <<<"$all_candidate_prs_json" | sed -n '1,3p')
 
-candidate_files_json="$(
+combined_candidate_paths_json="$(
   printf '%s\n%s\n%s\n%s\n' "$pr_files_json" "$branch_files_json" "$linked_pr_file_sets" "$recent_commit_files_json" \
-    | join_json_arrays \
-    | jq '
+    | join_json_arrays
+)"
+
+candidate_files_json="$(
+  jq --argjson limit "$candidate_file_limit" '
         map(select(test("(^|/)(test|tests|__tests__)/") | not))
         | map(select(test("\\.(spec|test)\\.[[:alnum:]]+$") | not))
-        | .[:40]
-      '
+        | .[:$limit]
+      ' <<<"$combined_candidate_paths_json"
 )"
 
 candidate_tests_json="$(
-  printf '%s\n%s\n%s\n%s\n' "$pr_files_json" "$branch_files_json" "$linked_pr_file_sets" "$recent_commit_files_json" \
-    | join_json_arrays \
-    | jq '
+  jq --argjson limit "$candidate_test_limit" '
         map(select(
           test("(^|/)(test|tests|__tests__)/")
           or test("\\.(spec|test)\\.[[:alnum:]]+$")
         ))
-        | .[:20]
-      '
+        | .[:$limit]
+      ' <<<"$combined_candidate_paths_json"
 )"
+
+candidate_file_count_total="$(jq '
+        map(select(test("(^|/)(test|tests|__tests__)/") | not))
+        | map(select(test("\\.(spec|test)\\.[[:alnum:]]+$") | not))
+        | length
+      ' <<<"$combined_candidate_paths_json")"
+
+candidate_test_count_total="$(jq '
+        map(select(
+          test("(^|/)(test|tests|__tests__)/")
+          or test("\\.(spec|test)\\.[[:alnum:]]+$")
+        ))
+        | length
+      ' <<<"$combined_candidate_paths_json")"
 
 issue_summary_json="$(
   jq '
@@ -225,6 +280,7 @@ issue_summary_json="$(
       author: (.author.login // null),
       labels: [.labels[].name],
       body_excerpt: ((.body // "") | gsub("\\r"; "") | split("\n") | map(select(length > 0)) | .[:8] | join("\n")),
+      body_truncated: (((.body // "") | gsub("\\r"; "") | split("\n") | map(select(length > 0)) | length) > 8),
       has_acceptance_clues: ((.body // "") | test("acceptance criteria|expected behavior|definition of done"; "i")),
       has_repro_clues: ((.body // "") | test("steps to reproduce|repro|reproduction"; "i"))
     }
@@ -248,13 +304,25 @@ gaps_json="$(
         (if ($candidate_tests | length) == 0 then "no candidate tests identified from target diff sources" else empty end),
         (if $issue_summary.has_acceptance_clues then empty else "issue body has no obvious acceptance-criteria markers" end),
         (if $issue_summary.has_repro_clues then empty else "issue body has no obvious reproduction markers" end),
+        (if $issue_summary.body_truncated then "issue body excerpt was truncated; fetch the full body if acceptance details may appear later" else empty end),
         (if $branch_gap == "" then empty else $branch_gap end)
       ]
     '
 )"
 
+api_errors_json="$(
+  printf '%s\n' "${api_errors[@]:-}" | jq -Rsc 'split("\n") | map(select(length > 0))'
+)"
+
 jq -n \
   --arg repo "$repo" \
+  --arg repo_autodetected "$repo_autodetected" \
+  --arg linked_prs_cap "$linked_prs_cap" \
+  --argjson all_candidate_prs_count "$all_candidate_prs_count" \
+  --argjson candidate_file_limit "$candidate_file_limit" \
+  --argjson candidate_test_limit "$candidate_test_limit" \
+  --argjson candidate_file_count_total "$candidate_file_count_total" \
+  --argjson candidate_test_count_total "$candidate_test_count_total" \
   --arg issue_id "$issue" \
   --arg default_branch "$default_branch" \
   --arg history_days "$history_days" \
@@ -267,8 +335,11 @@ jq -n \
   --arg branch "$branch" \
   --argjson candidate_files "$candidate_files_json" \
   --argjson candidate_tests "$candidate_tests_json" \
+  --argjson api_errors "$api_errors_json" \
   --argjson gaps "$gaps_json" '
     {
+      repo_detected: $repo,
+      repo_autodetected: ($repo_autodetected == "true"),
       issue: ($issue + {repo: $repo}),
       target: {
         mode:
@@ -303,15 +374,26 @@ jq -n \
         headRefName,
         baseRefName
       })),
+      all_candidate_prs_count: $all_candidate_prs_count,
+      linked_prs_cap: ($linked_prs_cap | tonumber),
+      has_more_candidate_prs: ($all_candidate_prs_count > ($linked_prs_cap | tonumber)),
       linked_commits: $linked_commits,
       recent_commits: $recent_commits,
+      candidate_file_limit: $candidate_file_limit,
+      candidate_test_limit: $candidate_test_limit,
+      candidate_file_count_total: $candidate_file_count_total,
+      candidate_test_count_total: $candidate_test_count_total,
+      has_more_candidate_files: ($candidate_file_count_total > $candidate_file_limit),
+      has_more_candidate_tests: ($candidate_test_count_total > $candidate_test_limit),
       candidate_files: $candidate_files,
       candidate_tests: $candidate_tests,
+      api_errors: $api_errors,
       gaps: $gaps,
       notes: [
         "Inspect candidate_files first; widen only if evidence is ambiguous.",
         "Use candidate_tests to check for issue-specific behavior coverage.",
-        "Use linked_prs and referenced_prs as hints, not proof."
+        "Use linked_prs and referenced_prs as hints, not proof.",
+        (if ($repo_autodetected == "true") then "Repository was auto-detected; confirm it matches the intended target repo." else empty end)
       ]
     }
   '

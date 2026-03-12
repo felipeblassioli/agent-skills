@@ -6,12 +6,18 @@ Choose the most honest verdict based on observed evidence.
 
 ## RESOLVED
 
-Use `RESOLVED` only when most of the following are true:
+Use `RESOLVED` only when both of the following are true:
 
 - the issue's reported behavior is clearly addressed in code
 - the relevant target branch, PR, or current codebase contains that behavior change
-- tests directly cover the issue scenario, or equivalent strong evidence exists
-- there are no major unresolved contradictions in docs, code, or linked history
+
+And at least one of the following is also true:
+
+- tests directly cover the issue scenario
+- the target PR or branch diff explicitly maps to the issue scenario
+- equivalent strong evidence exists and is described explicitly in the report
+
+Do not use `RESOLVED` when major contradictions remain in docs, code, linked history, or repository state.
 
 ## NOT RESOLVED
 
@@ -40,7 +46,8 @@ Use `INCONCLUSIVE` when any of the following apply:
 
 ## Confidence Pairing
 
-- `RESOLVED` with `Low` confidence should be rare.
+- `RESOLVED` with `Low` confidence should be avoided.
+- `RESOLVED` without targeted tests should usually be capped at `Medium` confidence unless the alternative proof is unusually strong.
 - `NOT RESOLVED` may still have `High` confidence when the missing behavior is explicit.
 - `INCONCLUSIVE` is often appropriate with `Low` or `Medium` confidence.
 

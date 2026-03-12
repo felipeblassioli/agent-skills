@@ -1,6 +1,6 @@
 ---
 name: gh-issue-verifier
-description: Verify whether a GitHub issue is implemented in the current codebase by collecting evidence from the GitHub issue, git history, docs, code, and tests, then producing a structured report with verdict, proof, gaps, confidence, and scope-clarity doubts. Use when the user asks whether an issue was resolved or whether a branch or PR truly satisfies an issue. Do not use for fixing code, implementation planning, or generic PR review.
+description: Verify whether a GitHub issue is implemented in the current codebase by collecting evidence from the GitHub issue, git history, docs, code, and tests, then producing a structured report with verdict, proof, gaps, confidence, and scope-clarity doubts. Use when the user asks whether an issue was resolved or whether a branch or PR truly satisfies a specific issue. Do not use for fixing code, implementation planning, or generic PR review that is not issue-grounded.
 ---
 
 # GH Issue Verifier
@@ -20,7 +20,7 @@ Do not use it for:
 - fixing code
 - implementation planning
 - writing or editing PR descriptions
-- generic code review without a concrete issue-verification target
+- generic code review or generic PR review without a concrete issue-verification target
 - assuming an issue is resolved based only on linked commits or PRs
 
 ## Inputs Required
@@ -39,15 +39,7 @@ Optional comparison target:
 Fallback when `gh` is unavailable:
 - pasted issue title and body
 
-## Verification Modes
-
-### Issue-only
-
-Determine whether the current codebase state appears to satisfy the issue.
-
-### Issue vs branch or PR
-
-Determine whether a specific branch or PR appears to satisfy the issue, and whether the evidence is strong enough to claim resolution.
+This skill supports both issue-only verification and issue-vs-branch-or-PR verification.
 
 ## Routing Table
 
@@ -64,16 +56,21 @@ Determine whether a specific branch or PR appears to satisfy the issue, and whet
 ## Procedure
 
 1. Run `scripts/collect-evidence.sh` first and use its JSON as the initial fact base.
-2. Decide whether verification is issue-only or issue-vs-branch-or-PR.
-3. Inspect only the top candidate files and candidate tests from the script output.
+2. Inspect only the top candidate files and candidate tests from the script output.
+3. If the script reports no candidates, derive search anchors from the issue:
+   - symbols or function names
+   - file paths or directories
+   - API routes
+   - error strings
+   - config keys
+   Then search with `rg` in the most likely subsystem before widening further.
 4. Read additional reference docs only when needed:
    - `issue-parsing.md` if the issue is vague
    - `code-docs-tests-review.md` when checking implementation logic
    - `evidence-ranking.md` and `verdict-rubric.md` when choosing the verdict
    - `scope-clarity-audit.md` when issue quality is weak
 5. Widen the search only if the initial evidence is ambiguous or contradictory.
-6. Record evidence for and against resolution.
-7. Produce a strictly observational report with:
+6. Produce a strictly observational report with:
    - verdict: `RESOLVED`, `NOT RESOLVED`, or `INCONCLUSIVE`
    - evidence of fix
    - documentation status
@@ -99,6 +96,7 @@ Only widen the search when:
 - the issue is ambiguous
 - metadata and code evidence conflict
 - the target PR or branch appears only partially related
+- the script reports bounded or truncated candidate lists
 
 ## Evidence Budget
 
@@ -108,52 +106,10 @@ Only widen the search when:
 - Avoid opening more files once the verdict can already be justified honestly.
 - Prefer `INCONCLUSIVE` over expanding the search without a strong reason.
 
-## Evidence Hierarchy
-
-Use stronger evidence before weaker evidence:
-
-1. direct code-path inspection
-2. targeted tests for the reported scenario
-3. issue-linked PR or branch diffs
-4. linked commits and timeline discussion
-5. documentation or changelog updates
-6. commit-message intent without direct proof
-
-Do not treat lower-ranked signals as sufficient proof when higher-ranked checks are missing or contradictory.
-
-## Delegation Policy
-
-Use a faster subagent for bounded grunt work when available:
-
-- collecting issue, PR, and commit facts
-- narrowing candidate files and tests
-- summarizing linked timeline evidence
-
-Keep the main agent responsible for:
-
-- interpreting ambiguity
-- weighing contradictory signals
-- choosing the verdict
-- writing the final report
-
-If a subagent is used, require it to return compact structured output rather than prose dumps.
-
 ## Confirmation Policy
 
-- Do not suggest code fixes or refactors.
-- Do not claim resolution from weak signals alone.
-- Treat missing or ambiguous evidence as a reportable gap.
-- Use `INCONCLUSIVE` when the evidence is insufficient.
-- Keep recommendations strictly observational:
-  - missing proof
-  - missing tests
-  - missing docs
-  - scope ambiguity
+Keep the final report strictly observational. Do not suggest code fixes or refactors, do not claim resolution from weak signals alone, and use `INCONCLUSIVE` when evidence is missing, contradictory, truncated, or access-limited.
 
-## Verification Checklist
-
-- [ ] The skill applies only when there is a concrete issue-verification target.
-- [ ] `gh` is used as the preferred source when available.
-- [ ] The correct reference doc is read for parsing, workflow, evidence, verdict, and scope audit.
-- [ ] The final report uses the template shape from `assets/templates/verification-report.md`.
-- [ ] The report stays strictly observational.
+For evidence ranking and verdict thresholds, read:
+- `references/evidence-ranking.md`
+- `references/verdict-rubric.md`
