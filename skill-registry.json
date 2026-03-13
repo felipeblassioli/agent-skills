@@ -438,6 +438,23 @@
         "gh-cli"
       ],
       "description": "Verify whether a GitHub issue is implemented in the current codebase by collecting evidence from the issue, git history, docs, code, and tests, then producing a structured report with verdict, proof, gaps, confidence, and scope-clarity doubts."
+    },
+    "hono-htmx-server": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "htmx",
+        "hono",
+        "typescript",
+        "nodejs",
+        "server-rendered"
+      ],
+      "description": "Build and review server-side HTMX applications with Hono using HTML fragment responses, typed HTMX attributes, and production-safe server patterns."
     }
   },
   "targetPaths": {

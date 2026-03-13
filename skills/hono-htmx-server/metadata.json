@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-03-12",
+  "abstract": "Build and review server-side HTMX applications with Hono using HTML fragment responses, typed HTMX attributes, and production-safe server patterns."
+}
