@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Improve existing Cursor skills and Cursor packs by asking focused diagnostic questions, then recommending concrete changes with expected outcomes. Use when refining an existing skill or pack, reducing noise or token cost, sharpening subagent delegation, or deciding which improvement will have the highest leverage."
+}
