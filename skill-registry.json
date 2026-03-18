@@ -424,6 +424,22 @@
       ],
       "description": "Design repository-local agent guidance using root and nested AGENTS.md files, scoped Cursor rules, reusable skills, and pack-owned runtime assets."
     },
+    "improving-agent-artifacts": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "improvement",
+        "skills",
+        "packs"
+      ],
+      "description": "Improve existing Cursor skills and Cursor packs by asking focused diagnostic questions, then recommending concrete changes with expected outcomes. Use when refining an existing skill or pack, reducing noise or token cost, sharpening subagent delegation, or deciding which improvement will have the highest leverage."
+    },
     "gh-issue-verifier": {
       "version": "1.0.0",
       "author": "felipeblassioli",
