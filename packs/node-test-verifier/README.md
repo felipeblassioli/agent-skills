@@ -1,7 +1,7 @@
 ---
 name: node-test-verifier
-version: "0.1.0"
-description: Portable Node and Jest verifier pack with a reusable subagent and project guidance for low-noise, tier-aware verification.
+version: "0.2.0"
+description: Portable Node and Jest verifier pack with a reusable subagent and project guidance for low-noise, pass-fail-first verification with explicit evidence and optional coverage.
 ---
 
 # Node Test Verifier
@@ -17,8 +17,9 @@ The pack is intentionally opinionated about execution style:
 
 - keep terminal output compact
 - prefer the smallest meaningful tier set
+- answer pass/fail first, then show failure evidence
 - summarize failures instead of dumping raw Jest logs
-- treat coverage as tier-aware rather than universal
+- treat coverage as opt-in and tier-aware rather than universal
 - make prerequisites explicit before running slow or environment-backed suites
 
 It is intentionally not opinionated about your repository's script names,
@@ -44,17 +45,20 @@ rather than a `~/.cursor/rules/` directory.
 - `.cursor/agents/test-verifier.md`
 - `.cursor/agents/test-verifier-bootstrapper.md`
 - optional strict project rule at `.cursor/rules/verify-after-change.mdc`
+- expected repo-local contract at `.cursor/test-verifier.contract.json`
 
 ## What this pack expects from a project
 
-This pack works best when the repository already documents:
+This pack works best when the repository can supply or generate:
 
 - the working directory that owns tests
 - the package manager and test entrypoints
 - how changed files map to tiers
-- which tiers can emit coverage
+- which tiers can emit coverage when coverage is explicitly requested
 - prerequisite commands such as `build:modules`, Docker checks, emulators, or
   required environment variables
+- a quiet execution preference such as `npm --silent run`
+- an evidence location such as `.work/test-verifier`
 
 The subagent stays reusable by consuming that project-specific contract instead
 of hardcoding any one repository's scripts.
@@ -65,12 +69,15 @@ Install the pack first, then run the `test-verifier-bootstrapper` agent against
 the target repository.
 
 That bootstrap step should inspect the repository's `package.json`, local
-`AGENTS.md`, and relevant `.cursor/rules/` files, then create or update a
-repo-local overlay such as:
+`AGENTS.md`, and relevant `.cursor/rules/` files, then create or update the
+canonical repo-local contract:
 
-- a test-verifier section in `AGENTS.md`
+- `.cursor/test-verifier.contract.json`
+
+Optional thin companion surfaces may also be created:
+
 - a repository rule like `.cursor/rules/test-verifier-project.mdc`
-- a small config note such as `.cursor/test-verifier-config.md`
+- a short `AGENTS.md` note that points to the contract
 
 This keeps the pack reusable across repositories while still letting each repo
 describe its own:
@@ -80,6 +87,7 @@ describe its own:
 - coverage paths
 - build-before-test prerequisites
 - environment-backed test constraints
+- stale-contract refresh hints
 
 ## Recommended tier model
 
@@ -107,6 +115,7 @@ Use this pack when the agent needs:
 - a portable installed bootstrapper at `.cursor/agents/test-verifier-bootstrapper.md`
 - isolated execution that keeps noisy test output out of the parent context
 - persistent project guidance in `strict` mode
+- a default answer shaped around pass/fail plus evidence
 
 Keep these details in the project rather than the pack:
 
@@ -114,6 +123,26 @@ Keep these details in the project rather than the pack:
 - exact test and coverage commands
 - build-before-test prerequisites
 - repository-specific thresholds and PR wording
+- whether coverage should ever be on by default
+
+## Default report shape
+
+The steady-state question for this pack is:
+
+- are the tests passing?
+- if not, what failed?
+- where is the evidence?
+
+That means the verifier should default to:
+
+- quiet execution
+- the smallest meaningful tier set
+- a short results table
+- the first useful failure excerpts
+- evidence file paths for deeper investigation
+
+Coverage is still supported, but it should be requested explicitly or enabled by
+the repo-local contract rather than assumed on every run.
 
 ## Guides
 

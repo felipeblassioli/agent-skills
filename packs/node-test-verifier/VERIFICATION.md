@@ -9,6 +9,87 @@ Each meaningful pack release should append:
 - the outcome
 - the diagnosis that explains what still needs improvement
 
+## Release 0.2.0 - 2026-03-18
+
+## Goals
+
+The validation for this release aims to prove that:
+
+- the pack remains structurally valid after the verifier and bootstrapper rewrite
+- the pack still installs cleanly across the supported target and profile shapes
+- the reusable runtime now supports a canonical repo-local contract
+- the default verifier summary is pass-fail-first and evidence-oriented
+- the strict rule and guides align with the new contract-driven workflow
+
+## Structural verification
+
+The pack passed:
+
+```bash
+bash scripts/cursor-pack-verify.sh --pack=node-test-verifier
+```
+
+The pack also passed dry-run installs for:
+
+- `project-cursor` with `lite`
+- `project-cursor` with `strict`
+- `user-cursor` with `lite`
+
+Example commands:
+
+```bash
+bash scripts/cursor-pack-sync.sh --pack=node-test-verifier --target=project --project-root="$PWD" --profile=lite --dry-run
+bash scripts/cursor-pack-sync.sh --pack=node-test-verifier --target=project --project-root="$PWD" --profile=strict --dry-run
+bash scripts/cursor-pack-sync.sh --pack=node-test-verifier --target=user --profile=lite --dry-run
+```
+
+## Scenario validation
+
+This release was also validated with a real project install:
+
+```bash
+bash scripts/cursor-pack-sync.sh --pack=node-test-verifier --target=project --project-root="$TARGET_PROJECT" --profile=strict
+```
+
+Observed outcome:
+
+- install completed successfully
+- three artifacts were copied
+- no conflicts were reported
+- the target project now has the verifier, bootstrapper, and strict rule installed
+
+The runtime and documentation were then manually reviewed against the intended
+workflow:
+
+- read `.cursor/test-verifier.contract.json` first when present
+- fall back to a minimal inline contract only when bootstrap has not happened yet
+- prefer `npm --silent run` or repo-owned quiet scripts
+- report pass or fail first, then short failure evidence and evidence paths
+- treat coverage as optional rather than assumed
+
+## Diagnosis
+
+### 1. The canonical contract is documented but not shipped as a schema file
+
+That keeps the pack lightweight and portable, but repositories still need the
+bootstrapper or a careful manual contract authoring step to stay consistent.
+
+### 2. Stale-contract detection is advisory rather than enforced
+
+The verifier can now report likely stale inputs and recommend rerunning the
+bootstrapper, but it does not enforce freshness automatically.
+
+### 3. Coverage remains supported but intentionally secondary
+
+This release optimizes for quick triage. Repositories that want richer default
+coverage behavior still need to document that in their repo-local contract.
+
+## Outcome
+
+Release `0.2.0` is a meaningful non-breaking improvement to `node-test-verifier`.
+It keeps the pack reusable while making multi-tier repository verification
+cheaper, quieter, and more investigation-friendly.
+
 ## Release 0.1.0 - 2026-03-09
 
 ## Goals

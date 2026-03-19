@@ -8,21 +8,22 @@ alwaysApply: false
 Use the installed `test-verifier` subagent when Node or Jest changes need
 structured verification without flooding the main conversation.
 
-If the repository does not yet have a clear repo-local verifier contract, use
-`test-verifier-bootstrapper` first to inspect `package.json`, local `AGENTS.md`,
-and relevant `.cursor/rules/`, then create or update repo-local overlay files.
+Prefer this flow:
 
-- Prefer the smallest meaningful set of tiers based on the repository's
-  changed-file routing rules.
-- Provide the verifier with the repository's working directory, package manager,
-  tier command matrix, prerequisite steps, and coverage-summary paths.
-- Do not assume script names such as `test`, `test:coverage`, or
-  `test:integration`; read the repository's docs or `package.json`.
+1. Read `.cursor/test-verifier.contract.json` if it exists.
+2. If the contract is missing or stale, use `test-verifier-bootstrapper` first.
+3. Ask the verifier for the smallest meaningful tier set.
+4. Default the summary to:
+   - are tests passing?
+   - if not, what failed?
+   - where is the evidence?
+
 - Prefer quiet execution forms such as `npm --silent run ...` when the project
-  uses npm and supports appended Jest flags.
-- Report failures and coverage as a concise verification summary instead of
-  pasting raw Jest output.
+  supports them.
+- Prefer repo-owned scripts when they already provide stable, low-noise execution.
 - Treat Docker, emulator, build, and environment prerequisites as explicit
   checks before running environment-backed tiers.
-- Keep repo-specific commands and routing in local overlays, not in the reusable
-  pack assets.
+- Keep repo-specific commands, routing, and coverage paths in the repo-local
+  contract, not in the reusable pack assets.
+- Only ask for coverage when it is explicitly needed; pass-fail evidence comes
+  first.

@@ -1,8 +1,8 @@
 {
   "$schema": "../../cursor-pack.schema.json",
   "name": "node-test-verifier",
-  "version": "0.1.0",
-  "description": "Cursor pack with a reusable Node and Jest test-verifier subagent plus project guidance for low-noise, tier-aware verification and coverage reporting.",
+  "version": "0.2.0",
+  "description": "Cursor pack with a reusable Node and Jest test-verifier subagent plus project guidance for low-noise, pass-fail-first verification with explicit evidence and optional coverage.",
   "author": "felipeblassioli",
   "targets": [
     "project-cursor",
@@ -13,7 +13,7 @@
       "description": "Installs the reusable test-verifier subagent and documentation without persistent project rules."
     },
     "strict": {
-      "description": "Installs the same subagent plus project-only guidance for tier selection, prerequisite checks, and concise verification summaries."
+      "description": "Installs the same subagent plus project-only guidance for tier selection, prerequisite checks, pass-fail-first summaries, and repo-local verifier contracts."
     }
   },
   "artifacts": [

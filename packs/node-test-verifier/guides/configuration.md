@@ -9,24 +9,28 @@ The preferred path is:
 
 1. install the pack
 2. run the `test-verifier-bootstrapper` agent
-3. let it draft or update repo-local overlay files
+3. let it draft or update `.cursor/test-verifier.contract.json`
 4. refine unresolved items manually when the repository's scripts are ambiguous
 
-That overlay is the source of truth for the repository. The pack remains generic.
+That contract is the source of truth for the repository. Thin rules or
+`AGENTS.md` notes may point to it, but they should not duplicate the full matrix.
 
 ## Required project inputs
 
-Document these inputs somewhere the parent agent can read before delegating:
+Document these inputs in `.cursor/test-verifier.contract.json` or provide them
+inline before delegating:
 
 - test working directory
 - package manager and preferred quiet invocation style
 - changed-file to tier mapping rules
 - per-tier commands
-- per-tier coverage commands for instrumentable tiers
+- per-tier coverage commands for instrumentable tiers when coverage is requested
 - per-tier prerequisite commands or checks
+- evidence output location
 - coverage summary file locations
 - optional merged coverage command and merged summary location
 - threshold rules, if any
+- files whose changes should trigger contract refresh
 
 ## Recommended tier matrix
 
@@ -42,6 +46,45 @@ A simple matrix works well:
 
 If a tier command cannot accept appended Jest flags, document that clearly so the
 verifier falls back to compact log summarization instead of expecting JSON.
+
+If the repository already provides wrapper scripts such as `verify:unit` or
+`test:integration:ci`, prefer preserving those exact commands instead of
+rebuilding them from raw Jest assumptions.
+
+## Recommended contract shape
+
+A compact JSON contract keeps steady-state runs cheap:
+
+```json
+{
+  "contractVersion": 1,
+  "workingDirectory": "functions",
+  "packageManager": "npm",
+  "quietRun": "npm --silent run",
+  "defaultGoal": "pass-fail-first",
+  "defaultCoverage": "off",
+  "evidenceRoot": ".work/test-verifier",
+  "instrumentableTiers": ["unit", "integration", "functional-http"],
+  "tiers": {
+    "unit": {
+      "command": "npm --silent run test:unit",
+      "coverageCommand": "npm --silent run test:unit:cov",
+      "coverageSummary": "coverage/unit/coverage-summary.json",
+      "structuredOutput": "jest-json",
+      "prerequisites": []
+    }
+  },
+  "refreshWhenChanged": [
+    "package.json",
+    "AGENTS.md",
+    ".cursor/rules/test-verifier-project.mdc"
+  ],
+  "unresolved": []
+}
+```
+
+Keep this file small and operational. Heavy explanation belongs in repo docs, not
+in the contract.
 
 ## Changed-file routing
 
@@ -102,7 +145,8 @@ The verifier should run those checks before the tier and report skips cleanly.
 
 ## Coverage strategy
 
-Document which tiers are instrumentable. A common setup is:
+Coverage should be opt-in by default. Document which tiers are instrumentable. A
+common setup is:
 
 - `unit`
 - `integration`
@@ -121,23 +165,17 @@ Use a prompt shaped like this when delegating:
 
 ```text
 Verify changes to the following files: src/routes/risk.ts, src/usecases/enqueue.ts
-Working directory: functions
-Package manager: npm
-Prefer quiet execution: npm --silent run
+Read `.cursor/test-verifier.contract.json` first.
 Detect tiers using the repository's documented routing rules.
-Tier matrix:
-- unit: command `npm --silent run test:unit`, coverage `npm --silent run test:unit:cov`, summary `coverage/unit/coverage-summary.json`
-- integration: command `npm --silent run test:integration`, coverage `npm --silent run test:integration:cov`, summary `coverage/integration/coverage-summary.json`, prerequisites `npm run build:modules`, `docker info >/dev/null 2>&1`
-- functional-http: command `npm --silent run test:functional:http`, coverage `npm --silent run test:functional:http:cov`, summary `coverage/functional-http/coverage-summary.json`
-Collect coverage for instrumentable tiers you run.
-Return a compact verification report.
+Return a pass-fail-first verification report.
+If tests fail, show the shortest useful failure evidence and the evidence file paths.
+Only collect coverage if it is explicitly requested.
 ```
 
 ## Suggested bootstrap output
 
-For many repos, the best long-lived result is a small combination of:
+For many repos, the best long-lived result is:
 
-- `.cursor/rules/test-verifier-project.mdc` for persistent verification policy
-- a short `AGENTS.md` note pointing to the repo-local verifier contract
-- an optional `.cursor/test-verifier-config.md` when the tier matrix is too large
-  for a short rule
+- `.cursor/test-verifier.contract.json` as the canonical contract
+- `.cursor/rules/test-verifier-project.mdc` as a thin persistent pointer
+- a short `AGENTS.md` note only when the repository needs a repo-wide navigation hint
