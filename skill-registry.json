@@ -106,6 +106,23 @@
       ],
       "description": "Diagnose and fix ESM errors in TypeScript projects"
     },
+    "claude-plugin-to-cursor-pack": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "claude",
+        "cursor",
+        "packs",
+        "migration"
+      ],
+      "description": "Evaluates a Claude-style plugin or plugin-like folder and recommends how to adapt it into Cursor-native pack assets, companion skills, docs, and MCP templates."
+    },
     "nx-monorepo": {
       "version": "2.0.0",
       "author": "felipeblassioli",
