@@ -13,36 +13,37 @@ It should inspect:
 - `.cursor/rules/` related to testing or verification
 - any existing repo-local verifier guidance
 
-Then it should produce or update a repo-local overlay containing:
+Then it should produce or update a canonical repo-local contract containing:
 
 - working directory
 - package manager and quiet execution style
+- evidence output location
 - discovered tiers
 - per-tier commands
 - per-tier coverage commands
 - per-tier prerequisites
 - changed-file routing when documented
+- stale-contract refresh hints
 - unresolved gaps that need human confirmation
 
 ## Recommended output targets
 
-Pick one of these based on repository shape:
+Prefer these targets in order:
 
-- root `AGENTS.md` when the repo has one main Node test workflow
+- `.cursor/test-verifier.contract.json` as the canonical verifier contract
+- `.cursor/rules/test-verifier-project.mdc` as a thin persistent pointer
+- root `AGENTS.md` when the repo has one main Node test workflow and needs a
+  navigation hint
 - nested `AGENTS.md` when only one package or subtree owns the test model
-- `.cursor/rules/test-verifier-project.mdc` when the verification policy should
-  apply persistently
-- `.cursor/test-verifier-config.md` when the command matrix is too detailed for a
-  short rule
 
 ## Suggested bootstrap prompt
 
 ```text
 Adapt the installed node-test-verifier pack to this repository.
 Inspect package.json, AGENTS.md files, and relevant .cursor/rules.
-Discover the real test tiers, coverage commands, prerequisites, and any build-before-test steps.
-Create a repo-local overlay instead of editing the pack.
-Preferred target: .cursor/rules/test-verifier-project.mdc and a short AGENTS.md reference if needed.
+Discover the real test tiers, quiet commands, prerequisites, evidence location, and any build-before-test steps.
+Create `.cursor/test-verifier.contract.json` as the canonical repo-local contract instead of editing the pack.
+Optionally add `.cursor/rules/test-verifier-project.mdc` as a thin pointer if the repo needs persistent guidance.
 If anything is ambiguous, leave it unresolved rather than inventing commands.
 ```
 
@@ -66,16 +67,18 @@ For a repo with scripts like:
 - `coverage:all`
 - `build:modules`
 
-the bootstrapper should likely generate a repo-local overlay that tells the
+the bootstrapper should likely generate a repo-local contract that tells the
 reusable `test-verifier` agent:
 
 - `functions` or equivalent is the working directory
 - npm quiet execution should prefer `npm --silent run`
+- evidence should land under `.work/test-verifier`
 - `integration`, `functional`, and `functional-http` may require
   `npm run build:modules`
 - `integration` depends on Docker
 - `emulator` depends on emulator-specific env and runtime setup
 - only selected tiers emit coverage summaries
+- coverage is off by default unless explicitly requested
 
 ## Why this is better than pack mutation
 

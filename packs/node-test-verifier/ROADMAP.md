@@ -2,10 +2,11 @@
 
 ## Near term
 
-- Add one or two richer project bootstrap examples, including a repo with
-  multiple Jest configs and build-before-test prerequisites.
-- Add a prompt template for repositories that want a standard verifier contract
-  in `AGENTS.md` or `.cursor/rules/`.
+- Add one or two richer bootstrap examples built around
+  `.cursor/test-verifier.contract.json`, including a repo with multiple Jest
+  configs and build-before-test prerequisites.
+- Add a compact contract template snippet that repositories can adopt before
+  their first bootstrap run.
 - Validate the pack against at least one real project install beyond dry-run.
 
 ## Later

@@ -7,7 +7,7 @@ is informative but not noisy.
 
 1. Install the pack.
 2. Run the `test-verifier-bootstrapper` agent against the target repository.
-3. Let the bootstrapper create or update repo-local overlay files.
+3. Let the bootstrapper create or update `.cursor/test-verifier.contract.json`.
 4. Use the `test-verifier` agent for ongoing verification runs.
 
 This split keeps the pack reusable while letting each repository describe its
@@ -27,7 +27,8 @@ Use the `test-verifier` subagent when:
 
 - the run will span one full tier or more
 - the output is likely to exceed a few dozen lines
-- coverage collection is needed
+- you want a pass-fail-first answer with evidence
+- coverage collection is explicitly needed
 - you want a reusable report for a PR or review comment
 
 Stay inline when:
@@ -41,17 +42,18 @@ Use the `test-verifier-bootstrapper` subagent when:
 - the pack was just installed into a new repository
 - the repo's test scripts or tier layout changed
 - local guidance is missing or outdated
-- you want to scaffold a repo-local overlay instead of hand-writing it
+- you want to scaffold the canonical repo-local contract instead of hand-writing it
 
 ## Common patterns
 
 ### 0. First-time adoption
 
-Run the bootstrapper first so the repository gets a local verifier contract.
+Run the bootstrapper first so the repository gets a canonical local verifier
+contract.
 
 Expected outcome:
 
-- a repo-local overlay is created or updated
+- `.cursor/test-verifier.contract.json` is created or updated
 - the reusable verifier no longer needs to guess script names
 - unresolved gaps are called out explicitly
 
@@ -62,12 +64,14 @@ Delegate with changed files and let the verifier choose the smallest tier set.
 Expected outcome:
 
 - one or two tiers run
-- failures summarized in a short table
+- the report answers pass or fail first
+- failures summarized in a short table with evidence paths
 - no raw Jest flood in the parent context
 
 ### 2. Coverage check for instrumentable tiers
 
-Tell the verifier which tiers can emit coverage and where their summaries live.
+Tell the verifier to read the repo-local contract and collect coverage only for
+tiers that can emit it.
 
 Expected outcome:
 
@@ -110,22 +114,26 @@ That shape is a strong fit because the verifier can:
 - route to the right tier quickly
 - keep output compact with quiet script execution
 - append Jest JSON flags for compatible tiers
-- summarize coverage without forcing a single monolithic `test:ci` flow
+- summarize failures without forcing a single monolithic `test:ci` flow
+- leave coverage off unless it is requested
 
 ## Output you should expect
 
 The verifier returns a compact report with:
 
+- top-line pass, fail, or blocked status
 - changed files
 - tiers requested, run, and skipped
 - pass or fail counts
-- a short failure list
-- coverage summary for relevant tiers
+- a short failure list with evidence file paths
+- coverage summary for relevant tiers only when requested
 - notes about prerequisites, assumptions, and noise suppression
 
 ## Practical advice
 
 - Keep the repository's tier matrix close to `package.json` or `AGENTS.md`
+- Prefer a canonical `.cursor/test-verifier.contract.json` over spreading the
+  matrix across multiple repo-local files
 - Mark tiers that cannot emit structured JSON so the verifier can degrade gracefully
 - Document build-before-test requirements explicitly
 - Do not ask the verifier to infer thresholds that the repository never defined
