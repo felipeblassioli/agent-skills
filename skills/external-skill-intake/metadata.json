@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Evaluate a candidate Cursor skill from another repository or arbitrary path, decide whether it should be imported into this repository, and route the import through the correct normalization path. Use when the user wants to bring a skill into `felipeblassioli/agent-skills`, compare an external skill against this repo's conventions, or review a skill-like folder before importing it."
+}

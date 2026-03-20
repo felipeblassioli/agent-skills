@@ -123,6 +123,22 @@
       ],
       "description": "Diagnose and fix ESM errors in TypeScript projects"
     },
+    "external-skill-intake": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "import",
+        "intake",
+        "skills"
+      ],
+      "description": "Evaluate a candidate Cursor skill from another repository or arbitrary path, decide whether it should be imported into this repository, and route the import through the correct normalization path."
+    },
     "claude-plugin-to-cursor-pack": {
       "version": "1.0.1",
       "author": "felipeblassioli",
