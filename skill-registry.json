@@ -271,6 +271,22 @@
       ],
       "description": "Commit hygiene and self-contained pull requests. Highlights production impact, uses gh CLI for opening/updating PRs, and adding proof comments (test runs, coverage reports)."
     },
+    "code-review": {
+      "version": "1.0.0",
+      "author": "anthropics",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "review",
+        "pull-requests",
+        "quality",
+        "security",
+        "performance"
+      ],
+      "description": "Use when reviewing code changes, pull requests, or code audits and you need a structured pass over correctness, security, performance, maintainability, and testing gaps."
+    },
     "deno-production-practices": {
       "version": "1.0.0",
       "author": "felipeblassioli",
