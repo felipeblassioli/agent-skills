@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Usage: scripts/cursor-pack-verify.sh [--pack=NAME]
 # Validate cursor pack registry entries, pack structure, release artifacts,
-# subagents, rules, hooks, MCP templates, and common secret/path safety issues.
+# subagents, rules, hooks, MCP templates, bundled skill artifacts (kind: skill),
+# and common secret/path safety issues.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -178,6 +179,69 @@ validate_release_artifacts() {
   fi
 }
 
+validate_pack_skill_artifact() {
+  local pack_dir="$1"
+  local actual_path="$2"
+  local artifact_json="$3"
+
+  local artifact_id source_rel skill_id source_abs fm_name
+  artifact_id=$(jq -r '.id' <<<"$artifact_json")
+  source_rel=$(jq -r '.source' <<<"$artifact_json")
+  skill_id=$(jq -r '.skillId' <<<"$artifact_json")
+  source_abs="$pack_dir/$source_rel"
+
+  if ! [[ "$skill_id" =~ ^[a-z0-9-]+$ ]]; then
+    add_error "$actual_path/pack.json: artifact '$artifact_id' has invalid skillId '$skill_id'"
+    return
+  fi
+
+  if [[ ! -d "$source_abs" ]]; then
+    add_error "$actual_path/pack.json: skill artifact '$artifact_id' source must be a directory: $source_rel"
+    return
+  fi
+
+  [[ -f "$source_abs/SKILL.md" ]] || add_error "$actual_path/pack.json: skill artifact '$artifact_id' missing SKILL.md under $source_rel"
+  [[ -f "$source_abs/metadata.json" ]] || add_error "$actual_path/pack.json: skill artifact '$artifact_id' missing metadata.json under $source_rel"
+
+  if [[ -f "$source_abs/metadata.json" ]]; then
+    jq empty "$source_abs/metadata.json" >/dev/null 2>&1 || add_error "$source_rel/metadata.json: invalid JSON"
+  fi
+
+  if [[ -f "$source_abs/SKILL.md" ]]; then
+    fm_name=$(awk '/^---$/{n++; next} n==1 && /^name:/{sub(/^name:[[:space:]]*/,""); print; exit}' "$source_abs/SKILL.md" | tr -d '\r')
+    fm_name="${fm_name//\"/}"
+    if [[ -z "$fm_name" ]]; then
+      add_error "$source_rel/SKILL.md: missing name in YAML frontmatter (required for bundled skills)"
+    elif [[ "$fm_name" != "$skill_id" ]]; then
+      add_error "$source_rel/SKILL.md: frontmatter name '$fm_name' must match pack.json skillId '$skill_id'"
+    fi
+  fi
+}
+
+validate_pack_skill_artifacts() {
+  local pack_dir="$1"
+  local actual_path="$2"
+  local pack_json="$3"
+
+  local skill_count
+  skill_count=$(jq '[.artifacts[] | select(.kind == "skill")] | length' "$pack_json")
+  if [[ "$skill_count" -eq 0 ]]; then
+    return 0
+  fi
+
+  local dup_skill_ids
+  dup_skill_ids=$(jq -r '.artifacts[] | select(.kind == "skill") | .skillId' "$pack_json" | sort | uniq -d | sort -u)
+  while IFS= read -r dup_id; do
+    [[ -n "$dup_id" ]] || continue
+    add_error "$actual_path/pack.json: duplicate skillId '$dup_id' across skill artifacts"
+  done <<<"$dup_skill_ids"
+
+  while IFS= read -r artifact_json; do
+    [[ -n "$artifact_json" ]] || continue
+    validate_pack_skill_artifact "$pack_dir" "$actual_path" "$artifact_json"
+  done < <(jq -c '.artifacts[] | select(.kind == "skill")' "$pack_json")
+}
+
 scan_pack_for_safety_issues() {
   local pack_dir="$1"
   local rel_dir="${pack_dir#$CURSOR_PACK_REPO_ROOT/}"
@@ -264,6 +328,8 @@ validate_pack() {
     [[ -n "${artifact_id:-}" ]] || continue
     add_error "$actual_path/pack.json: artifact '$artifact_id' references target '$target_name' not allowed by registry"
   done <<<"$invalid_targets"
+
+  validate_pack_skill_artifacts "$pack_dir" "$actual_path" "$pack_json"
 
   validate_release_artifacts "$pack_dir"
 

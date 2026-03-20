@@ -119,6 +119,21 @@ cursor_pack_selected_artifacts() {
 cursor_pack_artifact_dest_rel() {
   local artifact_json="$1"
   local target="$2"
+  local kind
+  kind=$(jq -r '.kind // "runtime"' <<<"$artifact_json")
+
+  if [[ "$kind" == "skill" ]]; then
+    local skill_id
+    skill_id=$(jq -r '.skillId // empty' <<<"$artifact_json")
+    [[ -n "$skill_id" ]] || cursor_pack_die "Skill artifact is missing skillId"
+
+    case "$target" in
+      project-cursor) echo ".cursor/skills/$skill_id" ;;
+      user-cursor) echo "skills/$skill_id" ;;
+      *) cursor_pack_die "Unknown target: $target" ;;
+    esac
+    return 0
+  fi
 
   case "$target" in
     project-cursor) jq -r '.projectPath // empty' <<<"$artifact_json" ;;
