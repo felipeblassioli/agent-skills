@@ -27,6 +27,11 @@ review.
 - [ ] every artifact `source` exists
 - [ ] every artifact has at least one target and one profile
 - [ ] every artifact destination path matches the intended target surface
+- [ ] bundled skill artifacts use `"kind": "skill"` with a pack-scoped `skillId`
+  and **no** `projectPath` / `userPath`
+- [ ] each bundled skill `source` is a directory containing `SKILL.md` and
+  `metadata.json`, and frontmatter `name` matches `skillId`
+- [ ] no duplicate `skillId` values across skill artifacts in the same pack
 - [ ] only approved surfaces were scaffolded
 - [ ] no empty `.cursor/agents`, `.cursor/rules`, `.cursor/hooks`, or `guides`
   directories remain

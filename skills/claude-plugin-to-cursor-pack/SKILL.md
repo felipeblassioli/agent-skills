@@ -1,6 +1,6 @@
 ---
 name: claude-plugin-to-cursor-pack
-description: Evaluates a Claude-style plugin or plugin-like folder and recommends how to adapt it into this repository's Cursor-native artifacts. Use when inspecting `.claude-plugin`, `.mcp.json`, plugin manifests, bundled workflow prompts, or mixed guidance and runtime folders and deciding whether the result should become a Cursor pack, one or more skills, companion docs, or a combination.
+description: Evaluates a Claude-style plugin or plugin-like folder and recommends how to adapt it into this repository's Cursor-native artifacts. Use when inspecting `.claude-plugin`, `.mcp.json`, plugin manifests, bundled workflow prompts, or mixed guidance and runtime folders and deciding whether the result should become a Cursor pack, repo-root skills, pack-bundled skills (kind skill), companion docs, or a combination.
 ---
 
 # Claude Plugin To Cursor Pack
@@ -74,10 +74,10 @@ Cover these in order:
 2. Identify whether the source contains a Claude plugin manifest, MCP configuration, skill or prompt directories, docs, and runtime-only or cache artifacts.
 3. Classify each file or subtree into one of: `pack-runtime`, `skill-guidance`, `docs-reference`, `claude-only`, `ignore`.
 4. Read only the minimum files needed to determine manifest fields worth preserving, MCP trust and portability concerns, whether the skill layout is already reusable, and whether links or placeholders will break after migration.
-5. Recommend the smallest correct destination shape: `packs/<name>/` only, `skills/<name>/` only, pack plus one or more companion skills, or pack or skill plus optional docs only.
-6. Default to NOT recommending both a pack and skills unless the source clearly contains both runtime assets and reusable guidance.
+5. Recommend the smallest correct destination shape: `packs/<name>/` only, `skills/<name>/` only, pack plus one or more **repo-root** companion skills (`skills/<name>/`), **pack with bundled skills** (`packs/<name>/skills/...` plus `kind: "skill"` in `pack.json`), or pack or skill plus optional docs only.
+6. Default to NOT recommending both a **repo-root** skill and a pack unless the source clearly contains both runtime assets and reusable guidance. **Pack-bundled skills** (installed with the pack, not `skill-registry.json` by default) are a third pattern: one pack deliverable with skill-shaped content, not a second top-level skill.
 7. For any MCP config, explicitly state whether it should become installable example config, documentation-only example, or excluded pending trust review.
-8. For any skill-like docs, explicitly state whether they should become separate standard skills, one umbrella skill with references, or supporting docs outside hot-path skill content.
+8. For any skill-like docs, explicitly state whether they should become separate **repo-root** skills under `skills/<name>/`, **pack-bundled** skills under `packs/<pack>/skills/<folder>/` with `kind: "skill"` and a pack-scoped `skillId`, one umbrella skill with references, or supporting docs outside hot-path skill content.
 9. Identify blocking migration concerns such as Claude-only command conventions, path assumptions that break after sync, auth or trust risks in MCP definitions, missing metadata for repo-native skills, and vendor-specific cache or settings files.
 10. Present a concise adaptation report using [assets/templates/adaptation-report.md](assets/templates/adaptation-report.md).
 
@@ -89,7 +89,15 @@ Use for files that affect installed Cursor runtime behavior, such as `.cursor/` 
 
 ### `skill-guidance`
 
-Use for reusable task guidance that belongs in `skills/<name>/`, such as workflow `SKILL.md` files, reusable prompt instructions, and compact operational guidance that can stand alone.
+Use for reusable task guidance authored as a **skill** (routing/knowledge), either:
+
+- **Repo-root**: `skills/<name>/` (typically synced via `skill-registry.json`), or
+- **Pack-bundled**: `packs/<pack>/skills/<folder>/` declared in `pack.json` with
+  `"kind": "skill"` and `skillId` (installs to Cursor skill paths with the pack;
+  not auto-listed in `skill-registry.json` unless promoted).
+
+Examples: workflow `SKILL.md` files, reusable prompt instructions, compact
+operational guidance that should not be pasted into rules or README.
 
 ### `docs-reference`
 
@@ -105,13 +113,16 @@ Use for non-source or ephemeral artifacts: cache directories, `.DS_Store`, gener
 
 ## Recommendation Policy
 
-- Prefer skill-first when the source is mostly guidance.
+- Prefer **repo-root** skill-first when the source is mostly guidance and should
+  sync via `skill-registry.json`. When the same deliverable already includes a
+  runtime pack, prefer **pack-bundled** skills over pasting guidance into rules
+  or README.
 - Prefer pack-first when the source includes real runtime assets that should be installed.
 - Prefer docs-only for vendor-specific behavior that should not become reusable hot-path context.
 - Prefer MCP templates over live MCP config in the first migration pass.
 - Prefer separate skills only when the workflows have distinct triggers and reusable value.
 - Prefer one umbrella skill plus references when the workflows are tightly related and small enough to avoid routing noise.
-- Do not recommend both a skill and a pack unless both are clearly needed.
+- Do not recommend both a **repo-root** skill and a pack unless both are clearly needed; prefer **pack-bundled** skills when guidance is tightly coupled to the pack install.
 
 ## Output Contract
 

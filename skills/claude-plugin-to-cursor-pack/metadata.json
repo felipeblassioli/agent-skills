@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "felipeblassioli",
   "date": "March 2026",
-  "abstract": "Evaluates a Claude-style plugin or mixed plugin folder and recommends how to adapt it into this repository's Cursor-native artifacts, including pack assets, companion skills, docs, and MCP templates."
+  "abstract": "Evaluates a Claude-style plugin or mixed plugin folder and recommends how to adapt it into this repository's Cursor-native artifacts: pack runtime assets, repo-root companion skills, optional pack-bundled skills (kind: skill in pack.json), docs, and MCP templates."
 }

@@ -29,6 +29,13 @@ Check the pack in this order:
    - Are strict rules thin routing nudges, or are they reteaching the whole pack?
    - Does the README explain purpose and install shape without duplicating assets?
 
+5b. **Bundled skills (`kind: "skill"` in `pack.json`)**
+   - Are bundled skills **skill-shaped** (`SKILL.md`, `metadata.json` under
+     `packs/<name>/skills/<folder>/`) rather than duplicated into rules or README?
+   - Does each `skillId` follow a **pack-scoped** naming convention to limit
+     collisions with `skill-registry.json` skills in `~/.cursor/skills/`?
+   - Does `SKILL.md` frontmatter `name` match `skillId` (verifier expectation)?
+
 6. **Install and safety**
    - Are targets and profiles clear?
    - Are examples still examples, not accidental live config?

@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "felipeblassioli",
   "date": "March 2026",
-  "abstract": "Create Cursor packs from user-provided reference material and repo context. Guides through intake, pack archetype selection, pack scaffolding under `packs/<name>/`, registry updates, and verification against this repository's pack conventions. Use when the user asks to create a Cursor pack, author `pack.json`, scaffold pack runtime assets, or package subagents, rules, hooks, MCP examples, and guides into an installable Cursor bundle."
+  "abstract": "Create Cursor packs from user-provided reference material and repo context. Guides through intake, pack archetype selection, pack scaffolding under `packs/<name>/`, registry updates, and verification against this repository's pack conventions, including optional pack-bundled skills (`kind: \"skill\"` in `pack.json`). Use when the user asks to create a Cursor pack, author `pack.json`, scaffold runtime assets, or package subagents, rules, hooks, MCP examples, guides, and bundled skills into an installable Cursor bundle."
 }

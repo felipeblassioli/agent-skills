@@ -23,6 +23,18 @@ For evolving packs, also commit release artifacts at pack root:
 | `packs/<name>/RELEASE-POLICY.md` | Rules for versioning, verification, and release expectations |
 | `packs/<name>/ROADMAP.md` | Next improvements and known follow-up work |
 
+Optional **bundled skills** (same semantics as `skills/<name>/`, different delivery
+channel):
+
+| Path | Purpose |
+|---|---|
+| `packs/<name>/skills/<folder>/SKILL.md` | Bundled skill hot path |
+| `packs/<name>/skills/<folder>/metadata.json` | Bundled skill metadata |
+
+Declare each bundled skill in `pack.json` with `"kind": "skill"`, a pack-scoped
+`skillId`, and `source` pointing at that directory. See
+`docs/specs/agentic-skill-pack-authoring.md` (pack-bundled skills).
+
 ## Pack naming rules
 
 - lowercase letters, numbers, and hyphens only
@@ -97,6 +109,7 @@ Each `cursor-pack-registry.json` entry must include:
 | Hook scripts | `.cursor/hooks/*` | Must be executable and pack-local |
 | MCP examples | `.cursor/mcp.example.json` | Keep example-only by default |
 | Guides | `guides/*.md` | Explain installation, usage, and safety trade-offs |
+| Bundled skills | `skills/<folder>/` under pack root | `kind: "skill"` artifacts; install to `.cursor/skills/<skillId>/` or `~/.cursor/skills/<skillId>/` |
 
 ## Authoring constraints
 
@@ -109,6 +122,11 @@ Each `cursor-pack-registry.json` entry must include:
 - Do not auto-install the pack as part of authoring.
 - If the pack will evolve across releases, keep release artifacts committed in
   the pack root instead of relying on transient chat history.
+- Do not fold bundled skill bodies into `.cursor/rules` or the pack README;
+  keep them skill-shaped and referenced only via `kind: "skill"` artifacts.
+- Prefer **pack-scoped** `skillId` values (for example `my-pack-overview`) to
+  avoid collisions with `skill-registry.json` skills synced to the same
+  `~/.cursor/skills/` namespace.
 
 ## Validation expectations
 
@@ -124,6 +142,9 @@ The canonical validator checks:
 - hook config JSON and local hook references
 - MCP example JSON and secret detection
 - machine-specific paths and suspicious credentials
+- bundled skill artifacts (`kind: "skill"`): directory `source`, `SKILL.md` and
+  `metadata.json`, `skillId` pattern, duplicate `skillId` within the pack,
+  YAML frontmatter `name` matches `skillId`
 
 Run via:
 
@@ -141,9 +162,11 @@ and linked from:
 
 ## Current schema gap
 
-The current schemas are strong enough for install and verification, but not yet
-for reliable recommendation. Before building a recommender, capture richer
-machine-readable intent in:
+`cursor-pack.schema.json` supports **runtime** artifacts (optional
+`"kind": "runtime"`) and **bundled skill** artifacts (`"kind": "skill"` +
+`skillId`).
+Schemas are still not optimized for reliable **recommendation** metadata. Before
+building a recommender, capture richer machine-readable intent in:
 
 - `references/recommendation-metadata.md`
 

@@ -3,7 +3,7 @@
 - Candidate path: `<path>`
 - Desired target name: `<name or unknown>`
 - Source shape: `<claude-plugin | mixed-plugin-folder | docs-only | unknown>`
-- Recommended shape: `<pack-only | skill-only | pack-plus-skills | docs-only>`
+- Recommended shape: `<pack-only | skill-only | pack-plus-repo-skills | pack-with-bundled-skills | docs-only>`
 - Classification: `<ready-to-adapt | adapt-with-review | stop-and-rework>`
 
 ## Source Classification
@@ -18,7 +18,8 @@
 ## Recommended Destination Paths
 
 - Pack assets: `<packs/<name>/... or none>`
-- Companion skills: `<skills/<name>/... or none>`
+- Repo-root companion skills: `<skills/<name>/... or none>`
+- Pack-bundled skills: `<packs/<name>/skills/<folder>/... + pack.json kind: skill or none>`
 - Docs or references: `<path or none>`
 
 ## Blocking Concerns

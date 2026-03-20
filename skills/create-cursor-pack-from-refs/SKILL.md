@@ -6,7 +6,8 @@ description: >-
   `packs/<name>/`, registry updates, and verification against this repository's
   pack conventions. Use when the user asks to create a Cursor pack, author
   `pack.json`, scaffold pack runtime assets, or package subagents, rules, hooks,
-  MCP examples, and guides into an installable Cursor bundle.
+  MCP examples, guides, and optional pack-bundled skills (`kind: "skill"`) into
+  an installable Cursor bundle.
 disable-model-invocation: true
 ---
 
@@ -30,7 +31,8 @@ Apply this skill when ANY of the following are true:
 
 - the user wants a new installable Cursor pack under `packs/`
 - the user provides reference docs, examples, or policies that should become a
-  reusable bundle of subagents, rules, hooks, MCP examples, or guides
+  reusable bundle of subagents, rules, hooks, MCP examples, guides, and/or
+  bundled skills shipped with the pack
 - the task requires authoring `pack.json` and the matching registry entry
 - the user wants a repo-aware pack scaffold rather than ad hoc `.cursor/` files
 
@@ -78,6 +80,7 @@ Read and classify every reference the user provides.
 | Existing `.cursor/` files, examples, snippets | Runtime artifact reference | matching `.cursor/...` path in pack |
 | Guard-rails, policies, safety rules | Policy surface | `.cursor/rules/`, hooks, guides |
 | Workflow descriptions for reviewers/helpers | Subagent concept | `.cursor/agents/*.md` |
+| Reusable task guidance tied to the pack install | Bundled skill | `packs/<name>/skills/<folder>/` + `kind: "skill"` row in `pack.json` |
 | Example MCP config, server docs | MCP example | `.cursor/mcp.example.json`, guides |
 | Install or usage instructions | Operational guide | `guides/*.md` |
 | Checklists or validation expectations | Quality gate | `references/quality-checklist.md` or `scripts/validate-pack.sh` |
@@ -160,7 +163,13 @@ Present the contract as:
 | Artifact ID | Surface | Source | Targets | Profiles | Destination |
 |---|---|---|---|---|---|
 | `agents` | subagent | `.cursor/agents` | project,user | lite,strict | `.cursor/agents` |
+| `pack-overview` | bundled skill | `skills/my-pack-overview` | project,user | lite | `.cursor/skills/my-pack-overview` (derived) |
 ```
+
+For bundled skills, destination paths are **derived** by the installer from
+`skillId` (see `references/pack-standard.md`). Use
+`assets/templates/bundled-skill-artifact.fragment.json` as a copy-paste pattern
+for the `artifacts[]` entry.
 
 **PAUSE — Wait for approval before creating files.**
 
@@ -171,6 +180,7 @@ Create `packs/<name>/` and only the subdirectories that will contain content.
 Load the minimal template set from `assets/templates/`:
 
 - `pack.json.template.json`
+- `bundled-skill-artifact.fragment.json` (when adding `kind: "skill"` entries)
 - `README.template.md`
 - `guide.template.md`
 - `CHANGELOG.template.md`
@@ -191,6 +201,10 @@ Scaffolding rules:
 3. Put human-facing operational guidance in `guides/`.
 4. Keep secrets out of examples; prefer `${env:VAR}` interpolation.
 5. If a surface is not needed, do not create an empty directory for it.
+5b. For bundled skills, create `packs/<name>/skills/<folder>/` with `SKILL.md` and
+   `metadata.json`, declare `"kind": "skill"` and a pack-scoped `skillId` in
+   `pack.json`, and do **not** list the skill in `skill-registry.json` unless the
+   user explicitly wants a repo-global synced skill.
 6. Mirror the repo's current pack style unless the user explicitly wants a new
    convention.
 7. If the pack is expected to evolve across releases, scaffold committed release

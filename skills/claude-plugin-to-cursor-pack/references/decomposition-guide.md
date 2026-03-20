@@ -6,8 +6,10 @@ Use this guide after the first-pass inspection.
 
 Map each source file into the smallest correct destination in this repository:
 
-- `packs/<name>/` for installable Cursor runtime assets
-- `skills/<name>/` for reusable guidance
+- `packs/<name>/` for installable Cursor runtime assets (`.cursor/`, guides, etc.)
+- `packs/<name>/skills/<folder>/` plus `kind: "skill"` in `pack.json` when
+  guidance should ship **with** the pack into Cursor skill discovery paths
+- `skills/<name>/` for reusable **repo-root** guidance (central registry / sync)
 - `guides/` or `references/` under a pack for supporting docs
 - excluded for Claude-only or non-source files
 
@@ -26,6 +28,16 @@ Map each source file into the smallest correct destination in this repository:
 - the content has clear trigger scenarios
 - the guidance can stand alone without a large runtime bundle
 - the content should be discoverable through skill routing
+
+Then choose **repo-root** `skills/<name>/` versus **pack-bundled**
+`packs/<pack>/skills/<folder>/`:
+
+- Prefer **repo-root** when the skill should be versioned in `skill-registry.json`
+  and synced independently of any pack.
+- Prefer **pack-bundled** when the skill is orientation or workflow tied to that
+  pack's install and should ride along with `cursor-pack-sync.sh`, using a
+  **pack-scoped** `skillId` to avoid colliding with registry skills under
+  `~/.cursor/skills/`.
 
 ### Put it in docs when
 
