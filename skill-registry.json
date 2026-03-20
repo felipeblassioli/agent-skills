@@ -77,6 +77,23 @@
       ],
       "description": "Go package documentation (doc.go) following official conventions"
     },
+    "go-command-line-applications": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "golang",
+        "cli",
+        "command-line",
+        "automation",
+        "architecture"
+      ],
+      "description": "Author and review serious Go command-line applications with stable command grammar, explicit side effects, predictable output contracts, and thin CLI adapter boundaries."
+    },
     "tdd-classicist": {
       "version": "1.0.0",
       "author": "felipeblassioli",

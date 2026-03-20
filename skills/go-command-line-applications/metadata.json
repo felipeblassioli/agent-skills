@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "March 2026",
+  "abstract": "Guidance for authoring and reviewing serious Go command-line applications with stable command grammar, explicit side effects, strong automation contracts, thin CLI adapters, deliberate rendering boundaries, and predictable operator UX."
+}
