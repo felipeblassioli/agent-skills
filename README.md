@@ -15,6 +15,7 @@ metadata, and deployment targets.
 - Import skills from local repositories/projects
 - Sync skills to discovery paths (for example `~/.cursor/skills/`)
 - Verify, stage, install, and restore Cursor runtime bundles such as subagents, rules, hooks, and MCP templates
+- Optionally install **bundled skills** declared on packs (`kind: "skill"` in `pack.json`) into project or user Cursor skill paths (see `docs/specs/agentic-skill-pack-authoring.md`)
 
 ## Current Workflow
 
@@ -191,6 +192,7 @@ Each skill directory should include:
 
 - `SKILL.md` (required)
 - `metadata.json` (required)
+- `CHANGELOG.md` (recommended for evolving skills; Keep a Changelog style)
 - Optional: `references/`, `assets/`, `scripts/`
 
 ## Cursor Pack Layout

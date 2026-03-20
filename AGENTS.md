@@ -9,7 +9,13 @@ Skills are authored here and deployed to global (`~/.cursor/skills/`,
 `~/.agents/skills/`) or project-local (`.cursor/skills/`) paths via
 `scripts/skill-sync.sh`. Cursor runtime bundles such as subagents, hooks,
 project rules, and MCP templates are authored under `packs/` and installed via
-`scripts/cursor-pack-sync.sh`.
+`scripts/cursor-pack-sync.sh`. Packs may also declare **`kind: "skill"`**
+artifacts in `pack.json` to install **bundled skills** into Cursor skill
+discovery paths (for example `.cursor/skills/<skillId>/` on project installs and
+`~/.cursor/skills/<skillId>/` for user installs). Those skills follow the same
+authoring rules as `skills/<name>/` but are not automatically listed in
+`skill-registry.json` unless promoted. See
+`docs/specs/agentic-skill-pack-authoring.md` (pack-bundled skills).
 
 ## Structure
 
@@ -18,6 +24,7 @@ agent-skills/
 ├── skills/                       # All skill sources
 │   ├── <name>/
 │   │   ├── SKILL.md              # Required — agent instructions
+│   │   ├── CHANGELOG.md          # Recommended — release history for evolving skills
 │   │   ├── metadata.json         # Required — version, author, date, abstract
 │   │   ├── README.md             # Optional — human docs (excluded from deploy)
 │   │   ├── AGENTS.md             # Optional — compiled rules output
@@ -36,6 +43,7 @@ agent-skills/
 │       ├── RELEASE-POLICY.md     # Expected for evolving packs — release rules
 │       ├── ROADMAP.md            # Expected for evolving packs — next steps
 │       ├── .cursor/              # Runtime assets to install
+│       ├── skills/               # Optional — bundled skills (kind: skill in pack.json)
 │       ├── guides/               # Optional — user-facing guidance
 │       └── assets/               # Optional — templates and examples
 ├── skill-registry.json           # Central manifest (versions, targets, tags)
@@ -55,6 +63,21 @@ agent-skills/
 │   └── skills/skill-registry/    # Meta-skill for registry management
 └── README.md
 ```
+
+## Authoring Doctrine
+
+When creating or revising repository-local agent guidance artifacts, use these
+specs as the primary routing surface instead of expanding this root file:
+
+- `docs/specs/agentic-skill-pack-authoring.md` — skill-versus-pack boundaries,
+  cheap-agent-first delegation, and token/context policy
+- `docs/specs/skill-authoring-checklist.md` — compact checklist for work under
+  `skills/`
+- `docs/specs/pack-authoring-checklist.md` — compact checklist for work under
+  `packs/`
+
+Keep reusable authoring doctrine in those specs rather than duplicating it in
+`AGENTS.md`.
 
 ## Skill Archetypes
 

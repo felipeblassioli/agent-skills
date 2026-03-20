@@ -20,7 +20,7 @@ then deployed to `~/.cursor/skills/`, `~/.agents/skills/`, or
 
 | Path | Purpose |
 |------|---------|
-| `skills/<name>/` | Skill source — SKILL.md + metadata.json + optional refs/assets/scripts |
+| `skills/<name>/` | Skill source — SKILL.md + metadata.json + optional CHANGELOG/refs/assets/scripts |
 | `skill-registry.json` | Central manifest — version, author, scope, targets per skill |
 | `scripts/skill-sync.sh` | Deploy skills to target paths |
 | `scripts/skill-version.sh` | Bump version across registry + metadata + SKILL.md |
@@ -36,6 +36,7 @@ Every skill MUST have `SKILL.md` and `metadata.json` at minimum.
 skills/<name>/
 ├── SKILL.md          # Required — agent instructions
 ├── metadata.json     # Required — version, author, date, abstract
+├── CHANGELOG.md      # Recommended — release history (Keep a Changelog)
 ├── README.md         # Optional — human-facing docs (excluded from deploy)
 ├── AGENTS.md         # Optional — compiled output (for rules-based skills)
 ├── references/       # Optional — on-demand docs
