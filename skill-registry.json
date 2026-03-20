@@ -107,7 +107,7 @@
       "description": "Diagnose and fix ESM errors in TypeScript projects"
     },
     "claude-plugin-to-cursor-pack": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -121,7 +121,7 @@
         "packs",
         "migration"
       ],
-      "description": "Evaluates a Claude-style plugin or plugin-like folder and recommends how to adapt it into Cursor-native pack assets, companion skills, docs, and MCP templates."
+      "description": "Evaluates a Claude-style plugin or plugin-like folder and recommends how to adapt it into Cursor-native pack assets, repo-root companion skills, optional pack-bundled skills (kind: skill), docs, and MCP templates."
     },
     "nx-monorepo": {
       "version": "2.0.0",
@@ -286,7 +286,7 @@
       "description": "Create Cursor skills through Socratic discovery, boundary clarification, strict scope control, and quality-gated scaffolding. Use when the user wants to create or refactor a Cursor skill, define a skill's job and triggers, or turn best practices into a reusable skill package. Invoke explicitly via /cursor-skill-creator."
     },
     "create-cursor-pack-from-refs": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -297,7 +297,7 @@
         "authoring",
         "cursor-pack"
       ],
-      "description": "Create Cursor packs from user-provided reference material and repo context. Guides through intake, pack archetype selection, pack scaffolding under `packs/<name>/`, registry updates, and verification against this repository's pack conventions. Use when the user asks to create a Cursor pack, author `pack.json`, scaffold pack runtime assets, or package subagents, rules, hooks, MCP examples, and guides into an installable Cursor bundle."
+      "description": "Create Cursor packs from user-provided reference material and repo context. Guides through intake, pack archetype selection, pack scaffolding under `packs/<name>/`, registry updates, and verification against this repository's pack conventions, including optional pack-bundled skills (kind: skill). Use when the user asks to create a Cursor pack, author `pack.json`, scaffold runtime assets, or package subagents, rules, hooks, MCP examples, guides, and bundled skills into an installable Cursor bundle."
     },
     "firebase-functions-node": {
       "version": "1.0.0",
@@ -426,7 +426,7 @@
       "description": "Type-safe SQL query building in TypeScript using Kysely"
     },
     "nested-agents-routing": {
-      "version": "1.0.1",
+      "version": "1.0.2",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -439,10 +439,10 @@
         "monorepo",
         "routing"
       ],
-      "description": "Design repository-local agent guidance using root and nested AGENTS.md files, scoped Cursor rules, reusable skills, and pack-owned runtime assets."
+      "description": "Design repository-local agent guidance using root and nested AGENTS.md files, scoped Cursor rules, reusable skills, pack-owned runtime assets, and optional pack-bundled skills."
     },
     "improving-agent-artifacts": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -455,7 +455,7 @@
         "skills",
         "packs"
       ],
-      "description": "Improve existing Cursor skills and Cursor packs by asking focused diagnostic questions, then recommending concrete changes with expected outcomes. Use when refining an existing skill or pack, reducing noise or token cost, sharpening subagent delegation, or deciding which improvement will have the highest leverage."
+      "description": "Improve existing Cursor skills and Cursor packs by asking focused diagnostic questions, then recommending concrete changes with expected outcomes. Pack reviews cover optional bundled skills (kind: skill). Use when refining an existing skill or pack, reducing noise or token cost, sharpening subagent delegation, or deciding which improvement will have the highest leverage."
     },
     "gh-issue-verifier": {
       "version": "1.0.0",
