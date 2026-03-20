@@ -2,6 +2,28 @@
 
 This file is the committed release companion to `CHANGELOG.md`.
 
+## Release 0.1.3 - 2026-03-19
+
+## Commands
+
+```bash
+bash scripts/cursor-pack-verify.sh --pack=cursor-companion
+bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=project --project-root="$PWD" --profile=lite --dry-run
+bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=project --project-root="$PWD" --profile=strict --dry-run
+bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=user --profile=lite --dry-run
+bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=user --profile=strict --dry-run
+```
+
+## Outcome
+
+- structural verification passed, including bundled skill checks (`SKILL.md`, `metadata.json`, `skillId` / frontmatter `name` alignment)
+- dry-run installs covered both targets and both profiles; bundled skill stages to `.cursor/skills/cursor-companion-pack-overview/` (project) and `skills/cursor-companion-pack-overview/` under `~/.cursor` (user)
+
+## Diagnosis
+
+- establishes `kind: "skill"` pack artifacts as a supported install path aligned with repository doctrine
+- residual risk: same `skillId` under `~/.cursor/skills/` can still collide with `skill-sync.sh`; pack-scoped naming mitigates
+
 ## Release 0.1.1 - 2026-03-09
 
 ## Commands

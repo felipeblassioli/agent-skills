@@ -4,6 +4,17 @@ All notable changes to `cursor-companion` should be recorded here.
 
 ## Unreleased
 
+## 0.1.3 - 2026-03-19
+
+### Added
+
+- **Bundled skill** `cursor-companion-pack-overview` (`kind: "skill"` in `pack.json`): orientation for what the pack installs and how it relates to `skill-registry.json` / `skill-sync.sh`
+- Pack-local directory `skills/cursor-companion-pack-overview/` with `SKILL.md` and `metadata.json`
+
+### Changed
+
+- `pack.json` / registry: version `0.1.3`; profiles description notes the bundled skill
+
 ## 0.1.2 - 2026-03-09
 
 ### Added

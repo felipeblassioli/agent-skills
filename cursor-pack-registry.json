@@ -2,7 +2,7 @@
   "$schema": "./cursor-pack-registry.schema.json",
   "packs": {
     "cursor-companion": {
-      "version": "0.1.2",
+      "version": "0.1.3",
       "author": "felipeblassioli",
       "path": "packs/cursor-companion",
       "targets": [
@@ -25,9 +25,10 @@
         "rules",
         "hooks",
         "mcp",
-        "guardrails"
+        "guardrails",
+        "skills"
       ],
-      "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, and operational guides."
+      "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and a bundled orientation skill."
     },
     "gcp-log-investigation": {
       "version": "0.1.0",

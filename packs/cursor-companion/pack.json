@@ -1,8 +1,8 @@
 {
   "$schema": "../../cursor-pack.schema.json",
   "name": "cursor-companion",
-  "version": "0.1.2",
-  "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, and operational guides.",
+  "version": "0.1.3",
+  "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and an optional bundled orientation skill.",
   "author": "felipeblassioli",
   "targets": [
     "project-cursor",
@@ -10,10 +10,10 @@
   ],
   "profiles": {
     "lite": {
-      "description": "Installs reusable subagents and MCP configuration examples without active hooks."
+      "description": "Installs reusable subagents, MCP configuration examples, and the bundled orientation skill without active hooks."
     },
     "strict": {
-      "description": "Installs the full companion bundle, including hooks and project rules where Cursor supports them."
+      "description": "Installs the full companion bundle, including hooks, project rules where Cursor supports them, and the bundled orientation skill."
     }
   },
   "artifacts": [
@@ -95,6 +95,24 @@
       "userPath": "mcp.example.json",
       "notes": [
         "The installer never promotes this file to mcp.json automatically."
+      ]
+    },
+    {
+      "id": "bundled-skill-pack-overview",
+      "kind": "skill",
+      "skillId": "cursor-companion-pack-overview",
+      "source": "skills/cursor-companion-pack-overview",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "notes": [
+        "Installs to .cursor/skills/cursor-companion-pack-overview/ (project) or ~/.cursor/skills/cursor-companion-pack-overview/ (user).",
+        "Not listed in skill-registry.json unless promoted to the central registry."
       ]
     }
   ],

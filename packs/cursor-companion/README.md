@@ -1,20 +1,26 @@
 ---
 name: cursor-companion
-version: "0.1.2"
-description: Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, and operational guides.
+version: "0.1.3"
+description: Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and an optional bundled skill.
 ---
 
 # Cursor Companion
 
 `cursor-companion` is a first-class Cursor pack for projects and personal environments.
 
-It packages the runtime pieces that do not belong inside `skills/`:
+It packages **runtime** pieces (subagents, rules, hooks, MCP examples) that
+should not be authored *as* skill bodies. It may also ship **bundled skills**
+(separate `kind: "skill"` artifacts) that install like normal skills into Cursor
+skill discovery paths. See `docs/specs/agentic-skill-pack-authoring.md`.
 
 - focused subagents in `.cursor/agents/`
 - project rules in `.cursor/rules/`
 - hook guard-rails in `.cursor/hooks*.json` and `.cursor/hooks/`
 - MCP configuration examples in `.cursor/mcp.example.json`
 - usage guides and authoring templates for teams adopting the pack
+- optional bundled skill `cursor-companion-pack-overview` (installs to
+  `.cursor/skills/cursor-companion-pack-overview/` on project targets and
+  `~/.cursor/skills/cursor-companion-pack-overview/` on user targets)
 
 It does not treat repo-specific nested `AGENTS.md` files as pack-managed runtime
 assets. Instead, the pack teaches that pattern through guides and templates while
