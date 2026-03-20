@@ -134,6 +134,12 @@ Reuse existing assets as source material instead of duplicating policy:
 - `AGENTS.md` and `.cursor/rules/` for governance/process constraints.
 - `skills/*/SKILL.md` and `skill-registry.json` for skills inventory and scope.
 - `README.md` and `scripts/skill-*.sh` for repository operation flows.
+- `docs/specs/agentic-skill-pack-authoring.md` plus its related checklists for
+  repo-local doctrine on authoring skills and packs.
+
+The skill and pack authoring doctrine lives in `docs/specs/` on purpose. It is
+repo-specific authoring policy, not a core layer of the agentic architecture
+stack.
 
 ## Authoring Guardrail
 
