@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "Anthropic adapted by felipeblassioli",
+  "date": "2026-03-20",
+  "abstract": "Bundled engineering workflow for READMEs, API docs, runbooks, onboarding guides, and architecture documentation."
+}

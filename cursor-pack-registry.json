@@ -30,6 +30,62 @@
       ],
       "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and a bundled orientation skill."
     },
+    "cursor-skill-creator": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "path": "packs/cursor-skill-creator",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "installPolicy": {
+        "backupOnConflict": true,
+        "defaultProfile": "lite",
+        "projectRules": "project-only",
+        "mcp": "none"
+      },
+      "tags": [
+        "cursor",
+        "skills",
+        "packs",
+        "authoring",
+        "evaluation",
+        "subagents"
+      ],
+      "description": "Portable Cursor authoring pack with a bundled workflow skill, evaluation toolkit, and helper subagents for adapting source material into bundled skills and installable packs."
+    },
+    "engineering-workflows": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "path": "packs/engineering-workflows",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "installPolicy": {
+        "backupOnConflict": true,
+        "defaultProfile": "lite",
+        "projectRules": "none",
+        "mcp": "example-only"
+      },
+      "tags": [
+        "cursor",
+        "skills",
+        "engineering",
+        "review",
+        "debugging",
+        "mcp"
+      ],
+      "description": "Portable engineering workflow pack with bundled skills for code review, debugging, architecture, incident response, deploy readiness, documentation, standups, technical debt, and testing strategy."
+    },
     "gcp-log-investigation": {
       "version": "0.1.0",
       "author": "felipeblassioli",

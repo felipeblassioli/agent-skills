@@ -1,0 +1,20 @@
+---
+description: "When authoring Cursor packs or installed bundled skills, keep skills, packs, rules, subagents, and docs separated by purpose rather than copying mixed source trees directly."
+alwaysApply: false
+---
+
+# Skill Creator Routing
+
+When adapting source material into Cursor-native artifacts:
+
+1. Classify first.
+2. Define the artifact matrix before editing.
+3. Prefer bundled skills for reusable guidance that should install with the pack.
+4. Prefer subagents for bounded helper work such as grading or blind comparison.
+5. Keep long explanations in guides or references, not in strict rules.
+
+Avoid these mistakes:
+
+- copying a mixed Claude-style source tree into `packs/` unchanged
+- turning all guidance into rules
+- referencing repo-local top-level skills from installed bundled skills

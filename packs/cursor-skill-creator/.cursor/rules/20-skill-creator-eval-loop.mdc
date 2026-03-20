@@ -1,0 +1,24 @@
+---
+description: "After substantive skill or pack-authoring changes, prefer a small eval loop with explicit expectations, evidence-based grading, and review output rather than relying on prose confidence alone."
+alwaysApply: false
+---
+
+# Skill Creator Eval Loop
+
+Use the bundled evaluation flow when authoring changes are important enough to
+need proof.
+
+Prefer this sequence:
+
+1. Define realistic eval prompts.
+2. Capture baseline and candidate outputs separately.
+3. Grade with `skill-creator-grader`.
+4. Aggregate metrics with the bundled benchmark script.
+5. Review outputs with the bundled HTML viewer.
+6. Use `skill-creator-analyzer` for interpretation.
+
+Keep the loop proportional:
+
+- use a tiny eval set for early iteration
+- expand coverage only after the workflow stabilizes
+- do not force benchmarks for trivial wording edits

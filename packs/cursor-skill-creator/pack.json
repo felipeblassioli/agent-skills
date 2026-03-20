@@ -1,0 +1,77 @@
+{
+  "$schema": "../../cursor-pack.schema.json",
+  "name": "cursor-skill-creator",
+  "version": "0.1.0",
+  "description": "Cursor pack with a bundled workflow skill, evaluation toolkit, and reusable helper subagents for adapting external skill material into installable Cursor-native packs and bundled skills.",
+  "author": "felipeblassioli",
+  "targets": [
+    "project-cursor",
+    "user-cursor"
+  ],
+  "profiles": {
+    "lite": {
+      "description": "Installs the bundled skill-creator workflow and helper subagents without persistent project rules."
+    },
+    "strict": {
+      "description": "Installs the same workflow plus project-only guidance for disciplined intake, decomposition, and evaluation loops when authoring packs and bundled skills."
+    }
+  },
+  "artifacts": [
+    {
+      "id": "agents",
+      "source": ".cursor/agents",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "projectPath": ".cursor/agents",
+      "userPath": "agents"
+    },
+    {
+      "id": "rules",
+      "source": ".cursor/rules",
+      "targets": [
+        "project-cursor"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "projectPath": ".cursor/rules",
+      "notes": [
+        "Strict installs add persistent project guidance for adapting source material into bundled skills and packs.",
+        "User installs skip rules because Cursor user rules are managed in settings rather than a ~/.cursor/rules directory."
+      ]
+    },
+    {
+      "id": "bundled-skill-workflow",
+      "kind": "skill",
+      "skillId": "cursor-skill-creator-workflow",
+      "source": "skills/cursor-skill-creator-workflow",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "notes": [
+        "Installs to .cursor/skills/cursor-skill-creator-workflow/ (project) or ~/.cursor/skills/cursor-skill-creator-workflow/ (user).",
+        "This bundled skill is pack-scoped and is not listed in skill-registry.json unless intentionally promoted."
+      ]
+    }
+  ],
+  "install": {
+    "defaultProfile": "lite",
+    "backupOnConflict": true,
+    "stageRoot": ".work/cursor-pack-staging",
+    "backupRoot": ".work/cursor-pack-backups",
+    "manifestFile": ".cursor-pack-manifest.json",
+    "conflictPolicy": "backup-and-overwrite",
+    "mcpPolicy": "none"
+  }
+}

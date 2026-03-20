@@ -1,0 +1,17 @@
+{
+  "id": "bundled-skill-example",
+  "kind": "skill",
+  "skillId": "my-pack-example-skill",
+  "source": "skills/my-pack-example-skill",
+  "targets": [
+    "project-cursor",
+    "user-cursor"
+  ],
+  "profiles": [
+    "lite",
+    "strict"
+  ],
+  "notes": [
+    "Installer destination is derived from skillId."
+  ]
+}

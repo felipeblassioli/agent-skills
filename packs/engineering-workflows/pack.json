@@ -1,0 +1,188 @@
+{
+  "$schema": "../../cursor-pack.schema.json",
+  "name": "engineering-workflows",
+  "version": "0.1.0",
+  "description": "Cursor pack with bundled engineering workflow skills for standups, code review, debugging, architecture, incident response, documentation, deploy readiness, technical debt, and testing strategy, plus example MCP connector configuration.",
+  "author": "felipeblassioli",
+  "targets": [
+    "project-cursor",
+    "user-cursor"
+  ],
+  "profiles": {
+    "lite": {
+      "description": "Installs the bundled engineering workflow skills and example MCP configuration."
+    },
+    "strict": {
+      "description": "Installs the same bundled workflows and example MCP configuration; reserved for future project-only guardrails if the pack grows stricter runtime policy."
+    }
+  },
+  "artifacts": [
+    {
+      "id": "mcp-example",
+      "source": ".cursor/mcp.example.json",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ],
+      "projectPath": ".cursor/mcp.example.json",
+      "userPath": "mcp.example.json",
+      "notes": [
+        "The installer never promotes this file to mcp.json automatically.",
+        "This example intentionally omits Claude-hosted endpoints and uses only pack-documented connector categories."
+      ]
+    },
+    {
+      "id": "bundled-skill-architecture",
+      "kind": "skill",
+      "skillId": "engineering-architecture",
+      "source": "skills/engineering-architecture",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-code-review",
+      "kind": "skill",
+      "skillId": "engineering-code-review",
+      "source": "skills/engineering-code-review",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-debug",
+      "kind": "skill",
+      "skillId": "engineering-debug",
+      "source": "skills/engineering-debug",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-deploy-checklist",
+      "kind": "skill",
+      "skillId": "engineering-deploy-checklist",
+      "source": "skills/engineering-deploy-checklist",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-documentation",
+      "kind": "skill",
+      "skillId": "engineering-documentation",
+      "source": "skills/engineering-documentation",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-incident-response",
+      "kind": "skill",
+      "skillId": "engineering-incident-response",
+      "source": "skills/engineering-incident-response",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-standup",
+      "kind": "skill",
+      "skillId": "engineering-standup",
+      "source": "skills/engineering-standup",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-system-design",
+      "kind": "skill",
+      "skillId": "engineering-system-design",
+      "source": "skills/engineering-system-design",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-tech-debt",
+      "kind": "skill",
+      "skillId": "engineering-tech-debt",
+      "source": "skills/engineering-tech-debt",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    },
+    {
+      "id": "bundled-skill-testing-strategy",
+      "kind": "skill",
+      "skillId": "engineering-testing-strategy",
+      "source": "skills/engineering-testing-strategy",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite",
+        "strict"
+      ]
+    }
+  ],
+  "install": {
+    "defaultProfile": "lite",
+    "backupOnConflict": true,
+    "stageRoot": ".work/cursor-pack-staging",
+    "backupRoot": ".work/cursor-pack-backups",
+    "manifestFile": ".cursor-pack-manifest.json",
+    "conflictPolicy": "backup-and-overwrite",
+    "mcpPolicy": "example-only"
+  }
+}
