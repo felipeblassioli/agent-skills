@@ -537,6 +537,23 @@
         "server-rendered"
       ],
       "description": "Build and review server-side HTMX applications with Hono using HTML fragment responses, typed HTMX attributes, and production-safe server patterns."
+    },
+    "bmad-specialist": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "bmad",
+        "agents",
+        "workflows",
+        "customization",
+        "runtime"
+      ],
+      "description": "Explain how installed BMAD works inside a project and guide safe customization of its runtime behavior through config, agent overrides, memory, workflows, and routing catalogs."
     }
   },
   "targetPaths": {
