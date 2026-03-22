@@ -5,7 +5,7 @@
 # Options:
 #   --skill=NAME     Deploy only the named skill
 #   --scope=SCOPE    Deploy only skills with this scope (global|project)
-#   --target=TARGET  Deploy only to this target (cursor|agents|claude)
+#   --target=TARGET  Deploy only to this target (cursor|agents|claude|gemini)
 #   --dry-run        Show what would be done without making changes
 #   --force          Overwrite even if target version matches
 #   --list           List all skills and their deploy status

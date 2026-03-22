@@ -479,7 +479,8 @@
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
-        "cursor"
+        "cursor",
+        "gemini"
       ],
       "tags": [
         "linear",
@@ -575,6 +576,7 @@
   "targetPaths": {
     "cursor": "~/.cursor/skills",
     "agents": "~/.agents/skills",
-    "claude": "~/.claude/skills"
+    "claude": "~/.claude/skills",
+    "gemini": "~/.gemini/skills"
   }
 }
