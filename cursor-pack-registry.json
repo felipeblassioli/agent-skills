@@ -1,6 +1,33 @@
 {
   "$schema": "./cursor-pack-registry.schema.json",
   "packs": {
+    "agentic-artifact-discovery": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "path": "packs/agentic-artifact-discovery",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "installPolicy": {
+        "backupOnConflict": true,
+        "defaultProfile": "lite",
+        "projectRules": "none",
+        "mcp": "none"
+      },
+      "tags": [
+        "cursor",
+        "skills",
+        "subagents",
+        "discovery",
+        "agentic-systems",
+        "plugins"
+      ],
+      "description": "Portable agentic-artifact discovery pack with an explicit workflow skill and a reusable exploration subagent for understanding skill systems, workflow frameworks, subagent bundles, and Claude-style plugins."
+    },
     "cursor-companion": {
       "version": "0.1.3",
       "author": "felipeblassioli",

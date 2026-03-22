@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "2026-03-21",
+  "abstract": "Installed workflow skill for explicitly discovering and explaining agentic artifacts such as skill systems, workflow frameworks, subagent bundles, and Claude-style plugins."
+}
