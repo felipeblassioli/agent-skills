@@ -56,6 +56,35 @@ This is appropriate for:
 
 It is a better first move than copying the same rule into multiple workflows.
 
+## Add a repeatable refinement or readiness ceremony
+
+Prefer a BMAD workflow or checklist when the change is:
+
+- a stable sequence of steps
+- something multiple roles should perform the same way
+- more than a reminder or a role-local prompt tweak
+
+Examples:
+
+- readiness gate
+- refinement checklist
+- promotion process from brainstorming output to durable rule
+
+If the sequence is still exploratory, document the idea first in `_memory/` and
+promote it to a workflow/checklist once the team agrees it should repeat.
+
+## Review generated outputs before promoting them
+
+Files under `_bmad-output/` are usually evidence, drafts, or exploratory output.
+
+Use them to learn:
+
+- what the team has been trying
+- what ideas are emerging
+- what should perhaps become durable behavior
+
+Do not assume a generated output file is authoritative just because it exists.
+
 ## Change workflow sequence or ceremony
 
 This usually means editing installed workflow files under `_bmad/core/`,
@@ -89,9 +118,10 @@ Treat CSV edits carefully because these files behave like runtime control data.
 When a user asks to modify BMAD behavior, prefer this order:
 
 1. module `config.yaml`
-2. `_bmad/_config/agents/*.customize.yaml`
-3. `_bmad/_memory/`
-4. manifest CSVs
-5. direct edits to installed workflow or agent files
+2. `_bmad/_memory/`
+3. `_bmad/_config/agents/*.customize.yaml`
+4. workflow/checklist
+5. manifest CSVs
+6. direct edits to installed workflow or agent files
 
 The deeper you go, the more upgrade-fragile the customization becomes.

@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-03-22",
+  "abstract": "Linear board specialist for auditing hierarchy, labels, statuses, stale work, and alignment between MCP-visible Linear state and the current reality of work."
+}

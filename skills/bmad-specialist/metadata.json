@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "felipeblassioli",
   "date": "2026-03-22",
-  "abstract": "Installed-project BMAD specialist for explaining `_bmad/` runtime structure and guiding safe customization of outputs, agents, workflows, and project-local behavior."
+  "abstract": "Installed-project BMAD specialist for auditing `_bmad/` customizations, aligning team process, and guiding safe placement of behavior across memory, role overrides, workflows/checklists, and reusable skills."
 }

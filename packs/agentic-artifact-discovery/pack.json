@@ -1,0 +1,57 @@
+{
+  "$schema": "../../cursor-pack.schema.json",
+  "name": "agentic-artifact-discovery",
+  "version": "0.1.0",
+  "description": "Cursor pack with an explicit discovery workflow skill and a reusable exploration subagent for understanding agentic artifacts such as skill systems, workflow frameworks, subagent bundles, and Claude-style plugins.",
+  "author": "felipeblassioli",
+  "targets": [
+    "project-cursor",
+    "user-cursor"
+  ],
+  "profiles": {
+    "lite": {
+      "description": "Installs the explicit discovery workflow and exploration subagent without persistent rules, hooks, or MCP configuration."
+    }
+  },
+  "artifacts": [
+    {
+      "id": "agents",
+      "source": ".cursor/agents",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "projectPath": ".cursor/agents",
+      "userPath": "agents"
+    },
+    {
+      "id": "bundled-skill-workflow",
+      "kind": "skill",
+      "skillId": "agentic-artifact-discovery-workflow",
+      "source": "skills/agentic-artifact-discovery-workflow",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "notes": [
+        "Installs to .cursor/skills/agentic-artifact-discovery-workflow/ (project) or ~/.cursor/skills/agentic-artifact-discovery-workflow/ (user).",
+        "This bundled skill is pack-scoped and is not listed in skill-registry.json unless intentionally promoted."
+      ]
+    }
+  ],
+  "install": {
+    "defaultProfile": "lite",
+    "backupOnConflict": true,
+    "stageRoot": ".work/cursor-pack-staging",
+    "backupRoot": ".work/cursor-pack-backups",
+    "manifestFile": ".cursor-pack-manifest.json",
+    "conflictPolicy": "backup-and-overwrite",
+    "mcpPolicy": "none"
+  }
+}

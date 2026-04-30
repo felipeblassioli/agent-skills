@@ -70,6 +70,11 @@ Think of the installed BMAD surface in layers:
 `bmad-help.csv` and related manifests often matter more than folder names
 because they define how the runtime routes users.
 
+Generated artifacts in `_bmad-output/` are useful for understanding what the
+team has been doing, but they are not automatically authoritative runtime
+control. Treat them as evidence unless the team has promoted the behavior into a
+durable surface such as `_memory/`, `*.customize.yaml`, or a workflow/checklist.
+
 ## Practical reading order
 
 When trying to understand installed BMAD in a project:
@@ -77,8 +82,10 @@ When trying to understand installed BMAD in a project:
 1. `manifest.yaml`
 2. module `config.yaml`
 3. `bmad-help.csv`
-4. the relevant `*.customize.yaml`
-5. the specific agent or workflow file the user wants to change
+4. the relevant `_memory/` files for standing local doctrine
+5. the relevant `*.customize.yaml`
+6. the specific agent or workflow file the user wants to change
+7. recent `_bmad-output/**` artifacts only if they are part of the question
 
 ## Common misunderstanding
 

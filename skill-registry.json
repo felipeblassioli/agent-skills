@@ -474,6 +474,23 @@
       ],
       "description": "Type-safe SQL query building in TypeScript using Kysely"
     },
+    "linear-specialist": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "gemini"
+      ],
+      "tags": [
+        "linear",
+        "board-audit",
+        "triage",
+        "workflow",
+        "alignment"
+      ],
+      "description": "Audit and tidy Linear boards using MCP-first evidence, with focused checks for hierarchy, labels, statuses, stale work, and whether Linear still reflects the current reality of work."
+    },
     "nested-agents-routing": {
       "version": "1.0.2",
       "author": "felipeblassioli",
@@ -539,7 +556,7 @@
       "description": "Build and review server-side HTMX applications with Hono using HTML fragment responses, typed HTMX attributes, and production-safe server patterns."
     },
     "bmad-specialist": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -553,12 +570,13 @@
         "customization",
         "runtime"
       ],
-      "description": "Explain how installed BMAD works inside a project and guide safe customization of its runtime behavior through config, agent overrides, memory, workflows, and routing catalogs."
+      "description": "Audit and customize installed BMAD projects by inspecting `_bmad/` customizations, interviewing the team about current process, and deciding whether behavior belongs in memory, role overrides, workflows/checklists, or reusable skills."
     }
   },
   "targetPaths": {
     "cursor": "~/.cursor/skills",
     "agents": "~/.agents/skills",
-    "claude": "~/.claude/skills"
+    "claude": "~/.claude/skills",
+    "gemini": "~/.gemini/skills"
   }
 }
