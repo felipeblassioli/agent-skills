@@ -623,7 +623,7 @@
       "description": "Audit and maintain Cursor skills and packs to ensure compliance with the repository governed maintenance model (ADR-0002) and registry-driven releases (ADR-0001)."
     },
     "audit-skill-for-cursor": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [

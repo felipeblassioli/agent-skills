@@ -2,6 +2,16 @@
 
 All notable changes to this skill will be documented in this file.
 
+## [1.1.0] - 2026-05-05
+
+### Added
+- Added Context Litmus Test to `SKILL.md` to rigorously evaluate skills.
+- Added cheap-agent-first delegation requirements for mechanical tasks.
+- Included strict output schema constraints to prevent chatty agent outputs.
+
+### Changed
+- Expanded `description` and `Overview` to explicitly highlight token discipline, the One-Hop Rule, and cheap-agent-first delegation.
+
 ## [1.0.1] - 2026-05-05
 
 ### Changed
