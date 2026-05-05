@@ -71,9 +71,21 @@ This pack does not own:
 - pack installation or sync workflows
 - MCP trust review as a primary task
 
+## Validation Evidence
+
+Durable validation material lives outside the bundled runtime surfaces so the
+installed skill and subagent stay small.
+
+- `guides/verification-and-diagnosis.md`: narrative interpretation of the
+  validation work
+- `verification-outputs/`: curated scenario evidence for real targets such as
+  `tmp/BMAD-METHOD`
+
 ## Release Artifacts
 
 - [CHANGELOG.md](CHANGELOG.md)
 - [VERIFICATION.md](VERIFICATION.md)
 - [RELEASE-POLICY.md](RELEASE-POLICY.md)
 - [ROADMAP.md](ROADMAP.md)
+- [guides/verification-and-diagnosis.md](guides/verification-and-diagnosis.md)
+- [verification-outputs/README.md](verification-outputs/README.md)

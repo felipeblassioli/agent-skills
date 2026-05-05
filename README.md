@@ -46,6 +46,18 @@ bash scripts/skill-sync.sh
 
 ## Cursor Pack Workflow
 
+Cursor Packs are this repository's private/local installable bundle format for
+Cursor runtime assets. See:
+
+- `docs/guides/cursor-packs.md` for usage guidance
+- `docs/specs/cursor-pack-specification.md` for the formal pack contract
+- `docs/ADR/ADR-0002-governed-skill-maintenance-model.md` for the skill-versus-pack
+  maintenance model
+
+In manifests and registries, pack targets are named `project-cursor` and
+`user-cursor`. The CLI uses `--target=project` and `--target=user` for those
+same two install destinations.
+
 ### 1) Verify a pack
 
 ```bash
@@ -169,6 +181,7 @@ See:
 - `docs/specs/release-workflow.md`
 - `docs/specs/vercel-skills-compatibility.md`
 - `docs/ADR/ADR-0001-registry-driven-releases-for-skills-and-packs.md`
+- `docs/ADR/ADR-0002-governed-skill-maintenance-model.md`
 
 ## PR Quality Standard
 
@@ -193,18 +206,24 @@ Each skill directory should include:
 - `SKILL.md` (required)
 - `metadata.json` (required)
 - `CHANGELOG.md` (recommended for evolving skills; Keep a Changelog style)
+- `README.md` (recommended for maintained, imported, source-contract, or
+  human-facing skills)
 - Optional: `references/`, `assets/`, `scripts/`
+
+For the governed skill maintenance model and package responsibilities, see
+`docs/ADR/ADR-0002-governed-skill-maintenance-model.md` and
+`docs/specs/skill-authoring-checklist.md`.
 
 ## Cursor Pack Layout
 
 Each pack directory should include:
 
 - `pack.json` (required)
-- `README.md` (recommended)
+- `README.md` (required for registry-managed packs)
 - runtime assets under `.cursor/`
 - optional `guides/` and `assets/`
 
-Maintained packs should also commit:
+Registry-managed packs also commit:
 
 - `CHANGELOG.md`
 - `VERIFICATION.md`
@@ -215,6 +234,11 @@ Current reference pack:
 
 - `cursor-companion`
 - `gcp-log-investigation`
+- `agentic-artifact-discovery`
+
+For the full pack contract and usage guidance, see
+`docs/specs/cursor-pack-specification.md` and
+`docs/guides/cursor-packs.md`.
 
 ## Selected Skills
 

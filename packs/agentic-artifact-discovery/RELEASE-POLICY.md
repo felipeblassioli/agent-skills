@@ -11,6 +11,9 @@ Every meaningful released change should keep these files up to date:
 - `CHANGELOG.md`
 - `VERIFICATION.md`
 - `ROADMAP.md`
+- `guides/verification-and-diagnosis.md` when a real scenario produces useful
+  interpretation
+- `verification-outputs/` when curated evidence is worth preserving
 - this file when the release policy itself changes
 
 These artifacts are committed on purpose. They are part of the pack's operating
@@ -39,6 +42,17 @@ When the change affects behavior, prompts, or boundaries, also record:
 - one realistic usage example
 - observed outcome
 - diagnosis or residual risks
+
+Use the evidence layers consistently:
+
+- `VERIFICATION.md` = concise release ledger
+- `guides/verification-and-diagnosis.md` = narrative explanation of what the
+  validation means
+- `verification-outputs/` = curated scenario artifacts such as report shapes,
+  prompt matrices, and boundary checks
+
+Keep raw transcripts, scratch notes, and repeated experimental runs in `.work/`,
+not in the committed pack tree.
 
 ## Release categories
 
@@ -74,6 +88,9 @@ Use for:
 - `CHANGELOG.md` explains what changed
 - `VERIFICATION.md` explains how the release was tested
 - `ROADMAP.md` explains what still needs improvement
+- `guides/verification-and-diagnosis.md` explains the most important scenario in
+  detail when narrative context matters
+- `verification-outputs/` keeps the durable evidence stable and curated
 
 If a release cannot provide meaningful verification, that gap should be stated
 explicitly in `VERIFICATION.md`.

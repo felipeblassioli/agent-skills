@@ -37,11 +37,11 @@ agent-skills/
 ├── packs/
 │   └── <name>/
 │       ├── pack.json             # Required — pack metadata and install map
-│       ├── README.md             # Recommended — human docs
-│       ├── CHANGELOG.md          # Expected for evolving packs — release history
-│       ├── VERIFICATION.md       # Expected for evolving packs — release evidence
-│       ├── RELEASE-POLICY.md     # Expected for evolving packs — release rules
-│       ├── ROADMAP.md            # Expected for evolving packs — next steps
+│       ├── README.md             # Required for registry-managed packs — human docs
+│       ├── CHANGELOG.md          # Required for registry-managed packs — release history
+│       ├── VERIFICATION.md       # Required for registry-managed packs — release evidence
+│       ├── RELEASE-POLICY.md     # Required for registry-managed packs — release rules
+│       ├── ROADMAP.md            # Required for registry-managed packs — next steps
 │       ├── .cursor/              # Runtime assets to install
 │       ├── skills/               # Optional — bundled skills (kind: skill in pack.json)
 │       ├── guides/               # Optional — user-facing guidance
@@ -51,7 +51,7 @@ agent-skills/
 ├── scripts/
 │   ├── skill-sync.sh             # Deploy skills to target paths
 │   ├── skill-version.sh          # Bump version (registry + metadata + SKILL.md)
-│   └── skill-import.sh           # Import skill from external project
+│   ├── skill-import.sh           # Import skill from external project
 │   ├── cursor-pack-verify.sh     # Validate pack structure and safety checks
 │   ├── cursor-pack-sync.sh       # Stage + install packs with backups
 │   ├── cursor-pack-restore.sh    # Restore files from a pack backup
@@ -71,6 +71,12 @@ specs as the primary routing surface instead of expanding this root file:
 
 - `docs/specs/agentic-skill-pack-authoring.md` — skill-versus-pack boundaries,
   cheap-agent-first delegation, and token/context policy
+- `docs/specs/cursor-pack-specification.md` — formal Cursor Pack contract for
+  private/local installable runtime bundles
+- `docs/guides/cursor-packs.md` — practical pack install, restore, and upgrade
+  guidance
+- `docs/ADR/ADR-0002-governed-skill-maintenance-model.md` — release-authority
+  split between root skills, bundled skills, and packs
 - `docs/specs/skill-authoring-checklist.md` — compact checklist for work under
   `skills/`
 - `docs/specs/pack-authoring-checklist.md` — compact checklist for work under

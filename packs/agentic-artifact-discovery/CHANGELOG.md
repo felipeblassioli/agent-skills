@@ -17,6 +17,7 @@ Initial release of the pack.
   synthesis
 - classification and report-shape references for consistent investigation output
 - standard release artifacts for future pack evolution
+- durable BMAD validation artifacts under `guides/` and `verification-outputs/`
 
 ### Validation
 
@@ -24,5 +25,4 @@ See `VERIFICATION.md` for:
 
 - structural verification
 - dry-run install verification
-- prompt-level validation against `tmp/BMAD-METHOD`, `tmp/superpowers`, and
-  `tmp/claude-plugin-engineering`
+- deep scenario validation against `tmp/BMAD-METHOD`

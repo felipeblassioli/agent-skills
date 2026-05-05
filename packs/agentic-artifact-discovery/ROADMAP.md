@@ -4,12 +4,14 @@ Next steps for `agentic-artifact-discovery`.
 
 ## Near term
 
-- Validate the discovery workflow against repeated real prompts for
-  `tmp/BMAD-METHOD`, `tmp/superpowers`, and `tmp/claude-plugin-engineering`.
+- Extend the committed `verification-outputs/` set beyond `tmp/BMAD-METHOD` to
+  cover `tmp/superpowers` and `tmp/claude-plugin-engineering`.
 - Add sharper heuristics for identifying actor roles, trigger phrases, and
   cross-file workflow boundaries in large agentic systems.
+- Tighten guidance for catalog-driven systems where routing lives in CSV, YAML,
+  or manifest files rather than obvious root docs.
 - Pressure test anti-triggers so the pack avoids drifting into generic repo
-  mapping or migration work.
+  mapping, migration work, or debugging.
 - Refine the report template based on real usage and reviewer feedback.
 
 ## Medium term
@@ -18,8 +20,8 @@ Next steps for `agentic-artifact-discovery`.
   ambiguity resolution.
 - Add optional examples for recurring agentic patterns such as slash-command
   bundles, skill trees, and mixed plugin manifests.
-- Evaluate whether a small verification guide or eval loop would improve pack
-  quality without bloating the hot path.
+- Decide whether committed prompt matrices should stay hand-curated or grow into
+  a small repeatable eval loop.
 
 ## Pack evolution
 
@@ -30,6 +32,8 @@ Next steps for `agentic-artifact-discovery`.
 - Keep the bundled skill compact and move heavy heuristics into one-hop
   references.
 - Keep `CHANGELOG.md` and `VERIFICATION.md` updated on every meaningful release.
+- Keep committed validation artifacts curated and small; raw iteration outputs
+  stay in `.work/`.
 
 ## Success signals
 

@@ -316,5 +316,7 @@ This repository should treat the following as default authoring policy:
 
 ## Related Documents
 
+- `docs/specs/cursor-pack-specification.md`
+- `docs/guides/cursor-packs.md`
 - `docs/specs/skill-authoring-checklist.md`
 - `docs/specs/pack-authoring-checklist.md`

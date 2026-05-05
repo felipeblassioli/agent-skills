@@ -1,6 +1,8 @@
 # Skill Authoring Checklist
 
 Use this checklist when creating or revising anything under `skills/`.
+For the maintenance contract behind this checklist, see
+`docs/ADR/ADR-0002-governed-skill-maintenance-model.md`.
 
 ## Fit
 
@@ -35,6 +37,16 @@ Use this checklist when creating or revising anything under `skills/`.
 - [ ] It is clear whether a script should be executed or read as reference.
 - [ ] Supporting utilities are narrow and obviously related to the skill purpose.
 
+## Package and Maintenance Contract
+
+- [ ] `metadata.json` exists and remains the machine-readable version authority
+  alongside `skill-registry.json` for registry skills.
+- [ ] `CHANGELOG.md` is present when this skill is maintained across releases.
+- [ ] `README.md` exists when this skill is maintained, imported,
+  source-contract-heavy, or otherwise needs a maintainer-facing usage guide.
+- [ ] Supporting files live under `references/`, `assets/`, or `scripts/`
+  rather than bloating `SKILL.md`.
+
 ## Behavior and Evaluation
 
 - [ ] The skill responds to an observed failure or repeated need, not an imagined one.
@@ -57,3 +69,6 @@ Use this checklist when creating or revising anything under `skills/`.
 - [ ] For skills that evolve across releases, `CHANGELOG.md` at the skill root
   records notable changes (Keep a Changelog style) and aligns with
   `metadata.json` `version` when present.
+- [ ] If this is a bundled pack skill rather than a root registry skill, its
+  release authority stays with the containing pack unless it is explicitly
+  promoted.

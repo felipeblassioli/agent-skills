@@ -1,6 +1,8 @@
 # Pack Authoring Checklist
 
 Use this checklist when creating or revising anything under `packs/`.
+For the full contract, see `docs/specs/cursor-pack-specification.md`. For
+install and upgrade guidance, see `docs/guides/cursor-packs.md`.
 
 ## Fit
 
@@ -18,10 +20,15 @@ Use this checklist when creating or revising anything under `packs/`.
 
 ## Install Shape
 
+- [ ] If this pack is installable, it is registered in `cursor-pack-registry.json`.
+- [ ] Registry-managed packs include `README.md`, `CHANGELOG.md`,
+  `VERIFICATION.md`, `RELEASE-POLICY.md`, and `ROADMAP.md`.
 - [ ] Targets are explicit and correct.
 - [ ] Profiles map to real operating modes, not vague labels.
 - [ ] Artifacts are grouped by runtime responsibility.
 - [ ] User-target and project-target behavior are clearly separated.
+- [ ] Runtime artifacts define `projectPath` for `project-cursor` targets and
+  `userPath` for `user-cursor` targets.
 - [ ] Any bundled skills use `kind: "skill"` with an explicit, pack-scoped
   `skillId` (see `docs/specs/agentic-skill-pack-authoring.md`).
 - [ ] Bundled skill install paths (`.cursor/skills/` vs `~/.cursor/skills/`) are
