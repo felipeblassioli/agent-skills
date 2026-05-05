@@ -8,6 +8,14 @@ as recorded in `metadata.json` (or `assets/metadata.json` / registry) for this s
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-05
+
+### Changed
+
+- Renamed the skill frontmatter identifier to `writing-cursor-skills` and updated explicit slash-command invocation guidance accordingly.
+- Refocused the authoring doctrine on context efficiency, including progressive disclosure, one-hop references, strict output shaping, and cheap-agent-first delegation.
+- Tightened the procedure and routing language to prioritize lean `SKILL.md` dispatch behavior and deterministic validation through scripts when appropriate.
+
 ## [1.0.0] - 2026-03-20
 
 ### Added

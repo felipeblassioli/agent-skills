@@ -32,7 +32,7 @@
       "description": "React/Next.js performance optimization guidelines"
     },
     "frontend-contract-discovery": {
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -337,7 +337,7 @@
       "description": "Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package. Use when the user asks to create a skill, write a SKILL.md, or package domain knowledge into a reusable skill — especially when they provide reference documents or code as context. Invoke explicitly via /create-skill-from-refs."
     },
     "writing-cursor-skills": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -606,6 +606,23 @@
         "deployments"
       ],
       "description": "Use when creating, reviewing, or hardening GitHub Actions CI/CD workflows where deployment topology, promotion safety, release identity, cache discipline, OIDC, environments, or production readiness matter."
+    },
+    "prd": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "product",
+        "requirements",
+        "planning",
+        "prd",
+        "specification"
+      ],
+      "description": "Use when the user asks to draft or refine a Product Requirements Document with clear scope, measurable success criteria, and implementation-ready requirement structure."
     },
     "personal-skill-maintainer": {
       "version": "1.0.0",

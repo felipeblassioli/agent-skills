@@ -1,24 +1,24 @@
 ---
-name: cursor-skill-creator
+name: writing-cursor-skills
 description: >-
-  Create Cursor skills through Socratic discovery, boundary clarification,
-  strict scope control, and quality-gated scaffolding. Use when the user wants
-  to create or refactor a Cursor skill, define a skill's job and triggers, or
-  turn best practices into a reusable skill package. Invoke explicitly via
-  /cursor-skill-creator.
+  Create context-efficient Cursor skills through Socratic discovery, boundary clarification,
+  progressive disclosure, and quality-gated scaffolding. Use when the user wants
+  to create or refactor a Cursor skill, define a skill's job and triggers, enforce
+  cheap-agent-first delegation, or turn best practices into a reusable skill package.
+  Invoke explicitly via /writing-cursor-skills.
 disable-model-invocation: true
 ---
 
-# Cursor Skill Creator
+# Writing Cursor Skills
 
-Create high-quality Cursor skills without jumping straight into scaffolding.
+Author high-quality, context-efficient Cursor skills without jumping straight into scaffolding.
 
-This skill is strict by default:
+This skill treats authoring as **context architecture**. It is strict by default:
 
-- challenge vague scope
-- prefer the smallest viable skill
+- challenge vague scope and chatty outputs
+- enforce the "One-Hop Rule" for progressive disclosure
+- prefer the smallest viable skill (under 500 lines for the hot-path `SKILL.md`)
 - require explicit anti-triggers when overlap is likely
-- reject empty scaffolding and generic filler
 - pause for approval at each phase
 
 ## Applicability Gate
@@ -26,7 +26,7 @@ This skill is strict by default:
 Apply this skill when ANY of the following are true:
 
 - the user wants to create a new Cursor skill
-- the user wants to refactor an existing Cursor skill for better auto-invocation
+- the user wants to refactor an existing Cursor skill for better context efficiency
 - the user needs help defining a skill's job, scope, triggers, and anti-triggers
 - the user wants a quality-gated authoring flow for `SKILL.md`, `metadata.json`,
   and supporting files
@@ -34,14 +34,9 @@ Apply this skill when ANY of the following are true:
 Do NOT apply when:
 
 - the task is mainly distilling a large set of user-provided documents, code, or
-  URLs into a skill package
-  - use `create-skill-from-refs` if available
-- the artifact should really be a Cursor pack, subagent, rule, hook, or command
-  rather than a skill
-  - use the surface-selection process in
-    [references/surface-selection.md](references/surface-selection.md)
+  URLs into a skill package (use `create-skill-from-refs` instead)
+- the artifact should really be a Cursor pack, subagent, rule, hook, or command (use `references/surface-selection.md`)
 - the user only wants to install, sync, list, or version existing skills
-  - use repository registry or sync workflows directly
 
 ## Routing Table
 
@@ -51,48 +46,29 @@ Do NOT apply when:
 | Handle Cursor-specific frontmatter, scope, and invocation behavior | [references/cursor-specifics.md](references/cursor-specifics.md) |
 | Run the discovery interview and define the skill contract | [references/socratic-discovery.md](references/socratic-discovery.md) |
 | Choose the right skill archetype and lean file tree | [references/archetype-selection.md](references/archetype-selection.md) |
-| Validate quality, boundaries, and packaging decisions | [references/quality-gate.md](references/quality-gate.md) |
+| Validate quality, context efficiency, and packaging decisions | [references/quality-gate.md](references/quality-gate.md) |
 | Present or fill the authoring contract | [assets/templates/skill-contract.md](assets/templates/skill-contract.md) |
 
 ## Procedure
 
-1. **Start with surface selection.** Confirm the artifact should be a skill, not
-   a rule, hook, subagent, command, or pack.
-2. **Lock Cursor-specific behavior early.** Decide whether the skill lives in
-   `.cursor/skills/` or `~/.cursor/skills/`, whether it should auto-invoke, and
-   whether it is a fresh skill or a migration from a Cursor rule or command.
-3. **Run a Socratic intake.** Clarify the recurring job, intended users,
-   triggers, anti-triggers, in-scope behavior, out-of-scope behavior, and likely
-   sibling overlaps.
-4. **Write the skill contract before any files.** Use the contract template and
-   restate the boundary in one sentence.
-5. **Choose the smallest fitting archetype.** Use a Knowledge Hub, Tool Runner,
-   Workflow Executor, or a narrow Hybrid only when justified.
-6. **Scaffold only justified files.** Create `SKILL.md` plus only the
-   `references/`, `assets/`, and `scripts/` content that has a clear purpose.
-7. **Keep `SKILL.md` lean.** It should act as a dispatcher with an applicability
-   gate, routing or workflow structure, and a confirmation policy.
-8. **Run the quality gate before sign-off.** Validate description precision,
-   anti-triggers, overlap boundaries, direct links, Cursor-specific frontmatter,
-   and packaging completeness.
+1. **Start with surface selection.** Confirm the artifact should be a skill, not a rule, hook, subagent, command, or pack.
+2. **Lock Cursor-specific behavior early.** Decide whether the skill lives in `.cursor/skills/` or `~/.cursor/skills/`.
+3. **Run a Socratic intake.** Clarify the recurring job, intended users, triggers, and anti-triggers.
+4. **Write the skill contract before any files.** Use the contract template.
+5. **Choose the smallest fitting archetype.** Use a Knowledge Hub, Tool Runner, Workflow Executor, or a narrow Hybrid only when justified.
+6. **Scaffold only justified files.** Create `SKILL.md` plus only the `references/`, `assets/`, and `scripts/` content that has a clear purpose.
+7. **Keep `SKILL.md` lean and context-efficient.** It should act as a dispatcher. 
+   - Move heavy, domain-specific details to `references/` (keep references exactly one hop away).
+   - Replace complex manual validation with deterministic python/bash `scripts/`.
+8. **Run the quality gate before sign-off.** Validate description precision, context cost, cheap-agent delegation, direct links, and packaging completeness.
 
-## Authoring Rules
+## Authoring Rules for Context Efficiency
 
-- Write the `description` in third person and include both WHAT the skill does
-  and WHEN to use it.
-- Use `disable-model-invocation: true` when the skill should behave like a
-  slash command rather than an auto-invoked skill.
-- Ask explicitly whether the skill belongs in project scope (`.cursor/skills/`)
-  or user scope (`~/.cursor/skills/`).
-- Include concrete trigger phrases a user would actually say.
-- Add anti-triggers when the skill could overlap with sibling skills.
-- If the skill is being migrated from a Cursor rule or command, preserve the
-  original invocation semantics unless the user asks to change them.
-- Do not create empty directories or placeholder files without a near-term use.
-- Prefer references and assets over bloating `SKILL.md`.
-- Prefer instructions over scripts unless deterministic execution is necessary.
-- If two distinct jobs emerge, split them into sibling skills instead of forcing
-  a vague umbrella skill.
+- **Default to "The Agent is Already Smart"**: Skip introductory explanations. Only add context the agent actually needs to complete the specific task.
+- **Strict Output Shapes**: Constrain outputs to JSON or strict bulleted lists to prevent token waste from conversational "chatty" responses.
+- **Cheap-Agent-First**: Delegate repository exploration, blind comparisons, and grading to subagents using `model: fast` and `readonly: true`.
+- **Progressive Disclosure**: Keep `SKILL.md` strictly focused on routing and triggers.
+- Ask explicitly whether the skill belongs in project scope (`.cursor/skills/`) or user scope (`~/.cursor/skills/`).
 
 ## Confirmation Policy
 

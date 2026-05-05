@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "felipeblassioli",
-  "date": "March 2026",
-  "abstract": "Create Cursor skills through Socratic discovery, boundary clarification, strict scope control, and quality-gated scaffolding. Use when the user wants to create or refactor a Cursor skill, define a skill's job and triggers, or turn best practices into a reusable skill package. Invoke explicitly via /cursor-skill-creator."
+  "date": "2026-05-05",
+  "abstract": "Create context-efficient Cursor skills through Socratic discovery, progressive disclosure, strict scope control, and quality-gated scaffolding. Use when the user wants to author or refactor a Cursor skill, enforcing cheap-agent-first delegation, one-hop references, and strict output structures. Invoke explicitly via /writing-cursor-skills."
 }
