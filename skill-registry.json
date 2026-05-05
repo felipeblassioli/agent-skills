@@ -652,6 +652,22 @@
         "maintenance"
       ],
       "description": "Audit a Cursor skill (or skills directory) for Cursor compatibility, safe auto-invocation, and index-style SKILL.md quality. Propose a remediation plan and unapplied diffs; apply ONLY after explicit user confirmation."
+    },
+    "backend-contract-reconciliation": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "backend",
+        "contracts",
+        "evidence",
+        "reconciliation"
+      ],
+      "description": "Take draft endpoint artifacts produced by frontend-contract-discovery and reconcile them with backend implementation truth using strict trace sources."
     }
   },
   "targetPaths": {

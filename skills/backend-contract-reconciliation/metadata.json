@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-05-05",
+  "abstract": "Reconcile frontend API draft docs with backend implementation truth using strict trace sources."
+}
