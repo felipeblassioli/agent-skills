@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "2026-05-05",
+  "abstract": "Find the HTTP contracts a React frontend consumes, draft an evidence-backed OpenAPI spec, and record traceable findings in discover.log.md. Use when the user wants to infer API behavior from frontend code instead of reviewing a backend-owned source of truth."
+}
