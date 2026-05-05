@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-05-05",
+  "abstract": "Structured code-review skill for PRs and diffs with focused review lenses for HTTP services, scheduled jobs, queue consumers, Kubernetes runtime behavior, observability, and distributed-systems safety."
+}
