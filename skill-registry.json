@@ -31,6 +31,24 @@
       ],
       "description": "React/Next.js performance optimization guidelines"
     },
+    "frontend-contract-discovery": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "react",
+        "typescript",
+        "openapi",
+        "contracts",
+        "evidence",
+        "drift"
+      ],
+      "description": "Find the HTTP contracts a React frontend consumes, drafts an evidence-backed OpenAPI spec, and records traceable findings in discover.log.md. Use when the user wants to infer API behavior from frontend code instead of reviewing a backend-owned source of truth."
+    },
     "react-native-skills": {
       "version": "1.0.0",
       "author": "vercel",
@@ -571,6 +589,51 @@
         "runtime"
       ],
       "description": "Audit and customize installed BMAD projects by inspecting `_bmad/` customizations, interviewing the team about current process, and deciding whether behavior belongs in memory, role overrides, workflows/checklists, or reusable skills."
+    },
+    "github-actions-release-topology": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "github-actions",
+        "ci",
+        "cd",
+        "release-topology",
+        "deployments"
+      ],
+      "description": "Use when creating, reviewing, or hardening GitHub Actions CI/CD workflows where deployment topology, promotion safety, release identity, cache discipline, OIDC, environments, or production readiness matter."
+    },
+    "personal-skill-maintainer": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "maintainer",
+        "governance"
+      ],
+      "description": "Audit and maintain Cursor skills and packs to ensure compliance with the repository governed maintenance model (ADR-0002) and registry-driven releases (ADR-0001)."
+    },
+    "audit-skill-for-cursor": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "audit",
+        "cursor-skill",
+        "maintenance"
+      ],
+      "description": "Audit a Cursor skill (or skills directory) for Cursor compatibility, safe auto-invocation, and index-style SKILL.md quality. Propose a remediation plan and unapplied diffs; apply ONLY after explicit user confirmation."
     }
   },
   "targetPaths": {
