@@ -32,7 +32,7 @@
       "description": "React/Next.js performance optimization guidelines"
     },
     "frontend-contract-discovery": {
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -336,7 +336,7 @@
       ],
       "description": "Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package. Use when the user asks to create a skill, write a SKILL.md, or package domain knowledge into a reusable skill — especially when they provide reference documents or code as context. Invoke explicitly via /create-skill-from-refs."
     },
-    "cursor-skill-creator": {
+    "writing-cursor-skills": {
       "version": "1.0.0",
       "author": "felipeblassioli",
       "scope": "global",
@@ -348,9 +348,10 @@
         "authoring",
         "cursor",
         "skill-creation",
-        "quality"
+        "quality",
+        "context-efficiency"
       ],
-      "description": "Create Cursor skills through Socratic discovery, boundary clarification, strict scope control, and quality-gated scaffolding. Use when the user wants to create or refactor a Cursor skill, define a skill's job and triggers, or turn best practices into a reusable skill package. Invoke explicitly via /cursor-skill-creator."
+      "description": "Create context-efficient Cursor skills through Socratic discovery, progressive disclosure, strict scope control, and quality-gated scaffolding. Use when the user wants to author or refactor a Cursor skill, enforcing cheap-agent-first delegation, one-hop references, and strict output structures. Invoke explicitly via /writing-cursor-skills."
     },
     "create-cursor-pack-from-refs": {
       "version": "1.0.1",
