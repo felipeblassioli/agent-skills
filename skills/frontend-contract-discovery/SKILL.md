@@ -1,16 +1,14 @@
 ---
 name: frontend-contract-discovery
 description: >-
-  Finds the HTTP contracts a React frontend consumes, drafts an evidence-backed
-  OpenAPI spec, and records traceable findings in discover.log.md. Use when the
-  user wants to infer API behavior from frontend code instead of reviewing a
-  backend-owned source of truth.
+  Use when the user wants to infer HTTP contracts and endpoint documentation from a
+  React or TypeScript frontend instead of relying on a backend-owned source of truth.
 ---
 
 # Frontend Contract Discovery
 
 Infer the HTTP contract a React frontend actually uses, then turn that evidence
-into a cautious OpenAPI draft plus a durable discovery log.
+into a cautious OpenAPI draft, per-endpoint docs, and a durable discovery log.
 
 This skill is strict by default:
 
@@ -48,12 +46,14 @@ Minimum useful input:
 Optional but helpful:
 
 - an existing spec to compare against
-- preferred output paths for `openapi.yaml` and `discover.log.md`
+- preferred output paths for `openapi.yaml`, endpoint docs, and
+  `discover.log.md`
 - any known API client directories, hooks, or service modules
 
 If the user gives no output paths, suggest:
 
 - `<target-root>/contract-discovery/openapi.yaml`
+- `<target-root>/contract-discovery/endpoints/`
 - `<target-root>/contract-discovery/discover.log.md`
 
 ## Routing Table
@@ -64,6 +64,7 @@ If the user gives no output paths, suggest:
 | Map code observations into OpenAPI safely | Use the `Read` tool on `references/openapi-inference-rules.md` |
 | Write the evidence log consistently | Use the `Read` tool on `assets/discover-log-template.md` |
 | Run a lightweight manual drift pass | Use the `Read` tool on `assets/drift-checklist.md` |
+| Write one evidence-backed endpoint document per inferred operation | Use the `Read` tool on `assets/endpoint-doc-template.md` |
 
 ## Procedure
 
@@ -87,17 +88,30 @@ If the user gives no output paths, suggest:
      (fetch using the `Read` tool).
    - Mark uncertain fields as assumptions. Do not invent servers, auth schemes,
      enum values, or error models that are not evidenced.
+   - Leave scalar types and formats generic or omitted unless runtime evidence,
+     validation, or parsing proves them.
 5. **Draft the OpenAPI spec.**
    - Produce the smallest useful spec that reflects observed behavior.
    - Prefer incomplete-but-traceable output over polished speculation.
-6. **Write `discover.log.md`.**
+6. **Draft endpoint documents.**
+   - Use the `Read` tool to read `assets/endpoint-doc-template.md`.
+   - Generate one endpoint markdown document per normalized `method + path`.
+   - Keep every section evidence-bound. If a field is not directly observed, mark
+     it as `unknown` or as an explicit assumption instead of filling it from
+     convention.
+   - Prefer compact `unknown` notes over large placeholder tables when sparse
+     evidence would otherwise create low-signal noise.
+   - Extract a companion `{VERB}_{path_segments}.response.json` only when the
+     success payload is large enough to help review and the structure is actually
+     evidenced in code.
+7. **Write `discover.log.md`.**
    - Use the `Read` tool to read `assets/discover-log-template.md`.
    - Every operation or schema claim must include evidence, confidence, and
      assumptions.
-7. **Run the drift protocol when a spec exists.**
+8. **Run the drift protocol when a spec exists.**
    - Use the `Read` tool to read `assets/drift-checklist.md`.
    - Record drift items as `observed`, `suspected`, or `resolved`.
-8. **Return an honest summary.**
+9. **Return an honest summary.**
    - Report what was inferred confidently, what remains ambiguous, and which
      follow-ups would most reduce uncertainty.
 
@@ -107,11 +121,13 @@ Default outputs:
 
 - `openapi.yaml` or `openapi.json`
 - `discover.log.md`
+- Individual endpoint markdown docs, one per inferred operation. Naming scheme: `{VERB}_{path_segments_joined_by_underscores}.md` (e.g. `POST_resource_{id}.md`)
+- Optional response payload snapshots when useful and evidenced: `{VERB}_{path_segments_joined_by_underscores}.response.json` (e.g. `POST_resource_{id}.response.json`)
 
 Every inferred operation should carry:
 
 - **Claim:** the contract statement being made
-- **Evidence:** exact files, symbols, or snippets that support it
+- **Evidence:** exact files, symbols, or snippets that support it. Favor git remote permalinks (e.g. `https://github.com/org/repo/blob/<sha>/path/to/file.ts#L10-L20`) if possible, fallback to local paths.
 - **Confidence:** `high`, `medium`, or `low`
 - **Assumptions:** what was derived rather than directly observed
 - **Drift risk:** what is most likely to change or already diverge
@@ -119,6 +135,8 @@ Every inferred operation should carry:
 ## Confirmation Policy
 
 - Confirm output paths unless the user already specified them.
+- Confirm a different artifact set only if the user explicitly wants to skip the
+  default per-endpoint docs.
 - If multiple competing client layers disagree, explain the conflict before
   choosing one as primary evidence.
 - If confidence stays low after reading the high-signal sources, stop instead of
@@ -130,11 +148,16 @@ Every inferred operation should carry:
   backend contract mining workflow. Keep v1 focused on React frontend evidence.
 - **Returning evidence only in chat.** The durable artifacts are part of the
   job. Write `discover.log.md` instead of leaving the audit trail implicit.
+- **Treating endpoint docs as optional.** Per-endpoint markdown is part of the
+  default deliverable, not an afterthought once the spec is done.
 - **Treating type names as contract truth.** A TypeScript type helps, but it is
   weaker than an actual request builder, validator, or runtime parser tied to a
   call site.
 - **Promoting guesses into facts.** If an auth scheme, error shape, or response
   field is not evidenced, mark it as an assumption or unknown.
+- **Inferring scalar types from names alone.** A key like `ttlSeconds` or
+  `orderId` does not prove `number` or `string` unless runtime evidence backs
+  that claim.
 - **Silently overwriting drift.** Drift should be logged with evidence, not
   hidden by rewriting the spec without explanation.
 

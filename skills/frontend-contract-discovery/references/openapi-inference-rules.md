@@ -30,6 +30,9 @@ traceable contract, not a perfect backend mirror.
 - Query params come from query builders, `params` objects, or `URLSearchParams`.
 - Header parameters should be captured only when they are operation-specific and
   not better represented as an auth note.
+- Leave scalar parameter types generic or omitted unless runtime validation,
+  parsing, or a transport-coupled schema proves `string`, `number`, `integer`,
+  `boolean`, or a format.
 - Do not invent pagination params just because a response looks list-shaped.
 
 ## Request Body Rules
@@ -39,12 +42,17 @@ traceable contract, not a perfect backend mirror.
   it into JSON.
 - If only a partial payload shape is visible, include the observed fields and
   note the missing parts in `discover.log.md`.
+- Do not infer scalar field types from names alone. A key like `ttlSeconds` or
+  `orderId` is not enough to prove `number` or `string` without stronger
+  evidence.
 
 ## Response Rules
 
 - Prefer runtime validators over plain TypeScript types.
 - If only UI usage is visible, model the smallest response shape supported by
   that usage and mark it as partial.
+- Keep leaf field types generic when the frontend only reads or forwards values
+  without validating, parsing, or constraining them.
 - Arrays, pagination envelopes, and nested objects should be inferred only when
   the code shows them clearly.
 - If multiple consumers use different subsets of the same response, model the
@@ -83,6 +91,8 @@ Avoid these failure modes:
 - inventing enums, examples, or full schemas from naming alone
 - copying backend-style completeness into a frontend-derived draft
 - turning guessed fields into required properties without evidence
+- turning path names, variable names, or UI labels into proven scalar types or
+  formats
 - treating a mock payload as proof of the live response
 
 ## Minimal OpenAPI Skeleton

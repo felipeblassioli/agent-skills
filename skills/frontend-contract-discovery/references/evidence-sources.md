@@ -53,21 +53,7 @@ Prefer claims backed by at least two of these:
 - schema evidence: runtime validator, parser, or tightly-coupled response type
 - usage evidence: component or hook behavior that depends on returned fields
 
-Treat a claim as:
-
-- **high confidence** when transport evidence plus schema or usage evidence agree
-- **medium confidence** when one strong source exists but details remain implied
-- **low confidence** when only types, mocks, or docs suggest the contract
-
-## Evidence Record Format
-
-Capture each important finding as:
-
-- **Claim:** `GET /projects/{id} returns Project`
-- **Evidence:** file paths, symbols, and why each source matters
-- **Confidence:** `high`, `medium`, or `low`
-- **Assumptions:** missing details filled in cautiously
-- **Drift risk:** where future mismatch is most likely
+*(For the confidence scoring rubric, refer to the OpenAPI Inference Rules).*
 
 ## Escalation And Stop Rules
 
