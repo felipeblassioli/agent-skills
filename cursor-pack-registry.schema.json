@@ -41,7 +41,11 @@
             "type": "array",
             "minItems": 1,
             "items": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "project-cursor",
+                "user-cursor"
+              ]
             }
           },
           "profiles": {
@@ -67,10 +71,18 @@
                 "type": "string"
               },
               "projectRules": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "none",
+                  "project-only"
+                ]
               },
               "mcp": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "none",
+                  "example-only"
+                ]
               }
             },
             "additionalProperties": true
@@ -91,10 +103,21 @@
     },
     "targetPaths": {
       "type": "object",
-      "additionalProperties": {
-        "type": "string",
-        "minLength": 1
-      }
+      "required": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "properties": {
+        "project-cursor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "user-cursor": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

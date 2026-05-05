@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "grafana-dashboards": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/observability-monitoring/skills/grafana-dashboards/SKILL.md",
+      "computedHash": "e9b692daf06faf96fa28b2b98f50b362e68b974db5ab503963a610c719cda79b"
+    }
+  }
+}

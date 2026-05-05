@@ -1,6 +1,0 @@
-{
-  "version": "1.0.0",
-  "author": "anthropics",
-  "date": "March 2026",
-  "abstract": "Structured code review guidance for pull requests and change audits, with explicit review lenses for correctness, security, performance, maintainability, and testing gaps."
-}

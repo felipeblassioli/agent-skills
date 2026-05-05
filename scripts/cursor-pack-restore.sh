@@ -26,7 +26,6 @@ done
 
 METADATA="$BACKUP_DIR/backup-metadata.json"
 cursor_pack_require_file "$METADATA"
-cursor_pack_require_dir "$BACKUP_DIR/files"
 
 jq empty "$METADATA" >/dev/null 2>&1 || cursor_pack_die "Backup metadata is not valid JSON: $METADATA"
 
@@ -45,6 +44,7 @@ while IFS= read -r record; do
   backup_file="$BACKUP_DIR/files/$rel"
 
   if [[ "$existed_before" == "true" ]]; then
+    cursor_pack_require_dir "$BACKUP_DIR/files"
     [[ -f "$backup_file" ]] || cursor_pack_die "Missing backup file for restoration: $backup_file"
     mkdir -p "$(dirname "$dest")"
     cp -p "$backup_file" "$dest"

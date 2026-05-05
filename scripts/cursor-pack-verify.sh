@@ -33,6 +33,52 @@ packs_checked=0
 add_error() { errors+=("$1"); }
 add_warning() { warnings+=("$1"); }
 
+validate_supported_target() {
+  local label="$1"
+  local value="$2"
+
+  case "$value" in
+    project-cursor|user-cursor) ;;
+    *) add_error "$label: unsupported target '$value'" ;;
+  esac
+}
+
+validate_supported_install_policy() {
+  local label="$1"
+  local conflict_policy="$2"
+  local mcp_policy="$3"
+
+  case "$conflict_policy" in
+    backup-and-overwrite) ;;
+    *) add_error "$label: unsupported conflictPolicy '$conflict_policy'" ;;
+  esac
+
+  case "$mcp_policy" in
+    none|example-only) ;;
+    *) add_error "$label: unsupported mcpPolicy '$mcp_policy'" ;;
+  esac
+}
+
+validate_supported_registry_policy() {
+  local label="$1"
+  local project_rules="$2"
+  local mcp="$3"
+
+  case "$project_rules" in
+    none|project-only) ;;
+    *) add_error "$label: unsupported installPolicy.projectRules '$project_rules'" ;;
+  esac
+
+  case "$mcp" in
+    none|example-only) ;;
+    *) add_error "$label: unsupported installPolicy.mcp '$mcp'" ;;
+  esac
+}
+
+fingerprint_lines() {
+  sort | tr '\n' ' '
+}
+
 validate_subagent() {
   local file="$1"
   local rel="${file#$CURSOR_PACK_REPO_ROOT/}"
@@ -293,6 +339,58 @@ validate_pack() {
     (.artifacts | length > 0)
   ' "$pack_json" >/dev/null || add_error "$actual_path/pack.json: missing required top-level fields"
 
+  [[ -f "$pack_dir/README.md" ]] || add_error "$actual_path: missing required README.md"
+
+  while IFS= read -r target_name; do
+    [[ -n "$target_name" ]] || continue
+    validate_supported_target "$actual_path/pack.json" "$target_name"
+  done < <(jq -r '.targets[]?' "$pack_json")
+
+  while IFS= read -r target_name; do
+    [[ -n "$target_name" ]] || continue
+    validate_supported_target "cursor-pack-registry.json:$pack_name" "$target_name"
+  done < <(jq -r '.targets[]?' <<<"$registry_entry")
+
+  validate_supported_install_policy \
+    "$actual_path/pack.json" \
+    "$(jq -r '.install.conflictPolicy // empty' "$pack_json")" \
+    "$(jq -r '.install.mcpPolicy // empty' "$pack_json")"
+
+  validate_supported_registry_policy \
+    "cursor-pack-registry.json:$pack_name" \
+    "$(jq -r '.installPolicy.projectRules // empty' <<<"$registry_entry")" \
+    "$(jq -r '.installPolicy.mcp // empty' <<<"$registry_entry")"
+
+  local registry_targets_fingerprint pack_targets_fingerprint
+  registry_targets_fingerprint=$(jq -r '.targets[]' <<<"$registry_entry" | fingerprint_lines)
+  pack_targets_fingerprint=$(jq -r '.targets[]' "$pack_json" | fingerprint_lines)
+  [[ "$registry_targets_fingerprint" == "$pack_targets_fingerprint" ]] || add_error "$pack_name: registry targets do not match pack.json targets"
+
+  local registry_profiles_fingerprint pack_profiles_fingerprint
+  registry_profiles_fingerprint=$(jq -r '.profiles[]' <<<"$registry_entry" | fingerprint_lines)
+  pack_profiles_fingerprint=$(jq -r '.profiles | keys[]' "$pack_json" | fingerprint_lines)
+  [[ "$registry_profiles_fingerprint" == "$pack_profiles_fingerprint" ]] || add_error "$pack_name: registry profiles do not match pack.json profiles"
+
+  local registry_default_profile pack_default_profile
+  registry_default_profile=$(jq -r '.installPolicy.defaultProfile' <<<"$registry_entry")
+  pack_default_profile=$(jq -r '.install.defaultProfile' "$pack_json")
+  [[ "$registry_default_profile" == "$pack_default_profile" ]] || add_error "$pack_name: registry defaultProfile '$registry_default_profile' does not match pack.json defaultProfile '$pack_default_profile'"
+  jq -e --arg profile "$pack_default_profile" '.profiles[$profile] != null' "$pack_json" >/dev/null || add_error "$actual_path/pack.json: defaultProfile '$pack_default_profile' is not declared in profiles"
+
+  local registry_mcp_policy pack_mcp_policy
+  registry_mcp_policy=$(jq -r '.installPolicy.mcp' <<<"$registry_entry")
+  pack_mcp_policy=$(jq -r '.install.mcpPolicy' "$pack_json")
+  [[ "$registry_mcp_policy" == "$pack_mcp_policy" ]] || add_error "$pack_name: registry installPolicy.mcp '$registry_mcp_policy' does not match pack.json mcpPolicy '$pack_mcp_policy'"
+
+  local registry_project_rules expected_project_rules
+  registry_project_rules=$(jq -r '.installPolicy.projectRules' <<<"$registry_entry")
+  if jq -e '[.artifacts[] | select((.kind // "runtime") == "runtime") | select((.projectPath // "" | startswith(".cursor/rules")) or (.source == ".cursor/rules"))] | length > 0' "$pack_json" >/dev/null; then
+    expected_project_rules="project-only"
+  else
+    expected_project_rules="none"
+  fi
+  [[ "$registry_project_rules" == "$expected_project_rules" ]] || add_error "$pack_name: registry installPolicy.projectRules '$registry_project_rules' does not match pack.json rule artifacts '$expected_project_rules'"
+
   local missing_sources
   missing_sources=$(jq -r '.artifacts[].source' "$pack_json" | while IFS= read -r source; do
     [[ -e "$pack_dir/$source" ]] || echo "$source"
@@ -328,6 +426,53 @@ validate_pack() {
     [[ -n "${artifact_id:-}" ]] || continue
     add_error "$actual_path/pack.json: artifact '$artifact_id' references target '$target_name' not allowed by registry"
   done <<<"$invalid_targets"
+
+  while IFS=$'\t' read -r artifact_id target_name; do
+    [[ -n "${artifact_id:-}" ]] || continue
+    validate_supported_target "$actual_path/pack.json artifact '$artifact_id'" "$target_name"
+  done < <(jq -r '.artifacts[] | .id as $id | .targets[] | "\($id)\t\(.)"' "$pack_json")
+
+  local missing_project_paths
+  missing_project_paths=$(jq -r '
+    .artifacts[]
+    | select((.kind // "runtime") == "runtime")
+    | select((.targets | index("project-cursor")) != null)
+    | select((.projectPath // "") == "")
+    | .id
+  ' "$pack_json")
+  while IFS= read -r artifact_id; do
+    [[ -n "$artifact_id" ]] || continue
+    add_error "$actual_path/pack.json: runtime artifact '$artifact_id' targets project-cursor but is missing projectPath"
+  done <<<"$missing_project_paths"
+
+  local missing_user_paths
+  missing_user_paths=$(jq -r '
+    .artifacts[]
+    | select((.kind // "runtime") == "runtime")
+    | select((.targets | index("user-cursor")) != null)
+    | select((.userPath // "") == "")
+    | .id
+  ' "$pack_json")
+  while IFS= read -r artifact_id; do
+    [[ -n "$artifact_id" ]] || continue
+    add_error "$actual_path/pack.json: runtime artifact '$artifact_id' targets user-cursor but is missing userPath"
+  done <<<"$missing_user_paths"
+
+  local live_mcp_artifacts
+  live_mcp_artifacts=$(jq -r '
+    .artifacts[]
+    | select((.kind // "runtime") == "runtime")
+    | select(
+        (.source == ".cursor/mcp.json")
+        or (.projectPath == ".cursor/mcp.json")
+        or (.userPath == "mcp.json")
+      )
+    | .id
+  ' "$pack_json")
+  while IFS= read -r artifact_id; do
+    [[ -n "$artifact_id" ]] || continue
+    add_error "$actual_path/pack.json: artifact '$artifact_id' attempts to install live MCP config; use .cursor/mcp.example.json with mcpPolicy example-only"
+  done <<<"$live_mcp_artifacts"
 
   validate_pack_skill_artifacts "$pack_dir" "$actual_path" "$pack_json"
 

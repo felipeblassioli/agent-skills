@@ -212,7 +212,7 @@ else
 fi
 
 if [[ "$DRY_RUN" == false ]]; then
-  mkdir -p "$BACKUP_DIR"
+  mkdir -p "$BACKUP_DIR/files"
   if [[ -f "$MANIFEST_PATH" ]]; then
     backup_existing_file "$MANIFEST_REL" "$MANIFEST_PATH"
     record_backup_entry "$MANIFEST_REL" true

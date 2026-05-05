@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "2026-05-05",
+  "abstract": "Designs and reviews GitHub Actions CI/CD pipelines for deterministic quality gates, dev deployment, production promotion, release identity manifests, cache discipline, documented topology, and future preview-environment readiness."
+}
