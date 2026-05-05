@@ -60,10 +60,10 @@ If the user gives no output paths, suggest:
 
 | Need | Route to |
 |---|---|
-| Decide where to look first in a React codebase | `references/evidence-sources.md` |
-| Map code observations into OpenAPI safely | `references/openapi-inference-rules.md` |
-| Write the evidence log consistently | `assets/discover-log-template.md` |
-| Run a lightweight manual drift pass | `assets/drift-checklist.md` |
+| Decide where to look first in a React codebase | Use the `Read` tool on `references/evidence-sources.md` |
+| Map code observations into OpenAPI safely | Use the `Read` tool on `references/openapi-inference-rules.md` |
+| Write the evidence log consistently | Use the `Read` tool on `assets/discover-log-template.md` |
+| Run a lightweight manual drift pass | Use the `Read` tool on `assets/drift-checklist.md` |
 
 ## Procedure
 
@@ -76,25 +76,26 @@ If the user gives no output paths, suggest:
    - Start from shared API clients, service modules, and direct HTTP call sites.
    - Use component-level call sites only to fill gaps in request or response
      usage.
-   - Read `references/evidence-sources.md` before widening the search.
+   - Use the `Read` tool to read `references/evidence-sources.md` before widening the search.
+   - For large codebases, use the `Task` tool (subagent `explore` or `generalPurpose`) to parallelize searching for API call sites.
 3. **Normalize operations.**
    - Group evidence by `path + method`.
    - Extract path params, query params, headers, request bodies, auth hints, and
      response shapes that are actually visible in code.
 4. **Infer cautiously.**
-   - Map observations into OpenAPI using
-     `references/openapi-inference-rules.md`.
+   - Map observations into OpenAPI using `references/openapi-inference-rules.md`
+     (fetch using the `Read` tool).
    - Mark uncertain fields as assumptions. Do not invent servers, auth schemes,
      enum values, or error models that are not evidenced.
 5. **Draft the OpenAPI spec.**
    - Produce the smallest useful spec that reflects observed behavior.
    - Prefer incomplete-but-traceable output over polished speculation.
 6. **Write `discover.log.md`.**
-   - Use `assets/discover-log-template.md`.
+   - Use the `Read` tool to read `assets/discover-log-template.md`.
    - Every operation or schema claim must include evidence, confidence, and
      assumptions.
 7. **Run the drift protocol when a spec exists.**
-   - Use `assets/drift-checklist.md`.
+   - Use the `Read` tool to read `assets/drift-checklist.md`.
    - Record drift items as `observed`, `suspected`, or `resolved`.
 8. **Return an honest summary.**
    - Report what was inferred confidently, what remains ambiguous, and which
