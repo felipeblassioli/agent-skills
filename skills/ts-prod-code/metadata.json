@@ -1,0 +1,43 @@
+{
+  "name": "ts-prod-code",
+  "version": "0.2.0",
+  "author": "felipeblassioli",
+  "date": "2026-05-06",
+  "abstract": "Production TypeScript guidance for layered module boundaries, strict typing, domain modeling, boundary validation, error ownership, and observability.",
+  "tags": [
+    "typescript",
+    "ddd",
+    "domain-driven-design",
+    "type-safety",
+    "error-handling",
+    "observability",
+    "structured-logging",
+    "opentelemetry",
+    "zod",
+    "neverthrown",
+    "value-objects",
+    "entities",
+    "hexagonal"
+  ],
+  "targets": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "apps/**/*.ts",
+    "libs/**/*.ts",
+    "packages/**/*.ts"
+  ],
+  "siblings": [
+    "ts-hermetic-testing"
+  ],
+  "sourceContracts": [
+    {
+      "path": "docs/ADR/ADR-0002-governed-skill-maintenance-model.md",
+      "reviewed": "2026-05-06"
+    },
+    {
+      "path": "tmp/oncall-roster-ag/docs/adr/ADR-001-testing-strategy.md",
+      "reviewed": "2026-05-06",
+      "notes": "Reviewed for layer-to-test-tier cross-references only."
+    }
+  ]
+}

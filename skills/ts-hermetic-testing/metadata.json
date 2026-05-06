@@ -1,0 +1,47 @@
+{
+  "name": "ts-hermetic-testing",
+  "version": "0.2.0",
+  "author": "felipeblassioli",
+  "date": "2026-05-06",
+  "abstract": "Hermetic TypeScript testing guidance for a four-layer strategy: colocated unit tests, contract/golden tests, in-process integration tests, and Playwright end-to-end flows.",
+  "tags": [
+    "typescript",
+    "testing",
+    "vitest",
+    "playwright",
+    "msw",
+    "sqlite",
+    "test-pyramid",
+    "contract-testing",
+    "golden-files",
+    "test-doubles",
+    "hermetic-testing",
+    "deterministic",
+    "state-verification",
+    "fowler"
+  ],
+  "targets": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.contract.test.ts",
+    "**/*.int.test.ts",
+    "e2e/*.spec.ts",
+    "packages/*/test/integration/**/*.ts",
+    "test/contract/**/*.ts",
+    "**/__helpers__/**/*.ts",
+    "**/__fixtures__/**/*"
+  ],
+  "siblings": [
+    "ts-prod-code"
+  ],
+  "sourceContracts": [
+    {
+      "path": "docs/ADR/ADR-0002-governed-skill-maintenance-model.md",
+      "reviewed": "2026-05-06"
+    },
+    {
+      "path": "tmp/oncall-roster-ag/docs/adr/ADR-001-testing-strategy.md",
+      "reviewed": "2026-05-06"
+    }
+  ]
+}
