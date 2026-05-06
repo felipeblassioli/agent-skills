@@ -70,6 +70,7 @@ Use this skill when the user asks for any of the following:
    - Incoming or outgoing webhooks (signature, replay, sender timeout, SSRF on egress): read `references/webhook-review.md`.
 
 6. Use scripts as accelerators, not as proof.
+   - When the diff touches routes, controllers, OpenAPI/Swagger files, or request/response schemas, run `scripts/detect-api-contract-risks.mjs` to surface likely contract smells automatically.
    - Run `scripts/detect-queue-consumers.mjs` to identify likely consumer code.
    - Run `scripts/detect-k8s-runtime-risks.mjs` to classify Kubernetes manifests and inspect them for workload-specific omissions.
    - Run `scripts/list-review-surface.sh` to summarize changed files and risky terms.
