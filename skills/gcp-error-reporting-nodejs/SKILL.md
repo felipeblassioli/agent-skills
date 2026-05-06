@@ -52,7 +52,7 @@ Do NOT apply when:
 
 ## Procedure
 
-1. **Identify the runtime.** Local dev, Cloud Run, Cloud Run functions, or something else?
+1. **Identify the runtime.** Delegate this to an `explore` subagent to scan the codebase for deployment configs (e.g., `app.yaml`, `Dockerfile`, `functions` framework) to determine if it's Cloud Run, Cloud Run functions, or local dev.
 2. **Pick the ingestion path.**
    - Prefer **automatic capture** when your runtime already emits unhandled exceptions to Logging.
    - Use `@google-cloud/error-reporting` when you need **manual reporting**, framework middleware, or
@@ -60,10 +60,8 @@ Do NOT apply when:
    - Use **log formatting** when you can’t (or don’t want to) use the library, but still control
      log entry shape.
 3. **Route to the right reference** using the table above (read only what you need).
-4. **Propose the minimal change set** (dependency + initialization + middleware + config), and keep
-   credentials out of source code.
-5. **Validate safely.** Generate a test error (in a non-production environment) and confirm it
-   appears in Error Reporting and/or in Cloud Logging with expected payload shape.
+4. **Propose the minimal change set.** Output the proposed changes as a strict markdown checklist. Do not include chatty explanations. Keep credentials out of source code.
+5. **Validate safely.** Use a `shell` subagent to generate a test error (in a non-production environment) and confirm it appears in Error Reporting and/or in Cloud Logging with expected payload shape.
 6. **Distinguish HTTP from non-HTTP workloads.** Only populate Error Reporting HTTP context when the
    error belongs to an actual HTTP request/response flow.
 
