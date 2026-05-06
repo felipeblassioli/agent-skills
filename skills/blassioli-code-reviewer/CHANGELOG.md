@@ -2,6 +2,20 @@
 
 All notable changes to this skill will be documented in this file.
 
+## [1.3.0] - 2026-05-06
+
+### Changed
+
+- **Context Efficiency Audit:** Applied the `audit-skill-for-cursor` remediation plan to improve context efficiency.
+  - Condensed the `SKILL.md` frontmatter description to focus on core triggers and reduce token bloat.
+  - Enforced the One-Hop Rule by removing redundant "Special review posture" sections from `SKILL.md` and explicitly instructing the `Read` tool for loading references.
+  - Replaced the inline review output template with a strict instruction to read `assets/review-report-template.md`.
+  - Explicitly instructed the use of the `Task` tool for subagent delegation on large PRs.
+
+### Validation
+
+- `bash scripts/skill-sync.sh --skill=blassioli-code-reviewer --dry-run`
+
 ## [1.2.0] - 2026-05-06
 
 ### Added
