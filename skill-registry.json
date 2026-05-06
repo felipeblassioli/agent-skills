@@ -654,7 +654,7 @@
       "description": "Audit a Cursor skill (or skills directory) for Cursor compatibility, safe auto-invocation, and index-style SKILL.md quality. Propose a remediation plan and unapplied diffs; apply ONLY after explicit user confirmation."
     },
     "blassioli-code-reviewer": {
-      "version": "1.0.0",
+      "version": "1.2.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -667,9 +667,13 @@
         "http",
         "pubsub",
         "observability",
-        "architecture"
+        "architecture",
+        "data-integrity",
+        "multi-tenancy",
+        "webhooks",
+        "error-handling"
       ],
-      "description": "Use when reviewing code changes, PRs, diffs, or implementation plans where HTTP services, scheduled jobs, queue consumers, Kubernetes runtime behavior, idempotency, retries, observability, or distributed-systems safety matter."
+      "description": "Use when reviewing code changes, PRs, diffs, or implementation plans where HTTP services, scheduled jobs, queue consumers, Kubernetes runtime behavior, webhooks, dual-writes, caches, multi-tenant data, money/units, time-sensitive logic, feature flags, error handling (failure/defect/fatal taxonomy, retry classification, boundary translation), idempotency, retries, observability, or distributed-systems safety matter."
     },
     "backend-contract-reconciliation": {
       "version": "1.0.0",

@@ -134,6 +134,24 @@ Ask:
 - Is the choreography or orchestration model explicit?
 - Are rollback, retry, and observability paths clear?
 
+## Cross-cutting lenses
+
+These apply across HTTP, queue, scheduled, and workflow archetypes. They are usually the actual production bug, not the architecture pattern.
+
+- `Dual-Write` / `Outbox` / `Inbox` — atomicity across DB and external effect. See `data-integrity-review.md`.
+- `Cache Correctness` — keying, invalidation, TTL/jitter, single-flight, negative caching. See `data-integrity-review.md`.
+- `Read-After-Write` and replication lag. See `data-integrity-review.md`.
+- `Money, Quantities, Units` — precision, currency, rounding, named units. See `data-integrity-review.md`.
+- `Time and Clocks` — UTC, monotonic vs wall, DST, day-boundary semantics. See `data-integrity-review.md`.
+- `Multi-Tenancy Isolation` — server-side scope on data, cache keys, queue topics, rate limits, logs. See `cross-cutting-review.md`.
+- `Error Model Design` — stable taxonomy, retryable vs terminal at the boundary. See `cross-cutting-review.md`.
+- `Error Handling Discipline` — failure vs defect vs fatal taxonomy, retry classification by error class, actionable errors, boundary translation, process-exit discipline. See `error-handling-review.md`.
+- `State Machines` — enumerated states, forbidden transitions, terminal unambiguity. See `cross-cutting-review.md`.
+- `Feature Flags and Kill Switches` — scope matches blast radius, safe defaults, sunset path. See `cross-cutting-review.md`.
+- `Configuration Safety` — fail-fast, no silent defaults, secret redaction. See `cross-cutting-review.md`.
+- `Cost and Blast Radius` — per-request scaling, metric cardinality, log volume. See `cross-cutting-review.md`.
+- `Webhook` (incoming and outgoing) — authenticity, replay, sender-timeout discipline, SSRF on egress. See `webhook-review.md`.
+
 ## Selection shortcut
 
 Use only the lenses that materially match the workload:
@@ -141,5 +159,6 @@ Use only the lenses that materially match the workload:
 - HTTP service: `Health Endpoint Monitoring`, `Circuit Breaker`, `Bulkhead`, `Retry`, `Rate Limiting`, `Asynchronous Request-Reply`
 - Queue consumer: `Competing Consumers`, `Queue-Based Load Leveling`, `Sequential Convoy`, `Retry`, `Compensating Transaction`
 - CronJob / batch / reconciler: `Leader Election`, `Scheduler Agent Supervisor`, `Retry`, `Compensating Transaction`, `Bulkhead`
+- Always-consider (cross-cutting): `Dual-Write` / `Outbox`, `Cache Correctness`, `Multi-Tenancy Isolation`, `Error Model Design`, `Time and Clocks` when any of those concerns are touched by the diff.
 
 If a lens does not change the review question, do not mention it.

@@ -1,6 +1,6 @@
 ---
 name: blassioli-code-reviewer
-description: Use when asked to review code, a PR, a git diff, an implementation plan, or Cursor-generated changes, especially for HTTP services, scheduled jobs, queue consumers, Kubernetes workloads, or distributed-systems failure modes.
+description: Use when asked to review code, a PR, a git diff, an implementation plan, or Cursor-generated changes, especially for HTTP services, scheduled jobs, queue consumers, Kubernetes workloads, webhooks, dual-writes, caches, multi-tenant data, money/units, time-sensitive logic, feature flags, or distributed-systems failure modes.
 ---
 
 # Blassioli Code Reviewer
@@ -18,6 +18,13 @@ Use this skill when the user asks for any of the following:
 - Evaluate an implementation plan for correctness or missing tasks.
 - Review queue consumers, workers, subscribers, Cloud Tasks handlers, Pub/Sub subscriptions, Kafka-like consumers, or asynchronous processors.
 - Review Kubernetes, Cloud Run, Helm, Kustomize, Terraform, CI/CD, or deployment changes that affect runtime behavior.
+
+## Do NOT use this skill when
+
+- The user wants commit message hygiene or PR description polishing without review (use `commit-hygiene` or `gh-pr-creator`).
+- The user wants a generic correctness/security/maintainability pass without distributed-systems framing (use `code-review`).
+- The user wants to author or refactor a Cursor skill or pack (use `writing-cursor-skills`, `audit-skill-for-cursor`, or `improving-agent-artifacts`).
+- The user wants to run tests or coverage (use `test-verifier`).
 
 ## Operating mode in Cursor
 
@@ -47,7 +54,7 @@ Use this skill when the user asks for any of the following:
 
 4. Load targeted references only when relevant.
    - Review style, severity, and output format: read `references/review-protocol.md`.
-   - Cross-cutting architecture risks, concurrency, and distributed-system lenses: read `references/architecture-risk-lenses.md`.
+   - Architecture risks, concurrency, and distributed-system lenses (workload-archetype + cross-cutting index): read `references/architecture-risk-lenses.md`.
    - HTTP services, request/response contracts, retries, liveness/readiness/startup probe posture, health endpoints, rate limiting, async `202` workflows: read `references/request-driven-service-review.md`.
    - Scheduled jobs, CronJobs, backfills, reconcilers, singleton work, resumability, and overlap safety: read `references/scheduled-work-review.md`.
    - Queue consumer, Pub/Sub, subscriber, ack/nack, retry, DLQ, lease, flow control: read `references/pubsub-consumer-review.md`.
@@ -55,13 +62,24 @@ Use this skill when the user asks for any of the following:
    - Observability changes: read `references/observability-review.md`.
    - Tests: read `references/testing-review.md`.
 
-5. Use scripts as accelerators, not as proof.
+5. Apply cross-cutting lenses when the diff touches their concerns.
+   - Dual-write / outbox / inbox, cache correctness, read-after-write, money & units, time & clocks, schema/migration safety: read `references/data-integrity-review.md`.
+   - Multi-tenancy isolation, error model design, state machines, feature flags, configuration safety, cost and blast radius: read `references/cross-cutting-review.md`.
+   - Failure / defect / fatal taxonomy, retry classification by error class, actionable error messages, boundary translation, process-exit discipline: read `references/error-handling-review.md`.
+   - Incoming or outgoing webhooks (signature, replay, sender timeout, SSRF on egress): read `references/webhook-review.md`.
+
+6. Use scripts as accelerators, not as proof.
    - Run `scripts/detect-queue-consumers.mjs` to identify likely consumer code.
    - Run `scripts/detect-k8s-runtime-risks.mjs` to classify Kubernetes manifests and inspect them for workload-specific omissions.
    - Run `scripts/list-review-surface.sh` to summarize changed files and risky terms.
    - Treat script output as hints. The reviewer owns the judgment.
+   - For PRs larger than ~300 LOC or ~10 files, delegate the classification + reference-routing pass to a subagent (`subagent_type: explore`, `readonly: true`) and resume the main review with the structured findings.
 
-6. Produce review comments, not a novella.
+7. Apply the senior meta-checklist before issuing the verdict.
+   - Read `assets/senior-review-meta-checklist.md` and run the steel-man, asymmetric-risk, scope, rollback, and 3-AM-signal pass.
+   - Adjust severities and finding wording based on what the meta-checklist surfaces.
+
+8. Produce review comments, not a novella.
    - Prioritize correctness, data loss, security, resilience, production safety, and broken contracts.
    - Group duplicate findings.
    - Distinguish “must fix before merge” from “follow-up improvement”.
@@ -189,6 +207,27 @@ Any queue consumer or long-lived service running in Kubernetes must be reviewed 
 - Does deployment strategy avoid duplicate work amplification during rollouts?
 
 For Kubernetes-specific review, load `references/k8s-runtime-review.md`.
+
+## Cross-cutting review posture
+
+These lenses cut across HTTP, queue, scheduled, and workflow archetypes. They are usually where the actual production bug lives, not in the architecture pattern. Apply the ones the diff materially touches.
+
+Default questions:
+
+- **Dual-write / outbox**: Does this PR write durable state AND emit an external effect (Pub/Sub, Cloud Tasks, HTTP, BigQuery, email)? If yes, is the pair atomic, or is there a silent split-brain?
+- **Cache correctness**: If a cache is touched, do keys include every dimension that changes the answer (tenant, locale, version, role)? Is invalidation atomic with the write? Is TTL jittered?
+- **Multi-tenancy isolation**: Are tenant scopes enforced server-side at every boundary (DB, cache, queue, log/metric labels, rate limits)?
+- **Money and units**: Is monetary precision integer or decimal — never float? Are duration/quantity units explicit in field names?
+- **Time and clocks**: Is time injectable for tests? Is monotonic vs wall clock used correctly? Is "today" defined in an explicit timezone?
+- **Error model**: Is the error taxonomy stable, classified, and useful to callers without leaking internals?
+- **Error handling discipline**: Does the code distinguish *failures* (expected, recoverable) from *defects* (invariant violations that must propagate, never silently retried) from *fatals* (must kill the process)? Are retries gated by error class, not applied blindly? Are errors actionable to the audience that reads them — caller, operator, on-call?
+- **State machines**: Are states enumerated, transitions guarded, and terminal states unambiguous?
+- **Feature flags**: Does the flag scope match the blast radius? Is the default safe? Is there a sunset path?
+- **Configuration**: Does the app fail fast on bad config? Are silent defaults that change behavior avoided?
+- **Cost and blast radius**: What scales with traffic — N+1, fan-out, log volume, metric cardinality? Is per-tenant budget capped?
+- **Webhooks**: For incoming, is signature verified before side effects and is replay rejected? For outgoing, is delivery durable, retried with backoff, signed, and SSRF-protected?
+
+For deep dives, load `references/data-integrity-review.md`, `references/cross-cutting-review.md`, `references/error-handling-review.md`, and `references/webhook-review.md`. For the lens index, load `references/architecture-risk-lenses.md`.
 
 ## Non-goals
 
