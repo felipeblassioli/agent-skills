@@ -30,16 +30,21 @@ This section covers the **API envelope and external taxonomy** side. For the **i
 Ask:
 
 - Are errors classified into stable buckets: validation / authentication / authorization / not-found / conflict / rate-limit / dependency / internal?
+- For HTTP APIs, does the boundary use a structured envelope such as RFC 9457 Problem Details with stable `type`, `title`, `status`, and optional field-level details?
+- Is there a machine-readable reason or code that callers can branch on without parsing prose, and is it stable across versions?
 - Is "retryable vs terminal" explicit at the boundary, not only inside the consumer?
 - Does the error envelope carry enough context for the caller to act (error code, correlation id, optional remediation), without leaking internals (stack traces, SQL fragments, file paths)?
 - Are error codes part of the API contract (versioned, documented), or implementation accidents the caller will accidentally depend on?
+- Are correlation identifiers separated from idempotency identifiers, instead of overloading `request_id` to do both jobs?
 - Do errors include enough dimensions for aggregation (error class) without high-cardinality fields (raw user input)?
 
 Red flags:
 
 - 500 for predictable validation failures.
 - 200 with `{ "error": ... }` body — silent failure that defeats client-side `fetch` error handling.
+- Problem Details body with unstable `type` URIs or clients expected to branch on `title` / `detail`.
 - Internal exception messages exposed verbatim to clients.
+- `request_id` or `Idempotency-Key` reused as the trace or correlation identifier.
 - Retryable / terminal classification only present in the consumer, not the producer's contract.
 
 ## `State Machines`
