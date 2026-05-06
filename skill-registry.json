@@ -31,6 +31,25 @@
       ],
       "description": "React/Next.js performance optimization guidelines"
     },
+    "owasp-security": {
+      "version": "0.2.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "security",
+        "owasp",
+        "nodejs",
+        "express",
+        "mysql2",
+        "auth",
+        "ssrf"
+      ],
+      "description": "Dispatcher skill mapping Node.js/TypeScript backend security questions to OWASP Top 10 (2021) categories and library-specific references (express, mysql2, auth, SSRF). Use for backend security review, parameterizing mysql2 queries, hardening Express middleware. Do NOT use for React/frontend XSS, ORM specifics (Prisma/Knex), or cloud/K8s posture."
+    },
     "frontend-contract-discovery": {
       "version": "0.2.2",
       "author": "felipeblassioli",

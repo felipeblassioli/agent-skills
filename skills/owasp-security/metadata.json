@@ -1,0 +1,6 @@
+{
+  "version": "0.2.0",
+  "author": "felipeblassioli",
+  "date": "2026-05-06",
+  "abstract": "Dispatcher skill for Node.js/TypeScript backend security. Routes questions to OWASP Top 10 (2021) categories and library-specific references for express and mysql2, with auth (bcrypt/JWT/TOTP) and SSRF/egress guidance one hop away. SKILL.md is a routing table; details live in references/."
+}

@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "plugins/observability-monitoring/skills/grafana-dashboards/SKILL.md",
       "computedHash": "e9b692daf06faf96fa28b2b98f50b362e68b974db5ab503963a610c719cda79b"
+    },
+    "owasp-security": {
+      "source": "hoodini/ai-agents-skills",
+      "sourceType": "github",
+      "skillPath": "skills/owasp-security/SKILL.md",
+      "computedHash": "96ddeeb1eab361ebb8e18c1770a3baab804526fb94966f644a21ae72cc7841e2"
     }
   }
 }
