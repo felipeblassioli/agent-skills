@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "author": "dash0",
+  "date": "May 2026",
+  "abstract": "OpenTelemetry Semantic Conventions expert. Covers the attribute registry, naming patterns, attribute placement, and versioning.",
+  "references": [
+    "https://opentelemetry.io/docs/specs/semconv/registry/attributes/",
+    "https://opentelemetry.io/docs/specs/semconv/",
+    "https://github.com/open-telemetry/semantic-conventions",
+    "https://www.dash0.com/documentation/dash0/semantic-conventions",
+    "https://www.dash0.com/knowledge/otel-semantic-conventions-explainer"
+  ]
+}

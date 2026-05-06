@@ -709,6 +709,22 @@
         "reconciliation"
       ],
       "description": "Take draft endpoint artifacts produced by frontend-contract-discovery and reconcile them with backend implementation truth using strict trace sources."
+    },
+    "otel-semantic-conventions": {
+      "version": "1.0.0",
+      "author": "dash0",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "opentelemetry",
+        "semconv",
+        "observability",
+        "attributes"
+      ],
+      "description": "OpenTelemetry Semantic Conventions expert. Use when selecting, applying, or reviewing telemetry attributes. Triggers on tasks involving attribute selection, semantic convention compliance, attribute migration, or custom attribute decisions. Covers the attribute registry, naming patterns, attribute placement, and versioning. For span names, span kinds, and span status codes, see the otel-instrumentation skill."
     }
   },
   "targetPaths": {
