@@ -1,0 +1,15 @@
+{
+  "commit_id": "REPLACE_WITH_HEAD_SHA",
+  "event": "REQUEST_CHANGES",
+  "body": "Hi @AUTHOR_LOGIN,\n\n**NOT MERGE-READY.** <verdict line verbatim>\n\n| sev | count |\n|---|---|\n| BLOCKER | 0 |\n| HIGH | 0 |\n| MEDIUM | 0 |\n| LOW | 0 |\n| QUESTION | 0 |\n\n<details><summary>nits</summary>\n\n- L1 — ...\n\n</details>\n\n<!-- gh-post-code-review:sha=REPLACE_WITH_HEAD_SHA:hash=REPLACE_WITH_BODY_HASH -->",
+  "comments": [
+    {
+      "path": "REPLACE/with/path/from/code/ref",
+      "side": "RIGHT",
+      "start_side": "RIGHT",
+      "start_line": 1,
+      "line": 1,
+      "body": "**BLOCKER — B1 — <title>**\n\n<finding body without the fenced code-ref block>"
+    }
+  ]
+}
