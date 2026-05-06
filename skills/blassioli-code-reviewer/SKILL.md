@@ -1,6 +1,6 @@
 ---
 name: blassioli-code-reviewer
-description: Use when asked to review code, a PR, a git diff, an implementation plan, or Cursor-generated changes, especially for HTTP services, scheduled jobs, queue consumers, Kubernetes workloads, webhooks, dual-writes, caches, multi-tenant data, money/units, time-sensitive logic, feature flags, or distributed-systems failure modes.
+description: Use when asked to review code, a PR, a git diff, an implementation plan, or Cursor-generated changes, especially for HTTP services, REST or HTTP API contracts (resource design, pagination, error envelopes, idempotency, field masks, Problem Details, deprecation, versioning), scheduled jobs, queue consumers, Kubernetes workloads, webhooks, dual-writes, caches, multi-tenant data, money/units, time-sensitive logic, feature flags, or distributed-systems failure modes.
 ---
 
 # Blassioli Code Reviewer
@@ -55,7 +55,8 @@ Use this skill when the user asks for any of the following:
 4. Load targeted references only when relevant.
    - Review style, severity, and output format: read `references/review-protocol.md`.
    - Architecture risks, concurrency, and distributed-system lenses (workload-archetype + cross-cutting index): read `references/architecture-risk-lenses.md`.
-   - HTTP services, request/response contracts, retries, liveness/readiness/startup probe posture, health endpoints, rate limiting, async `202` workflows: read `references/request-driven-service-review.md`.
+   - HTTP services, request/response runtime behavior, retries, liveness/readiness/startup probe posture, health endpoints, rate limiting, async `202` workflows: read `references/request-driven-service-review.md`.
+   - HTTP API contract design -- resource naming, standard methods, pagination/filtering/ordering, error envelopes, idempotency keys, `ETag` / conditional writes, field masks, output-only and immutable fields, versioning, deprecation/sunset, validate-only, and long-running operation contracts: read `references/api-contract-review.md`.
    - Scheduled jobs, CronJobs, backfills, reconcilers, singleton work, resumability, and overlap safety: read `references/scheduled-work-review.md`.
    - Queue consumer, Pub/Sub, subscriber, ack/nack, retry, DLQ, lease, flow control: read `references/pubsub-consumer-review.md`.
    - Kubernetes manifests, worker deployment, graceful shutdown, probes, resource limits, HPA, PDB: read `references/k8s-runtime-review.md`.
@@ -154,6 +155,24 @@ Default questions:
 - If work is long-running, should this be an `202 Accepted` plus status flow instead of a long synchronous request?
 
 For HTTP-specific review, load `references/request-driven-service-review.md`.
+
+## Special review posture for HTTP API contracts
+
+Any endpoint, schema, or OpenAPI change must be reviewed as a compatibility
+surface, not just as controller code.
+
+Default questions:
+
+- Is the API modeled around stable resources and collections instead of verbs in paths?
+- Are standard methods used intentionally, and are custom actions justified?
+- Do list endpoints define pagination, filtering, and ordering semantics explicitly?
+- Can mutating endpoints be retried safely, and do stale writes have a concurrency boundary?
+- Are error responses machine-readable and stable enough for callers to branch on?
+- Does the change introduce a breaking contract change without versioning or lifecycle signals?
+- Should a long-running operation become `202 Accepted` plus an operation-status flow?
+- Are field ownership, mutability, money/units, and timestamp semantics explicit?
+
+For API-contract review, load `references/api-contract-review.md`.
 
 ## Special review posture for scheduled work
 
