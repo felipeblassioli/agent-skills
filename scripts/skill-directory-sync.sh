@@ -521,6 +521,42 @@ symlink_skill_to_destination() {
   ln -s "$real_source" "$dest_entry" || die_fs "Failed to symlink skill: $dest_entry"
 }
 
+print_action_plan() {
+  local actions_file="$1"
+  local blocked_file="$2"
+
+  if [[ -s "$actions_file" ]]; then
+    printf '\nPlanned actions:\n'
+    printf '%-8s %-24s FROM -> TO\n' "ACTION" "SKILL"
+    while IFS= read -r plan_line; do
+      [[ -n "$plan_line" ]] || continue
+      local plan_action plan_name plan_src plan_dst
+      plan_action="$(printf '%s' "$plan_line" | cut -f1)"
+      plan_name="$(printf '%s' "$plan_line" | cut -f2)"
+      plan_src="$(printf '%s' "$plan_line" | cut -f3)"
+      plan_dst="$(printf '%s' "$plan_line" | cut -f4)"
+      printf '%-8s %-24s %s -> %s\n' "$plan_action" "$plan_name" "$plan_src" "$plan_dst"
+    done <"$actions_file"
+  else
+    printf '\nPlanned actions: (none)\n'
+  fi
+
+  if [[ -s "$blocked_file" ]]; then
+    printf '\nConflicts:\n'
+    while IFS= read -r blocked_line; do
+      [[ -n "$blocked_line" ]] || continue
+      local blocked_name blocked_src blocked_dst blocked_reason
+      blocked_name="$(printf '%s' "$blocked_line" | cut -f1)"
+      blocked_src="$(printf '%s' "$blocked_line" | cut -f2)"
+      blocked_dst="$(printf '%s' "$blocked_line" | cut -f3)"
+      blocked_reason="$(printf '%s' "$blocked_line" | cut -f4)"
+      printf '%-24s %s\n' "$blocked_name" "$blocked_reason" 
+      printf '  from: %s\n' "$blocked_src"
+      printf '  to:   %s\n' "$blocked_dst"
+    done <"$blocked_file"
+  fi
+}
+
 run_apply() {
   parse_common_flags "$@"
   validate_roots
@@ -529,20 +565,19 @@ run_apply() {
     "$YES" || die_safety "--yes is required for apply"
   fi
 
-  local src_file dst_file
+  local src_file dst_file selected_file actions_file blocked_file backup_records
   src_file="$(mktemp)"
   dst_file="$(mktemp)"
   discover_entries "$SOURCE_ROOT" "source" "$src_file"
   discover_entries "$DEST_ROOT" "destination" "$dst_file"
 
-  local selected_file
   selected_file="$(mktemp)"
-  local actions_file
   actions_file="$(mktemp)"
-  local backup_records
+  blocked_file="$(mktemp)"
   backup_records="$(mktemp)"
   : >"$selected_file"
   : >"$actions_file"
+  : >"$blocked_file"
   : >"$backup_records"
 
   if [[ "${#SKILLS[@]}" -eq 0 ]]; then
@@ -567,7 +602,7 @@ run_apply() {
 
   while IFS= read -r name; do
     [[ -n "$name" ]] || continue
-    local src_path dst_type dst_path state
+    local src_path dst_type dst_path src_digest dst_digest detail
     src_path="$(entry_path_by_name "$src_file" "$name")"
     validate_source_skill_content "$src_path"
 
@@ -575,17 +610,19 @@ run_apply() {
     dst_path="$DEST_ROOT/$name"
 
     if [[ -z "$dst_type" ]]; then
-      printf 'copy\t%s\t%s\t%s\n' "create" "$name" "$src_path" >>"$actions_file"
+      printf 'copy\t%s\t%s\t%s\n' "$name" "$src_path" "$dst_path" >>"$actions_file"
       copied_count=$((copied_count + 1))
       continue
     fi
 
     if [[ "$dst_type" != "valid" ]]; then
       if "$OVERWRITE" && "$BACKUP"; then
-        printf 'update\t%s\t%s\t%s\n' "conflict" "$name" "$src_path" >>"$actions_file"
+        printf 'update\t%s\t%s\t%s\n' "$name" "$src_path" "$dst_path" >>"$actions_file"
         updated_count=$((updated_count + 1))
         requires_backup=true
       else
+        detail="destination has invalid structure (${dst_type}); use --overwrite --backup"
+        printf '%s\t%s\t%s\t%s\n' "$name" "$src_path" "$dst_path" "$detail" >>"$blocked_file"
         blocked_count=$((blocked_count + 1))
         [[ -n "$first_blocked" ]] || first_blocked="destination-conflict-for-source: $name"
       fi
@@ -601,13 +638,17 @@ run_apply() {
     fi
 
     if "$OVERWRITE" && "$BACKUP"; then
-      printf 'update\t%s\t%s\t%s\n' "changed" "$name" "$src_path" >>"$actions_file"
+      printf 'update\t%s\t%s\t%s\n' "$name" "$src_path" "$dst_path" >>"$actions_file"
       updated_count=$((updated_count + 1))
       requires_backup=true
     elif "$OVERWRITE" && ! "$BACKUP"; then
+      detail="destination changed; --backup is required with --overwrite"
+      printf '%s\t%s\t%s\t%s\n' "$name" "$src_path" "$dst_path" "$detail" >>"$blocked_file"
       blocked_count=$((blocked_count + 1))
       [[ -n "$first_blocked" ]] || first_blocked="--backup is required with --overwrite"
     else
+      detail="destination changed; add --overwrite --backup"
+      printf '%s\t%s\t%s\t%s\n' "$name" "$src_path" "$dst_path" "$detail" >>"$blocked_file"
       blocked_count=$((blocked_count + 1))
       [[ -n "$first_blocked" ]] || first_blocked="--overwrite is required for changed destination skills"
     fi
@@ -629,12 +670,11 @@ run_apply() {
   if [[ "$DRY_RUN" == false ]]; then
     while IFS= read -r action_line; do
       [[ -n "$action_line" ]] || continue
-      local action_type _kind name src_path dest_path
+      local action_type name src_path dest_path
       action_type="$(printf '%s' "$action_line" | cut -f1)"
-      _kind="$(printf '%s' "$action_line" | cut -f2)"
-      name="$(printf '%s' "$action_line" | cut -f3)"
-      src_path="$(printf '%s' "$action_line" | cut -f4)"
-      dest_path="$DEST_ROOT/$name"
+      name="$(printf '%s' "$action_line" | cut -f2)"
+      src_path="$(printf '%s' "$action_line" | cut -f3)"
+      dest_path="$(printf '%s' "$action_line" | cut -f4)"
 
       if [[ "$action_type" == "update" ]]; then
         backup_entry "$name" "$dest_path" "$backup_records"
@@ -652,6 +692,7 @@ run_apply() {
   printf 'Source: %s (%s)\n' "$FROM" "$SOURCE_ROOT"
   printf 'Destination: %s (%s)\n' "$TO" "$DEST_ROOT"
   printf 'Mode: %s\n' "$MODE"
+  print_action_plan "$actions_file" "$blocked_file"
   if "$requires_backup" && [[ "$DRY_RUN" == false ]]; then
     printf 'Backup directory: %s\n' "$BACKUP_ROOT"
   fi
@@ -663,7 +704,7 @@ run_apply() {
     printf 'Dry run complete. No destination files were changed.\n'
   fi
 
-  rm -f "$src_file" "$dst_file" "$selected_file" "$actions_file" "$backup_records"
+  rm -f "$src_file" "$dst_file" "$selected_file" "$actions_file" "$blocked_file" "$backup_records"
 }
 
 main() {
