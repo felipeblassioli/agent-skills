@@ -281,6 +281,120 @@ file_sha256() {
   printf '%s\n' "${out%% *}"
 }
 
+build_skill_manifest() {
+  local entry="$1"
+  local output="$2"
+  local resolved
+  resolved="$(cd "$entry" 2>/dev/null && pwd -P)" || return 1
+
+  : >"$output"
+  (
+    cd "$resolved" || exit 1
+    while IFS= read -r rel; do
+      case "$rel" in
+        ./.git|./.git/*|./.DS_Store|*/.DS_Store) continue ;;
+      esac
+      clean="${rel#./}"
+      if [[ -L "$rel" ]]; then
+        printf 'L\t%s\t%s\n' "$clean" "$(readlink "$rel")"
+      elif [[ -f "$rel" ]]; then
+        printf 'F\t%s\t%s\n' "$clean" "$(file_sha256 "$rel")"
+      fi
+    done < <(find . -mindepth 1 \( -type f -o -type l \) -print | sort)
+  ) >>"$output"
+}
+
+collect_skill_file_delta() {
+  local source="$1"
+  local destination="$2"
+  local out_file="$3"
+
+  local src_manifest dst_manifest
+  src_manifest="$(mktemp)"
+  dst_manifest="$(mktemp)"
+
+  : >"$out_file"
+  if [[ -d "$source" ]]; then
+    build_skill_manifest "$source" "$src_manifest"
+  fi
+
+  if [[ -d "$destination" ]]; then
+    build_skill_manifest "$destination" "$dst_manifest"
+  fi
+
+  while IFS= read -r src_line; do
+    [[ -n "$src_line" ]] || continue
+    local src_type src_path src_sig dst_match dst_type dst_sig
+    src_type="$(printf '%s' "$src_line" | cut -f1)"
+    src_path="$(printf '%s' "$src_line" | cut -f2)"
+    src_sig="$(printf '%s' "$src_line" | cut -f3)"
+    dst_match="$(awk -F '\t' -v path="$src_path" '$2==path { print; exit }' "$dst_manifest")"
+
+    if [[ -z "$dst_match" ]]; then
+      printf 'A\t%s\t%s\n' "$src_type" "$src_path" >>"$out_file"
+      continue
+    fi
+
+    dst_type="$(printf '%s' "$dst_match" | cut -f1)"
+    dst_sig="$(printf '%s' "$dst_match" | cut -f3)"
+    if [[ "$src_type" != "$dst_type" || "$src_sig" != "$dst_sig" ]]; then
+      printf 'M\t%s\t%s\n' "$src_type" "$src_path" >>"$out_file"
+    fi
+  done <"$src_manifest"
+
+  while IFS= read -r dst_line; do
+    [[ -n "$dst_line" ]] || continue
+    local dst_type dst_path src_match
+    dst_type="$(printf '%s' "$dst_line" | cut -f1)"
+    dst_path="$(printf '%s' "$dst_line" | cut -f2)"
+    src_match="$(awk -F '\t' -v path="$dst_path" '$2==path { print; exit }' "$src_manifest")"
+    if [[ -z "$src_match" ]]; then
+      printf 'R\t%s\t%s\n' "$dst_type" "$dst_path" >>"$out_file"
+    fi
+  done <"$dst_manifest"
+
+  sort "$out_file" -o "$out_file"
+  rm -f "$src_manifest" "$dst_manifest"
+}
+
+print_verbose_file_delta() {
+  local source="$1"
+  local destination="$2"
+  local action="$3"
+
+  if [[ "$VERBOSE" != true ]]; then
+    return 0
+  fi
+
+  if [[ "$action" == "copy" && ! -d "$source" ]]; then
+    return 0
+  fi
+  if [[ "$action" == "update" && (! -d "$source" || ! -d "$destination") ]]; then
+    return 0
+  fi
+  if [[ "$MODE" == "symlink" ]]; then
+    printf '  File-level details not shown in symlink mode (directory replaced by symlink).\n'
+    return 0
+  fi
+
+  local file_delta
+  file_delta="$(mktemp)"
+  collect_skill_file_delta "$source" "$destination" "$file_delta"
+
+  if [[ -s "$file_delta" ]]; then
+    printf '  Files to change:\n'
+    while IFS= read -r file_line; do
+      [[ -n "$file_line" ]] || continue
+      local file_status file_type file_path
+      file_status="$(printf '%s' "$file_line" | cut -f1)"
+      file_type="$(printf '%s' "$file_line" | cut -f2)"
+      file_path="$(printf '%s' "$file_line" | cut -f3)"
+      printf '  %s %s\n' "$file_status" "$file_path"
+    done <"$file_delta"
+  fi
+  rm -f "$file_delta"
+}
+
 skill_digest() {
   local entry="$1"
   local resolved
@@ -536,6 +650,7 @@ print_action_plan() {
       plan_src="$(printf '%s' "$plan_line" | cut -f3)"
       plan_dst="$(printf '%s' "$plan_line" | cut -f4)"
       printf '%-8s %-24s %s -> %s\n' "$plan_action" "$plan_name" "$plan_src" "$plan_dst"
+      print_verbose_file_delta "$plan_src" "$plan_dst" "$plan_action"
     done <"$actions_file"
   else
     printf '\nPlanned actions: (none)\n'
