@@ -301,6 +301,51 @@ test_symlink_mode_and_destination_symlink_safety() {
   rm -rf "$tmp"
 }
 
+test_apply_symlink_dry_run() {
+  local tmp output
+  tmp="$(mktemp -d)"
+  mkdir -p "$tmp/source"
+  make_skill "$tmp/source" alpha
+
+  output="$(run_expect_success apply --from="$tmp/source" --to="$tmp/dest" --mode=symlink --dry-run)"
+  assert_contains "$output" "Mode: symlink"
+  assert_contains "$output" "Copied: 1"
+  assert_contains "$output" "Planned actions:"
+  assert_contains "$output" "Dry run complete"
+  [[ ! -e "$tmp/dest" ]] || fail "symlink dry-run created destination root"
+
+  rm -rf "$tmp"
+}
+
+test_apply_symlink_dry_run_verbose() {
+  local tmp output
+  tmp="$(mktemp -d)"
+  mkdir -p "$tmp/source"
+  make_skill "$tmp/source" alpha
+
+  output="$(run_expect_success apply --from="$tmp/source" --to="$tmp/dest" --mode=symlink --dry-run --verbose)"
+  assert_contains "$output" "Mode: symlink"
+  assert_contains "$output" "File-level details not shown in symlink mode"
+  assert_contains "$output" "Dry run complete"
+  [[ ! -e "$tmp/dest" ]] || fail "symlink dry-run verbose created destination root"
+
+  rm -rf "$tmp"
+}
+
+test_diff_source_symlink_annotation() {
+  local tmp output
+  tmp="$(mktemp -d)"
+  mkdir -p "$tmp/source" "$tmp/source_real" "$tmp/dest"
+  make_skill "$tmp/source_real" alpha
+  ln -s "$tmp/source_real/alpha" "$tmp/source/alpha"
+
+  output="$(run_expect_success diff --from="$tmp/source" --to="$tmp/dest")"
+  assert_contains "$output" "missing-in-destination"
+  assert_contains "$output" "alpha"
+
+  rm -rf "$tmp"
+}
+
 test_broken_nested_symlink_refusal() {
   local tmp output
   tmp="$(mktemp -d)"
@@ -326,6 +371,9 @@ test_apply_dry_run_verbose_shows_file_diff
 test_diff_verbose_shows_file_level_changes
 test_apply_overwrite_and_backup
 test_symlink_mode_and_destination_symlink_safety
+test_apply_symlink_dry_run
+test_apply_symlink_dry_run_verbose
+test_diff_source_symlink_annotation
 test_broken_nested_symlink_refusal
 
 printf 'All tests passed\n'
