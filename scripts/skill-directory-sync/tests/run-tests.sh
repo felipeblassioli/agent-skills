@@ -240,6 +240,26 @@ test_apply_dry_run_verbose_shows_file_diff() {
   rm -rf "$tmp"
 }
 
+test_diff_verbose_shows_file_level_changes() {
+  local tmp output
+  tmp="$(mktemp -d)"
+  mkdir -p "$tmp/source/alpha" "$tmp/dest/alpha"
+  printf '# source\n' >"$tmp/source/alpha/SKILL.md"
+  printf '# source-extra\n' >"$tmp/source/alpha/extra.md"
+  printf '# destination\n' >"$tmp/dest/alpha/SKILL.md"
+  printf 'obsolete\n' >"$tmp/dest/alpha/old.md"
+
+  output="$(run_expect_success diff --from="$tmp/source" --to="$tmp/dest" --verbose)"
+  assert_contains "$output" "changed"
+  assert_contains "$output" "alpha"
+  assert_contains "$output" "Files to change:"
+  assert_contains "$output" "M SKILL.md"
+  assert_contains "$output" "A extra.md"
+  assert_contains "$output" "R old.md"
+
+  rm -rf "$tmp"
+}
+
 test_apply_overwrite_and_backup() {
   local tmp output backup_dir
   tmp="$(mktemp -d)"
@@ -303,6 +323,7 @@ test_apply_copy_preflight_and_write
 test_apply_dry_run_makes_no_changes
 test_apply_dry_run_shows_conflict_details
 test_apply_dry_run_verbose_shows_file_diff
+test_diff_verbose_shows_file_level_changes
 test_apply_overwrite_and_backup
 test_symlink_mode_and_destination_symlink_safety
 test_broken_nested_symlink_refusal

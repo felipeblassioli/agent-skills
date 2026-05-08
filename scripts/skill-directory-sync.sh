@@ -366,15 +366,22 @@ print_verbose_file_delta() {
     return 0
   fi
 
+  if [[ "$MODE" == "symlink" ]]; then
+    printf '  File-level details not shown in symlink mode (directory replaced by symlink).\n'
+    return 0
+  fi
+
   if [[ "$action" == "copy" && ! -d "$source" ]]; then
     return 0
   fi
   if [[ "$action" == "update" && (! -d "$source" || ! -d "$destination") ]]; then
     return 0
   fi
-  if [[ "$MODE" == "symlink" ]]; then
-    printf '  File-level details not shown in symlink mode (directory replaced by symlink).\n'
+  if [[ "$action" == "delete" && ! -d "$destination" ]]; then
     return 0
+  fi
+  if [[ "$action" == "delete" ]]; then
+    source=""
   fi
 
   local file_delta
@@ -434,12 +441,35 @@ validate_source_skill_content() {
 print_diff_output() {
   local rows_file="$1"
   local counts_file="$2"
+  local src_file="$3"
+  local dst_file="$4"
   printf 'Source: %s (%s)\n' "$FROM" "$SOURCE_ROOT"
   printf 'Destination: %s (%s)\n\n' "$TO" "$DEST_ROOT"
   printf '%-30s %s\n' "STATE" "SKILL"
   while IFS= read -r line; do
     [[ -n "$line" ]] || continue
-    printf '%-30s %s\n' "$(printf '%s' "$line" | cut -f1)" "$(printf '%s' "$line" | cut -f2)"
+    local state name
+    state="$(printf '%s' "$line" | cut -f1)"
+    name="$(printf '%s' "$line" | cut -f2)"
+    printf '%-30s %s\n' "$state" "$name"
+
+    if [[ "$VERBOSE" == true ]]; then
+      local src_entry dst_entry
+      src_entry="$SOURCE_ROOT/$name"
+      dst_entry="$DEST_ROOT/$name"
+
+      case "$state" in
+        missing-in-destination)
+          print_verbose_file_delta "$src_entry" "$dst_entry" "copy"
+          ;;
+        changed)
+          print_verbose_file_delta "$src_entry" "$dst_entry" "update"
+          ;;
+        destination-only)
+          print_verbose_file_delta "$src_entry" "$dst_entry" "delete"
+          ;;
+      esac
+    fi
   done <"$rows_file"
   printf '\n'
   while IFS= read -r c; do
@@ -525,7 +555,7 @@ run_diff() {
     printf '%s: %s\n' "$state" "$count" >>"$counts_file"
   done < <(cut -f1 "$rows_file" | sort | uniq)
 
-  print_diff_output "$rows_file" "$counts_file"
+  print_diff_output "$rows_file" "$counts_file" "$src_file" "$dst_file"
   rm -f "$src_file" "$dst_file" "$rows_file" "$counts_file"
 }
 
