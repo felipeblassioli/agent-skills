@@ -189,8 +189,33 @@ test_apply_dry_run_makes_no_changes() {
 
   output="$(run_expect_success apply --from="$tmp/source" --to="$tmp/dest" --mode=copy --dry-run)"
   assert_contains "$output" "Copied: 1"
+  assert_contains "$output" "Planned actions:"
+  assert_contains "$output" "copy"
+  assert_contains "$output" "$tmp/source/alpha -> $tmp/dest/alpha"
   assert_contains "$output" "Dry run complete"
   [[ ! -e "$tmp/dest" ]] || fail "dry-run created destination root"
+  rm -rf "$tmp"
+}
+
+test_apply_dry_run_shows_conflict_details() {
+  local tmp output
+  tmp="$(mktemp -d)"
+  mkdir -p "$tmp/source" "$tmp/dest"
+  make_skill "$tmp/source" changed
+  make_skill "$tmp/source" invalid-dest
+  mkdir -p "$tmp/dest/changed"
+  printf '# source\n' >"$tmp/source/changed/SKILL.md"
+  printf '# destination\n' >"$tmp/dest/changed/SKILL.md"
+  printf 'I am not a skill directory\n' >"$tmp/dest/invalid-dest"
+
+  output="$(run_expect_success apply --from="$tmp/source" --to="$tmp/dest" --dry-run)"
+  assert_contains "$output" "Conflicts:"
+  assert_contains "$output" "changed"
+  assert_contains "$output" "destination changed; add --overwrite --backup"
+  assert_contains "$output" "from: $tmp/source/changed"
+  assert_contains "$output" "to:   $tmp/dest/changed"
+  assert_contains "$output" "invalid-dest"
+  assert_contains "$output" "destination has invalid structure (invalid-destination-entry)"
   rm -rf "$tmp"
 }
 
@@ -255,6 +280,7 @@ test_diff_states_and_filters
 test_digest_behavior
 test_apply_copy_preflight_and_write
 test_apply_dry_run_makes_no_changes
+test_apply_dry_run_shows_conflict_details
 test_apply_overwrite_and_backup
 test_symlink_mode_and_destination_symlink_safety
 test_broken_nested_symlink_refusal
