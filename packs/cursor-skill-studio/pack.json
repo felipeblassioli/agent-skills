@@ -1,8 +1,8 @@
 {
   "$schema": "../../cursor-pack.schema.json",
-  "name": "cursor-skill-creator",
-  "version": "0.2.0",
-  "description": "Cursor pack with a bundled workflow skill, evaluation toolkit, and reusable helper subagents for adapting and comparing skill material as installable Cursor-native packs and bundled skills.",
+  "name": "cursor-skill-studio",
+  "version": "0.3.0",
+  "description": "Cursor pack covering the full skill lifecycle: writing, maintaining, and auditing skills and packs. Successor to cursor-skill-creator (renamed). Ships the existing authoring workflow plus auditor subagents and skeleton bundled-skill entry points; per-job workflows (skill-studio-write/-maintain/-audit) are lifted in subsequent PRs per ADR-0005.",
   "author": "felipeblassioli",
   "targets": [
     "project-cursor",
@@ -10,10 +10,10 @@
   ],
   "profiles": {
     "lite": {
-      "description": "Installs the bundled skill-creator workflow and helper subagents without persistent project rules."
+      "description": "Installs the bundled authoring workflow, helper subagents, and audit subagents (overlap clusterer, architecture checker, consolidation advisor) without persistent project rules."
     },
     "strict": {
-      "description": "Installs the same workflow plus project-only guidance for disciplined intake, decomposition, and evaluation loops when authoring packs and bundled skills."
+      "description": "Same as lite plus project-only guidance for disciplined intake, decomposition, and evaluation loops when authoring or auditing packs and bundled skills."
     }
   },
   "artifacts": [
@@ -61,7 +61,8 @@
       ],
       "notes": [
         "Installs to .cursor/skills/cursor-skill-creator-workflow/ (project) or ~/.cursor/skills/cursor-skill-creator-workflow/ (user).",
-        "This bundled skill is pack-scoped and is not listed in skill-registry.json unless intentionally promoted."
+        "This bundled skill is pack-scoped and is not listed in skill-registry.json unless intentionally promoted.",
+        "Will be replaced by skill-studio-write/-maintain/-audit per ADR-0005; kept here to avoid breaking installs during the migration."
       ]
     }
   ],

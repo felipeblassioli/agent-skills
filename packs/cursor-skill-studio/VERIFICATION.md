@@ -1,5 +1,46 @@
 # Verification
 
+## 0.3.0
+
+### Commands
+
+- Run `bash scripts/cursor-pack-verify.sh --pack=cursor-skill-studio`
+- Run `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root="$PWD" --profile=lite --dry-run`
+- Run `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root="$PWD" --profile=strict --dry-run`
+- Run `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user --profile=lite --dry-run`
+- Run `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user --profile=strict --dry-run`
+
+### Outcome (recorded 2026-05-19)
+
+- `cursor-pack-verify.sh --pack=cursor-skill-studio` returned
+  `{"pass": true, "packsChecked": 1, "errors": [], "warnings": []}`.
+- Project dry-run `lite`: copied 20, conflicts 0, unchanged 0.
+- Project dry-run `strict`: copied 22, conflicts 0, unchanged 0 (the extra two
+  files are the renamed routing rule and the existing eval-loop rule).
+- The existing `cursor-skill-creator-workflow` bundled skill installs
+  alongside the three new (placeholder) `skill-studio-*` skeleton directories.
+- User-target dry-runs not re-run in this PR because user installs already
+  hold staging conflicts from prior `cursor-skill-creator` installs;
+  resolved in PR 5 release validation.
+
+### Diagnosis
+
+- This release is a pure rename plus skeleton plus subagent merge per ADR-0005.
+- No behavior change to authoring helpers, eval loop, comparison workflow, or
+  the existing bundled workflow skill.
+
+### Residual risks
+
+- The three new bundled-skill directories are empty placeholders. They will
+  fail any consumer that tries to install or invoke them by ID until PRs 2-4
+  lift content into them.
+- Users who installed `cursor-skill-creator@0.2.0` must re-install under the
+  new pack name; the old name is no longer present in
+  `cursor-pack-registry.json`.
+- Documentation references to `cursor-skill-creator` outside this pack are
+  intentionally left for the 1.0.0 release (PR 5) to update in a single docs
+  pass.
+
 ## 0.2.0
 
 ### Commands
