@@ -339,13 +339,66 @@ Accepted.
 - The current `cursor-pack-sync.sh` installer remains the only implemented pack
   adapter.
 
+## Cross-platform metadata gap
+
+`pack.json` and the existing artifact schema do not capture per-artifact
+metadata that target platforms may require. Concrete examples:
+
+- Claude Plugin agents accept fields such as `effort`, `maxTurns`, `tools`,
+  `disallowedTools`, `skills`, `memory`, and `isolation`.
+- Cursor subagent frontmatter uses Cursor-specific model slugs (for example
+  `fast`, `composer-2`) that are not valid Claude model slugs.
+- Cursor pack `runtime` artifacts do not declare whether they are subagents,
+  rules, hooks, or MCP examples; today this is inferred from the source path.
+
+Export adapters MUST either:
+
+- accept information loss with explicit warnings (drop fields the source does
+  not capture), or
+- be paired with an opt-in extension of `pack.json` that captures the missing
+  metadata at the artifact level.
+
+The first adapter (`docs/specs/claude-plugin-export-from-packs.md`) takes the
+first approach with a planned opt-in extension (`runtimeKind` discriminator)
+for artifact classification. Future adapters may propose further extensions,
+but any extension MUST keep `pack.json` and `cursor-pack-registry.json` as the
+authoritative source of truth.
+
+## Adapter sequencing
+
+Adapters are sequenced deliberately, not by accident:
+
+1. The existing Cursor Pack installer (`scripts/cursor-pack-sync.sh`) remains
+   the only fully implemented adapter.
+2. The Claude Plugin export adapter is sequenced first among new adapters
+   because Claude Code offers a Git-native, no-cost marketplace path.
+3. A Cursor Plugin export adapter is sequenced after Claude because the free
+   Cursor Plugin distribution path is local-only; a Cursor Plugin export adds
+   little capability over the existing Cursor Pack installer until Cursor
+   provides a free private-distribution surface.
+
+This is a stated choice, not an unaddressed gap.
+
+## Maturity
+
+Under ADR-0003, both planned export adapters start at **L0 (experimental)**.
+Promotion to L1 requires:
+
+- a verification workflow passing against at least one real pack
+- the corresponding spec accepted
+- safety and lifecycle rules in this ADR honored by the implementation
+
 ## Follow-up Work
 
-- Use `docs/specs/claude-plugin-export-from-packs.md` as the follow-up
-  specification for generating self-contained `.claude-plugin/plugin.json`
-  plugin trees and `.claude-plugin/marketplace.json` catalogs from packs.
-- Write a Cursor Plugin export specification for generating local or
-  marketplace-ready `.cursor-plugin/plugin.json` plugin trees from packs.
+- Implement `docs/specs/claude-plugin-export-from-packs.md` as the first
+  cross-runtime export adapter (Claude Plugin and Claude Plugin Marketplace).
+- Write a separate Cursor Plugin export specification when a meaningful Cursor
+  free distribution path exists or when local Cursor Plugin testing becomes a
+  goal beyond what the existing Cursor Pack installer covers.
+- Write a separate "public Claude distribution surface" specification covering
+  whether the repository commits generated plugin trees, uses an orphan branch,
+  publishes release archives, or publishes a separate distribution repo. The
+  initial Claude export spec deliberately stages output locally only.
 - Decide whether repository docs should gradually introduce "Agent Pack"
   terminology outside this ADR.
 - Consider schema and script changes only after this ADR is accepted.
@@ -360,6 +413,11 @@ This ADR is implemented when:
 - the ADR keeps MCP activation as a separate trust decision
 - the ADR references Cursor Plugin and Claude Plugin distribution as future
   adapter work, not current script behavior
+- export adapters introduced under this ADR start at L0 maturity and are
+  promoted only with verification evidence
+- export adapters that need metadata absent from `pack.json` either accept
+  documented information loss or extend `pack.json` through a separate spec
+  rather than relying on a parallel source of truth
 
 ## References
 

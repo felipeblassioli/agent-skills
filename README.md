@@ -6,6 +6,11 @@ generic agents, and Claude environments.
 This repository is the source of truth for skill content, pack content,
 metadata, and deployment targets.
 
+> **Contributing or coming back after a break?** Start with
+> [`docs/guides/governance-workflow.md`](docs/guides/governance-workflow.md) —
+> a one-screen guide to how ADRs, specs, ROADMAPs, issues, and CHANGELOGs fit
+> together in this repo.
+
 ## Repository Purpose
 
 - Maintain skills under `skills/<name>/`

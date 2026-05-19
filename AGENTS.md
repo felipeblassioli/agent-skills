@@ -67,6 +67,10 @@ agent-skills/
 
 ## Authoring Doctrine
 
+For a human-facing one-screen overview of how ADRs, specs, ROADMAPs, issues,
+and CHANGELOGs fit together, see
+[`docs/guides/governance-workflow.md`](docs/guides/governance-workflow.md).
+
 When creating or revising repository-local agent guidance artifacts, use these
 specs as the primary routing surface instead of expanding this root file:
 
