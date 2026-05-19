@@ -16,6 +16,6 @@ Your job is to synthesize cluster and architecture data to recommend concrete fi
    - **Anti-triggers**: specific "Do not use when..." phrases to add to descriptions.
    - **Rename**: when the namespace is confusing.
    - **Cross-link**: when skills form a sequential pipeline.
-4. Output the recommendations in the `report-template.md` format.
+4. Output the recommendations in the `skill-studio-audit/assets/templates/portfolio-audit-report.md` format (the bundled skill installs the template under `.cursor/skills/skill-studio-audit/assets/templates/portfolio-audit-report.md`).
 
 Do NOT execute the fixes. You are producing a proposal for the main agent.
