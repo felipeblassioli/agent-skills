@@ -4,3 +4,5 @@ _references/
 !packs/**/.cursor/
 !packs/**/.cursor/**
 .work
+__pycache__/
+*.pyc

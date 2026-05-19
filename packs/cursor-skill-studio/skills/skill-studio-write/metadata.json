@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "May 2026",
+  "abstract": "Create, adapt, and validate Cursor skills and packs in felipeblassioli/agent-skills: greenfield Socratic discovery, distilling reference material, scaffolding packs, external skill intake, Claude-plugin decomposition, and the eval/comparison loop. Invoke explicitly via /skill-studio-write."
+}

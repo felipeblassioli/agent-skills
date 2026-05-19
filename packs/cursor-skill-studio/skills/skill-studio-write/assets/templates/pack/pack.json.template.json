@@ -1,0 +1,37 @@
+{
+  "$schema": "../../cursor-pack.schema.json",
+  "name": "pack-name",
+  "version": "0.1.0",
+  "description": "What the pack installs and why it exists.",
+  "author": "felipeblassioli",
+  "targets": [
+    "project-cursor"
+  ],
+  "profiles": {
+    "lite": {
+      "description": "Safe default profile with the minimum approved runtime surfaces."
+    }
+  },
+  "artifacts": [
+    {
+      "id": "agents",
+      "source": ".cursor/agents",
+      "targets": [
+        "project-cursor"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "projectPath": ".cursor/agents"
+    }
+  ],
+  "install": {
+    "defaultProfile": "lite",
+    "backupOnConflict": true,
+    "stageRoot": ".work/cursor-pack-staging",
+    "backupRoot": ".work/cursor-pack-backups",
+    "manifestFile": ".cursor-pack-manifest.json",
+    "conflictPolicy": "backup-and-overwrite",
+    "mcpPolicy": "example-only"
+  }
+}

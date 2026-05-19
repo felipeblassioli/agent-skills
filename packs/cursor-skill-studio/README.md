@@ -1,15 +1,16 @@
 ---
 name: cursor-skill-studio
-version: "0.3.0"
-description: Cursor pack covering the full skill lifecycle (write, maintain, audit). Successor to cursor-skill-creator; per-job bundled skills (skill-studio-write/-maintain/-audit) are lifted in subsequent PRs per ADR-0005.
+version: "0.4.0"
+description: Cursor pack covering the full skill lifecycle (write, maintain, audit). Ships skill-studio-write as the consolidated authoring surface (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop); maintain/audit workflows land in subsequent PRs per ADR-0005.
 ---
 
 # Cursor Skill Studio
 
-> Renamed from `cursor-skill-creator` in 0.3.0. The pack now covers the full
-> skill lifecycle (write, maintain, audit), not only creation. See
+> Renamed from `cursor-skill-creator` in 0.3.0. **0.4.0 lifts the five
+> write-side root skills into one consolidated bundled skill,
+> `skill-studio-write`**, and stubs the originals.  See
 > [`docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md`](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)
-> and the [CHANGELOG](CHANGELOG.md) for the migration plan.
+> and the [CHANGELOG](CHANGELOG.md) for the full migration plan.
 
 `cursor-skill-studio` packages a reusable authoring workflow for turning
 reference material, existing skills, and Claude-style plugin bundles into
@@ -65,23 +66,35 @@ Audit helpers (merged in 0.3.0 from the deprecated `skill-consistency-auditor` p
 
 Bundled installed skills:
 
-- `cursor-skill-creator-workflow` (existing; replaced by `skill-studio-write` in PR 2)
-- `skill-studio-write` / `skill-studio-maintain` / `skill-studio-audit` (skeleton in 0.3.0; lifted in PRs 2-4)
+- **`skill-studio-write`** (0.4.0) — consolidated authoring surface for
+  greenfield skills, distilling reference material, scaffolding packs,
+  external skill intake, Claude-plugin adaptation, and the eval/comparison
+  loop. Invoke explicitly via `/skill-studio-write`.
+- `cursor-skill-creator-workflow` (deprecated in 0.4.0; superseded by
+  `skill-studio-write`; removal target 0.5.0).
+- `skill-studio-maintain` / `skill-studio-audit` (skeletons; lifted in PRs 3
+  and 4).
 
 Optional strict project rules under `.cursor/rules/`.
 
-## What the bundled skill covers
+## What `skill-studio-write` covers
 
-The bundled workflow skill is the main entry point when the user wants to:
+`skill-studio-write` is the consolidated authoring entry point. Invoke it with
+`/skill-studio-write` to route into one of six branches:
 
-- create a new Cursor pack from reference material
-- adapt a Claude-style skill or plugin-like folder into Cursor-native artifacts
-- compare two skills using shared eval prompts plus a source-structure audit
-- decide whether a source should become a pack, a bundled skill, docs, or a mix
-- set up an eval workspace and use review or benchmark tooling for authoring
+| Branch | Use when |
+|---|---|
+| A — Greenfield skill | The user wants to create or refactor a Cursor skill through Socratic discovery (no reference dump). |
+| B — Skill from reference material | The user provides docs, code, or URLs to package as a skill. |
+| C — Pack from reference material | The user wants an installable pack under `packs/<name>/` (with optional bundled skills). |
+| D — External skill intake | The user has a candidate skill folder elsewhere and wants a go/no-go review before importing. |
+| E — Claude-plugin adaptation | The user has a `.claude-plugin/`, `.mcp.json`, or mixed plugin tree to decompose into Cursor-native artifacts. |
+| F — Eval / comparison loop | The user wants evidence (blind A/B, structural audit, grading) that an authoring change improved the artifact. |
 
-The installed skill stays compact and pushes detail into one-hop references,
-templates, and scripts bundled alongside it.
+The hot-path `SKILL.md` stays compact and routes to one-hop references,
+templates, and bundled scripts (`validate-skill.sh`, `validate-pack.sh`,
+`inspect-candidate-skill.sh`, `bootstrap_skill_comparison.py`,
+`aggregate_benchmark.py`, and the eval review UI).
 
 ## What this pack expects from a project
 

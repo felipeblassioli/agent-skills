@@ -4,19 +4,31 @@ The pack is mid-migration per
 [ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
 Each milestone below maps to one PR.
 
-## In progress (0.3.0 — this release)
+## In progress (0.4.0 — this release)
 
-- Rename pack from `cursor-skill-creator` to `cursor-skill-studio`. **Done.**
-- Add skeleton bundled-skill directories `skill-studio-write/`,
-  `skill-studio-maintain/`, `skill-studio-audit/`. **Done.**
-- Merge auditor subagents into the shared pool. **Done.**
+- Lift content from `skills/writing-cursor-skills`,
+  `skills/create-skill-from-refs`, `skills/create-cursor-pack-from-refs`,
+  `skills/external-skill-intake`, and `skills/claude-plugin-to-cursor-pack`
+  into `skill-studio-write`. **Done.**
+- Stub the five source root skills (`disable-model-invocation: true`,
+  redirect body, bumped registry version with `[DEPRECATED]` description).
+  **Done.**
+- Relocate `recommendation-metadata.md` to
+  `docs/specs/pack-recommendation-metadata.md`. **Done.**
+- Mark `cursor-skill-creator-workflow` deprecated in `pack.json` notes.
+  **Done.** (Bundled skill stays in 0.4.0 to avoid breaking installs.)
+
+## Shipped (0.3.0)
+
+- Renamed pack from `cursor-skill-creator` to `cursor-skill-studio`.
+- Added skeleton bundled-skill directories for `skill-studio-write/`,
+  `skill-studio-maintain/`, and `skill-studio-audit/`.
+- Merged auditor subagents (`skill-overlap-clusterer`,
+  `skill-architecture-checker`, `skill-consolidation-advisor`) into the
+  shared pool.
 
 ## Next
 
-- **0.4.0 (PR 2):** lift content from `skills/writing-cursor-skills`,
-  `skills/create-skill-from-refs`, `skills/create-cursor-pack-from-refs`,
-  `skills/external-skill-intake`, and `skills/claude-plugin-to-cursor-pack`
-  into `skill-studio-write`. Stub the originals.
 - **0.5.0 (PR 3):** lift content from `skills/audit-skill-for-cursor`,
   `skills/improving-agent-artifacts`, and
   `packs/skill-consistency-auditor/skills/skill-consistency-auditor-workflow`
