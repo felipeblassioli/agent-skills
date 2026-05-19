@@ -1,5 +1,65 @@
 # Verification
 
+## 0.5.0
+
+### Commands
+
+- `bash scripts/cursor-pack-verify.sh --pack=cursor-skill-studio`
+- `bash scripts/cursor-pack-verify.sh --pack=skill-consistency-auditor`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-audit`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=".work/pr3-smoke" --profile=lite --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=".work/pr3-smoke" --profile=strict --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user --profile=lite --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=skill-consistency-auditor --target=project --project-root=".work/pr3-smoke" --profile=lite --dry-run`
+
+### Outcome (recorded 2026-05-19)
+
+- `cursor-pack-verify.sh --pack=cursor-skill-studio` returned
+  `{"pass": true, "packsChecked": 1, "errors": [], "warnings": []}`.
+- `cursor-pack-verify.sh --pack=skill-consistency-auditor` returned
+  `{"pass": true, "packsChecked": 1, "errors": [], "warnings": []}` — the
+  deprecation banner and bumped version did not invalidate the manifest.
+- `validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-audit`
+  returned `{"pass": true, "skill": "skill-studio-audit", "lines": 197,
+  "errors": [], "warnings": []}` — `SKILL.md` is 197 lines (under the
+  authoring 200-line target and well below the 500-line hard limit) with no
+  broken in-tree references.
+- Project dry-run `lite` against a fresh `.work/pr3-smoke` staging root:
+  copied 72, updated 0, conflicts 0, unchanged 0 (up from 65 in 0.4.0; the
+  +7 files are the `skill-studio-audit` SKILL/metadata + six references +
+  two templates, minus the `.gitkeep` placeholder).
+- Project dry-run `strict`: copied 74, updated 0, conflicts 0, unchanged 0
+  (lite + the two project rules).
+- User-target dry-run `lite`: copied 68, updated 3, conflicts 3, unchanged 1.
+  The conflicts/updates match the 0.4.0 pattern (legacy
+  `cursor-skill-creator` install on this host) — no new conflicts introduced
+  by `skill-studio-audit`.
+- Auditor pack dry-run (`skill-consistency-auditor`, project lite): copied 5,
+  updated 0, conflicts 0, unchanged 0. Pack still installs cleanly during
+  the deprecation window; the bundled SKILL is now a redirect stub.
+
+### Diagnosis
+
+- Two consolidated bundled skills (`skill-studio-write`, `skill-studio-audit`)
+  install side-by-side with no overlap or conflict.
+- The previously broken `assets/report-template.md` install path
+  (flagged FAIL in ADR-0005) is now resolved at
+  `.cursor/skills/skill-studio-audit/assets/templates/portfolio-audit-report.md`.
+- `skill-consolidation-advisor` now references the installed path explicitly.
+- Auditor pack remains installable but is clearly marked deprecated across
+  `pack.json`, `README.md`, `CHANGELOG.md`, and `cursor-pack-registry.json`.
+
+### Residual risks
+
+- User-target conflicts on this host are inherited from the
+  `cursor-skill-creator` → `cursor-skill-studio` rename in 0.3.0 and are
+  unrelated to PR 3. A clean host install will copy zero conflicts.
+- Branch D (deep repo-first-party audit) defers to
+  `docs/specs/skill-overlap-audit.md`; if the spec evolves, the bundled
+  adapter must be kept in sync — not exercised in this verification.
+- The three auditor subagents now live in both packs during the deprecation
+  window; PR 6 removes the duplicates by archiving `skill-consistency-auditor`.
+
 ## 0.4.0
 
 ### Commands

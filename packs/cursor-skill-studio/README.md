@@ -1,14 +1,16 @@
 ---
 name: cursor-skill-studio
-version: "0.4.0"
-description: Cursor pack covering the full skill lifecycle (write, maintain, audit). Ships skill-studio-write as the consolidated authoring surface (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop); maintain/audit workflows land in subsequent PRs per ADR-0005.
+version: "0.5.0"
+description: Cursor pack covering the full skill lifecycle (write, maintain, audit). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop) and skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit); the maintain workflow lands in PR 4 per ADR-0005.
 ---
 
 # Cursor Skill Studio
 
-> Renamed from `cursor-skill-creator` in 0.3.0. **0.4.0 lifts the five
-> write-side root skills into one consolidated bundled skill,
-> `skill-studio-write`**, and stubs the originals.  See
+> Renamed from `cursor-skill-creator` in 0.3.0. **0.5.0 lifts the audit-side
+> surface into one consolidated bundled skill, `skill-studio-audit`**, stubs
+> the source root skills (`audit-skill-for-cursor`,
+> `improving-agent-artifacts`), and marks `packs/skill-consistency-auditor`
+> deprecated.  See
 > [`docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md`](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)
 > and the [CHANGELOG](CHANGELOG.md) for the full migration plan.
 
@@ -70,10 +72,14 @@ Bundled installed skills:
   greenfield skills, distilling reference material, scaffolding packs,
   external skill intake, Claude-plugin adaptation, and the eval/comparison
   loop. Invoke explicitly via `/skill-studio-write`.
+- **`skill-studio-audit`** (0.5.0) — consolidated audit surface: single-skill
+  compliance audit, improvement recommendations for an existing skill or
+  pack, installed portfolio audit (three-subagent pipeline), and the deep
+  repo-first-party overlap methodology. Invoke explicitly via
+  `/skill-studio-audit`.
 - `cursor-skill-creator-workflow` (deprecated in 0.4.0; superseded by
-  `skill-studio-write`; removal target 0.5.0).
-- `skill-studio-maintain` / `skill-studio-audit` (skeletons; lifted in PRs 3
-  and 4).
+  `skill-studio-write`).
+- `skill-studio-maintain` (skeleton; lifted in PR 4).
 
 Optional strict project rules under `.cursor/rules/`.
 
@@ -90,6 +96,20 @@ Optional strict project rules under `.cursor/rules/`.
 | D — External skill intake | The user has a candidate skill folder elsewhere and wants a go/no-go review before importing. |
 | E — Claude-plugin adaptation | The user has a `.claude-plugin/`, `.mcp.json`, or mixed plugin tree to decompose into Cursor-native artifacts. |
 | F — Eval / comparison loop | The user wants evidence (blind A/B, structural audit, grading) that an authoring change improved the artifact. |
+
+## What `skill-studio-audit` covers
+
+`skill-studio-audit` is the consolidated audit and improvement entry point.
+Invoke it with `/skill-studio-audit` to route into one of four branches:
+
+| Branch | Use when |
+|---|---|
+| A — Single-skill compliance audit | The user wants to audit one skill (or a small set) for context efficiency, progressive disclosure, and compliance with `docs/architecture.md`. |
+| B — Improvement recommendation | The user wants 1–3 highest-leverage recommendations for an existing skill or pack before any rewrite. |
+| C — Installed portfolio audit | The user wants to audit `~/.cursor/skills`, `~/.agents/skills`, or `~/.claude/skills` for overlap, vague triggers, and bad bundling. Uses the three audit subagents in pipeline. |
+| D — Repo-first-party overlap audit | The user wants the deep methodology in `docs/specs/skill-overlap-audit.md` applied to repo `skills/` (e.g., to inform a consolidation ADR). |
+
+Audits are read-only and propose-don't-apply by default.
 
 The hot-path `SKILL.md` stays compact and routes to one-hop references,
 templates, and bundled scripts (`validate-skill.sh`, `validate-pack.sh`,
