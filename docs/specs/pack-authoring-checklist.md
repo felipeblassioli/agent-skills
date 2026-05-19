@@ -2,7 +2,7 @@
 
 Use this checklist when creating or revising anything under `packs/`.
 For the full contract, see `docs/specs/cursor-pack-specification.md`. For
-install and upgrade guidance, see `docs/guides/cursor-packs.md`.
+install and upgrade guidance, see `docs/cursor-packs.md`.
 
 ## Fit
 

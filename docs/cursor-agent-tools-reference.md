@@ -134,7 +134,7 @@ Use MCP when the agent needs structured access to systems outside the repo, such
 Related docs:
 
 - [Cursor Marketplace](https://www.cursor.com/marketplace)
-- [Cursor Packs guide](./guides/cursor-packs.md)
+- [Cursor Packs guide](./cursor-packs.md)
 
 Plugins and packs are delivery mechanisms, not just instruction surfaces.
 
@@ -157,7 +157,7 @@ Use these when you want to distribute a coherent runtime setup, not just write g
 
 This repository maintains several Cursor-adjacent artifacts directly, so these documents are the best next references if you are working inside this repo:
 
-- [Cursor Packs guide](./guides/cursor-packs.md)
+- [Cursor Packs guide](./cursor-packs.md)
 - [Cursor Pack specification](./specs/cursor-pack-specification.md)
 - [Agentic skill and pack authoring](./specs/agentic-skill-pack-authoring.md)
 

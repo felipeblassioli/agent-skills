@@ -199,5 +199,5 @@ be added to `skill-registry.json` unless intentionally promoted.
 - [Architecture](./architecture.md)
 - [Agentic Skill and Pack Authoring Specification](./specs/agentic-skill-pack-authoring.md)
 - [Skill Authoring Checklist](./specs/skill-authoring-checklist.md)
-- [Cursor Packs Guide](./guides/cursor-packs.md)
+- [Cursor Packs Guide](./cursor-packs.md)
 - [Governed Skill Maintenance Model](./ADR/ADR-0002-governed-skill-maintenance-model.md)

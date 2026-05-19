@@ -113,7 +113,7 @@ Read first:
 
 - `docs/specs/cursor-pack-specification.md`
 - `docs/specs/pack-authoring-checklist.md`
-- `docs/guides/cursor-packs.md`
+- `docs/cursor-packs.md`
 - the pack's `README.md`, `ROADMAP.md`, `RELEASE-POLICY.md`, and
   `VERIFICATION.md`
 
