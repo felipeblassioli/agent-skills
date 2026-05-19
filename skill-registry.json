@@ -161,7 +161,7 @@
       "description": "Diagnose and fix ESM errors in TypeScript projects"
     },
     "external-skill-intake": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -172,12 +172,13 @@
         "authoring",
         "import",
         "intake",
-        "skills"
+        "skills",
+        "deprecated"
       ],
-      "description": "Evaluate a candidate Cursor skill from another repository or arbitrary path, decide whether it should be imported into this repository, and route the import through the correct normalization path."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch D) per ADR-0005] Evaluate a candidate Cursor skill from another repository or arbitrary path, decide whether it should be imported into this repository, and route the import through the correct normalization path."
     },
     "claude-plugin-to-cursor-pack": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -189,9 +190,10 @@
         "claude",
         "cursor",
         "packs",
-        "migration"
+        "migration",
+        "deprecated"
       ],
-      "description": "Evaluates a Claude-style plugin or plugin-like folder and recommends how to adapt it into Cursor-native pack assets, repo-root companion skills, optional pack-bundled skills (kind: skill), docs, and MCP templates."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch E) per ADR-0005] Evaluates a Claude-style plugin or plugin-like folder and recommends how to adapt it into Cursor-native pack assets, repo-root companion skills, optional pack-bundled skills (kind: skill), docs, and MCP templates."
     },
     "nx-monorepo": {
       "version": "2.0.0",
@@ -342,7 +344,7 @@
       "description": "Production-grade Deno guidance centered on least-privilege permissions, ESM-first dependency strategy, Deno-native testing and style conventions, and deliberate Node/npm interoperability."
     },
     "create-skill-from-refs": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -351,12 +353,13 @@
       "tags": [
         "meta",
         "authoring",
-        "skill-creation"
+        "skill-creation",
+        "deprecated"
       ],
-      "description": "Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package. Use when the user asks to create a skill, write a SKILL.md, or package domain knowledge into a reusable skill — especially when they provide reference documents or code as context. Invoke explicitly via /create-skill-from-refs."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch B) per ADR-0005] Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package."
     },
     "writing-cursor-skills": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -368,12 +371,13 @@
         "cursor",
         "skill-creation",
         "quality",
-        "context-efficiency"
+        "context-efficiency",
+        "deprecated"
       ],
-      "description": "Create context-efficient Cursor skills through Socratic discovery, progressive disclosure, strict scope control, and quality-gated scaffolding. Use when the user wants to author or refactor a Cursor skill, enforcing cheap-agent-first delegation, one-hop references, and strict output structures. Invoke explicitly via /writing-cursor-skills."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch A) per ADR-0005] Create context-efficient Cursor skills through Socratic discovery, progressive disclosure, strict scope control, and quality-gated scaffolding."
     },
     "create-cursor-pack-from-refs": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -382,9 +386,10 @@
       "tags": [
         "meta",
         "authoring",
-        "cursor-pack"
+        "cursor-pack",
+        "deprecated"
       ],
-      "description": "Create Cursor packs from user-provided reference material and repo context. Guides through intake, pack archetype selection, pack scaffolding under `packs/<name>/`, registry updates, and verification against this repository's pack conventions, including optional pack-bundled skills (kind: skill). Use when the user asks to create a Cursor pack, author `pack.json`, scaffold runtime assets, or package subagents, rules, hooks, MCP examples, guides, and bundled skills into an installable Cursor bundle."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch C) per ADR-0005] Create Cursor packs from user-provided reference material and repo context. Guides through intake, pack archetype selection, pack scaffolding under `packs/<name>/`, registry updates, and verification against this repository's pack conventions, including optional pack-bundled skills (kind: skill)."
     },
     "firebase-functions-node": {
       "version": "1.0.0",
@@ -704,6 +709,23 @@
         "maintenance"
       ],
       "description": "Audit a Cursor skill (or skills directory) for Cursor compatibility, safe auto-invocation, and index-style SKILL.md quality. Propose a remediation plan and unapplied diffs; apply ONLY after explicit user confirmation."
+    },
+    "babysit": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "github",
+        "pr",
+        "ci",
+        "merge",
+        "workflow"
+      ],
+      "description": "Keep a PR merge-ready by triaging comments (including Bugbot), resolving clear merge conflicts, and fixing CI in a loop until the branch is mergeable. Invoke explicitly when the user wants a PR babysat."
     },
     "blassioli-code-reviewer": {
       "version": "1.3.0",

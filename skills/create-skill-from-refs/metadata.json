@@ -1,6 +1,8 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "felipeblassioli",
-  "date": "March 2026",
-  "abstract": "Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package. Use when the user asks to create a skill, write a SKILL.md, or package domain knowledge into a reusable skill — especially when they provide reference documents or code as context. Invoke explicitly via /create-skill-from-refs."
+  "date": "May 2026",
+  "abstract": "[DEPRECATED] Stub redirecting to skill-studio-write (Branch B) in the cursor-skill-studio Cursor pack. Slated for removal in the stub-removal PR per ADR-0005.",
+  "deprecated": true,
+  "replacedBy": "cursor-skill-studio/skill-studio-write"
 }
