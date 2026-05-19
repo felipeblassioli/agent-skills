@@ -19,3 +19,4 @@ repository together with the reasoning and trade-offs behind them.
 |-----|-------|--------|------|
 | [ADR-0001](ADR-0001-registry-driven-releases-for-skills-and-packs.md) | Registry-driven releases for skills and packs | draft | 2026-03-08 |
 | [ADR-0002](ADR-0002-governed-skill-maintenance-model.md) | Governed skill maintenance model | draft | 2026-04-30 |
+| [ADR-0003](ADR-0003-artifact-maturity-model.md) | Artifact maturity model | draft | 2026-05-19 |
