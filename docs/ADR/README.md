@@ -21,3 +21,4 @@ repository together with the reasoning and trade-offs behind them.
 | [ADR-0002](ADR-0002-governed-skill-maintenance-model.md) | Governed skill maintenance model | draft | 2026-04-30 |
 | [ADR-0003](ADR-0003-artifact-maturity-model.md) | Artifact maturity model | draft | 2026-05-19 |
 | [ADR-0004](ADR-0004-cross-runtime-agent-packaging-model.md) | Cross-runtime agent packaging model | draft | 2026-05-19 |
+| [ADR-0005](ADR-0005-skill-authoring-surface-consolidation.md) | Consolidate the skill-authoring surface into cursor-skill-studio | proposed | 2026-05-19 |
