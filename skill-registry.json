@@ -661,7 +661,7 @@
       "description": "Use when the user asks to draft or refine a Product Requirements Document with clear scope, measurable success criteria, and implementation-ready requirement structure."
     },
     "personal-skill-maintainer": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -673,7 +673,23 @@
         "maintainer",
         "governance"
       ],
-      "description": "Audit and maintain Cursor skills and packs to ensure compliance with the repository governed maintenance model (ADR-0002) and registry-driven releases (ADR-0001)."
+      "description": "Audit and maintain Cursor skills, scripts/tools, and packs against the repository governed maintenance model (ADR-0002), artifact maturity model (ADR-0003), and registry-driven releases (ADR-0001)."
+    },
+    "personal-pack-maintainer": {
+      "version": "1.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor"
+      ],
+      "tags": [
+        "meta",
+        "authoring",
+        "maintainer",
+        "packs",
+        "governance"
+      ],
+      "description": "Audit and maintain Cursor packs against the repository pack contract, release artifacts, install safety policy, and artifact maturity model (ADR-0003)."
     },
     "audit-skill-for-cursor": {
       "version": "1.1.0",

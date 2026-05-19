@@ -167,6 +167,7 @@ Read-only flags:
 
 Future flags:
 
+- `--pretty`
 - `--json`
 - `--include=<glob>`
 - `--exclude=<glob>`
@@ -475,6 +476,11 @@ identical                typescript-quality
 Machine-readable JSON output is out of scope for v0, but the implementation
 SHOULD keep internal state structured enough to add it later.
 
+A future `--pretty` mode MAY provide a more readable human report for large
+cleanup workflows. It MUST preserve the default output unless the spec is updated
+to define a breaking CLI change. It MUST remain separate from any future `--json`
+machine-readable contract.
+
 ## Exit Codes
 
 The tool MUST define stable exit behavior:
@@ -618,6 +624,16 @@ JSON/reporting ergonomics, and agent readability.
 
 Go is the recommended rewrite target when the priority is portable binary
 distribution and strong filesystem behavior across platforms.
+
+## Backlog
+
+Concrete implementation slices are tracked in GitHub issues and linked here when
+they affect the tool's durable behavior contract.
+
+- [#80](https://github.com/felipeblassioli/agent-skills/issues/80):
+  add `--pretty` human output mode. Before implementation, define the output
+  semantics in this spec and add fixture tests for default output preservation
+  and pretty output rendering.
 
 ## Open Questions For Future Versions
 

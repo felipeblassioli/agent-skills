@@ -1,10 +1,12 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "felipeblassioli",
-  "date": "2026-05-05",
-  "abstract": "Ensure Cursor skills and packs adhere to the repository's governed maintenance model and registry-driven releases.",
+  "date": "2026-05-19",
+  "abstract": "Ensure Cursor skills, scripts/tools, and packs follow the repository's governed maintenance, maturity, and registry-driven release models.",
   "references": [
     "docs/ADR/ADR-0001-registry-driven-releases-for-skills-and-packs.md",
-    "docs/ADR/ADR-0002-governed-skill-maintenance-model.md"
+    "docs/ADR/ADR-0002-governed-skill-maintenance-model.md",
+    "docs/ADR/ADR-0003-artifact-maturity-model.md",
+    "docs/specs/artifact-maintenance-workflow.md"
   ]
 }

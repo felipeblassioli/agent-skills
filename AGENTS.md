@@ -52,6 +52,7 @@ agent-skills/
 │   ├── skill-sync.sh             # Deploy skills to target paths
 │   ├── skill-version.sh          # Bump version (registry + metadata + SKILL.md)
 │   ├── skill-import.sh           # Import skill from external project
+│   ├── skill-directory-sync.sh   # Compare/sync installed skill directories
 │   ├── cursor-pack-verify.sh     # Validate pack structure and safety checks
 │   ├── cursor-pack-sync.sh       # Stage + install packs with backups
 │   ├── cursor-pack-restore.sh    # Restore files from a pack backup
@@ -77,6 +78,10 @@ specs as the primary routing surface instead of expanding this root file:
   guidance
 - `docs/ADR/ADR-0002-governed-skill-maintenance-model.md` — release-authority
   split between root skills, bundled skills, and packs
+- `docs/ADR/ADR-0003-artifact-maturity-model.md` — maturity levels for skills,
+  scripts/tools, packs, and repository guidance
+- `docs/specs/artifact-maintenance-workflow.md` — practical workflow for
+  backlog, specs, verification, and agent routing by maturity
 - `docs/specs/skill-authoring-checklist.md` — compact checklist for work under
   `skills/`
 - `docs/specs/pack-authoring-checklist.md` — compact checklist for work under
@@ -84,6 +89,25 @@ specs as the primary routing surface instead of expanding this root file:
 
 Keep reusable authoring doctrine in those specs rather than duplicating it in
 `AGENTS.md`.
+
+## Artifact Maturity Workflow
+
+Before changing a maintained artifact, classify it by type and maturity:
+
+- **Root skills**: follow ADR-0002 and ADR-0003. Keep `SKILL.md` compact; update
+  `metadata.json`, `skill-registry.json`, and `CHANGELOG.md` together when a
+  behavior change needs a version bump.
+- **Scripts/tools**: treat stable tools as maintained artifacts. Read
+  `scripts/<tool>/SPEC.md` before changing CLI behavior, output, safety rules,
+  persistence, or backup behavior. Update tests under `scripts/<tool>/tests/`.
+- **Cursor packs**: registry-managed packs are release-critical. Preserve
+  `README.md`, `CHANGELOG.md`, `VERIFICATION.md`, `RELEASE-POLICY.md`, and
+  `ROADMAP.md`.
+- **Agent guidance**: keep long-lived policy in ADRs or `docs/specs/`; keep this
+  file and `.cursor/rules/` as short routing surfaces.
+
+Use GitHub issues for concrete backlog slices, and link them from `SPEC.md`,
+`ROADMAP.md`, or README files when the idea changes durable product direction.
 
 ## Skill Archetypes
 

@@ -1,0 +1,20 @@
+# Artifact Maturity
+
+Before changing a maintained artifact, classify its type and maturity using
+`docs/ADR/ADR-0003-artifact-maturity-model.md` and
+`docs/specs/artifact-maintenance-workflow.md`.
+
+## Required routing
+
+- Skills: read ADR-0002, ADR-0003, and the skill's maintainer files before
+  changing behavior or version metadata.
+- Scripts/tools: read `scripts/<tool>/SPEC.md` before changing CLI behavior,
+  output, safety rules, persistence, backup behavior, or tests.
+- Cursor packs: read the pack's `README.md`, `ROADMAP.md`,
+  `RELEASE-POLICY.md`, and `VERIFICATION.md` before changing install behavior.
+- Backlog: use GitHub issues for implementation slices and link them from
+  `SPEC.md`, `ROADMAP.md`, or README when they affect durable product direction.
+- Root changelog: update repository `CHANGELOG.md` when changing cross-cutting
+  governance, workflow, ADR, rule, or maintainer-skill behavior.
+
+Update the durable contract before implementation when behavior changes.
