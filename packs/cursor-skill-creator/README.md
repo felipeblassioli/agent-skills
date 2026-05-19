@@ -1,7 +1,7 @@
 ---
 name: cursor-skill-creator
-version: "0.1.0"
-description: Portable authoring pack for creating and adapting Cursor-native skills and packs with a bundled workflow skill, evaluation toolkit, and helper subagents.
+version: "0.2.0"
+description: Portable authoring pack for creating, adapting, and comparing Cursor-native skills and packs with a bundled workflow skill, evaluation toolkit, and helper subagents.
 ---
 
 # Cursor Skill Creator
@@ -13,7 +13,8 @@ installable Cursor-native artifacts.
 The pack combines three layers:
 
 - a bundled installed skill for intake, decomposition, scaffolding, and review
-- reusable helper subagents for grading, comparison, analysis, and bootstrap
+- reusable helper subagents for grading, blind comparison, structural auditing,
+  analysis, and bootstrap
 - optional strict project rules that reinforce the intended authoring workflow
 
 It is intentionally opinionated about adaptation strategy:
@@ -45,6 +46,7 @@ rather than a `~/.cursor/rules/` directory.
 - `.cursor/agents/skill-creator-grader.md`
 - `.cursor/agents/skill-creator-analyzer.md`
 - `.cursor/agents/skill-creator-comparator.md`
+- `.cursor/agents/skill-creator-structural-auditor.md`
 - bundled installed skill at `.cursor/skills/cursor-skill-creator-workflow/`
   or `~/.cursor/skills/cursor-skill-creator-workflow/`
 - optional strict rules under `.cursor/rules/`
@@ -55,6 +57,7 @@ The bundled workflow skill is the main entry point when the user wants to:
 
 - create a new Cursor pack from reference material
 - adapt a Claude-style skill or plugin-like folder into Cursor-native artifacts
+- compare two skills using shared eval prompts plus a source-structure audit
 - decide whether a source should become a pack, a bundled skill, docs, or a mix
 - set up an eval workspace and use review or benchmark tooling for authoring
 
@@ -74,6 +77,7 @@ This pack works best when the repository can supply:
 
 - [guides/installation.md](guides/installation.md)
 - [guides/evaluation-workflow.md](guides/evaluation-workflow.md)
+- [guides/skill-comparison.md](guides/skill-comparison.md)
 - [guides/adapting-existing-skills.md](guides/adapting-existing-skills.md)
 
 ## Release Artifacts

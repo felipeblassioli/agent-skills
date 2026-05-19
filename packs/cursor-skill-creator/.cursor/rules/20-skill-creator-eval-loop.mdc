@@ -12,10 +12,14 @@ Prefer this sequence:
 
 1. Define realistic eval prompts.
 2. Capture baseline and candidate outputs separately.
-3. Grade with `skill-creator-grader`.
-4. Aggregate metrics with the bundled benchmark script.
-5. Review outputs with the bundled HTML viewer.
-6. Use `skill-creator-analyzer` for interpretation.
+3. For two-skill comparisons, audit source shape with
+   `skill-creator-structural-auditor`.
+4. Grade with `skill-creator-grader`.
+5. Compare paired outputs blindly with `skill-creator-comparator` when labels
+   could bias the decision.
+6. Aggregate metrics with the bundled benchmark script.
+7. Review outputs with the bundled HTML viewer.
+8. Use `skill-creator-analyzer` for interpretation.
 
 Keep the loop proportional:
 

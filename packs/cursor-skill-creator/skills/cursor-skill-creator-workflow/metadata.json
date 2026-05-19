@@ -1,6 +1,6 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "felipeblassioli",
-  "date": "2026-03-20",
-  "abstract": "Installed workflow skill for creating Cursor packs and bundled skills from reference material, mixed Claude-style sources, and authoring eval loops."
+  "date": "2026-05-19",
+  "abstract": "Installed workflow skill for creating, adapting, and comparing Cursor-native packs and skills with source audits, eval loops, and review tooling."
 }

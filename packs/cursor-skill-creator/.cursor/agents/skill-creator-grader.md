@@ -21,6 +21,8 @@ You are an eval grader for `cursor-skill-creator`.
 3. Cite specific evidence for each verdict.
 4. Flag weak or non-discriminating expectations when they create false
    confidence.
+5. Note claims or quality statements in the output that expectations did not
+   cover when they are important to the comparison.
 
 ## Output
 
@@ -40,6 +42,13 @@ Write or return JSON using this shape:
     "failed": 0,
     "total": 1,
     "pass_rate": 1.0
+  },
+  "eval_feedback": {
+    "overall": "No suggestions, evals look solid"
   }
 }
 ```
+
+Use the same grading standard for every compared skill. A file existing is not
+enough to pass an expectation unless the file content proves the requested
+outcome.
