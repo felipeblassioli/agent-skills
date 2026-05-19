@@ -74,7 +74,7 @@ specs as the primary routing surface instead of expanding this root file:
   cheap-agent-first delegation, and token/context policy
 - `docs/specs/cursor-pack-specification.md` — formal Cursor Pack contract for
   private/local installable runtime bundles
-- `docs/guides/cursor-packs.md` — practical pack install, restore, and upgrade
+- `docs/cursor-packs.md` — practical pack install, restore, and upgrade
   guidance
 - `docs/ADR/ADR-0002-governed-skill-maintenance-model.md` — release-authority
   split between root skills, bundled skills, and packs

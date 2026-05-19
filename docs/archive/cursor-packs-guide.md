@@ -1,5 +1,12 @@
 # Cursor Packs
 
+Archived from `docs/guides/cursor-packs.md`.
+
+This file preserves the earlier guide-style Cursor Packs documentation. The
+current pack catalog lives at `docs/cursor-packs.md`.
+
+## Original Guide
+
 Cursor Packs are installable bundles of Cursor runtime assets maintained in this
 repository.
 

@@ -275,7 +275,7 @@ Maintained artifacts should point future editors to the durable source of truth:
 ## See Also
 
 - [Agent Skills](./agent-skills.md)
-- [Cursor Packs Guide](./guides/cursor-packs.md)
+- [Cursor Packs Guide](./cursor-packs.md)
 - [Agentic Skill and Pack Authoring Specification](./specs/agentic-skill-pack-authoring.md)
 - [Skill Authoring Checklist](./specs/skill-authoring-checklist.md)
 - [Pack Authoring Checklist](./specs/pack-authoring-checklist.md)

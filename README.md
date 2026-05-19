@@ -49,7 +49,7 @@ bash scripts/skill-sync.sh
 Cursor Packs are this repository's private/local installable bundle format for
 Cursor runtime assets. See:
 
-- `docs/guides/cursor-packs.md` for usage guidance
+- `docs/cursor-packs.md` for usage guidance
 - `docs/specs/cursor-pack-specification.md` for the formal pack contract
 - `docs/ADR/ADR-0002-governed-skill-maintenance-model.md` for the skill-versus-pack
   maintenance model
@@ -238,7 +238,7 @@ Current reference pack:
 
 For the full pack contract and usage guidance, see
 `docs/specs/cursor-pack-specification.md` and
-`docs/guides/cursor-packs.md`.
+`docs/cursor-packs.md`.
 
 ## Selected Skills
 
