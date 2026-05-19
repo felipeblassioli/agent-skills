@@ -1,8 +1,8 @@
 {
   "$schema": "../../cursor-pack.schema.json",
   "name": "cursor-skill-creator",
-  "version": "0.1.0",
-  "description": "Cursor pack with a bundled workflow skill, evaluation toolkit, and reusable helper subagents for adapting external skill material into installable Cursor-native packs and bundled skills.",
+  "version": "0.2.0",
+  "description": "Cursor pack with a bundled workflow skill, evaluation toolkit, and reusable helper subagents for adapting and comparing skill material as installable Cursor-native packs and bundled skills.",
   "author": "felipeblassioli",
   "targets": [
     "project-cursor",

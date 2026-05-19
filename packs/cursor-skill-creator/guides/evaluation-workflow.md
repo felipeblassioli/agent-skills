@@ -14,6 +14,10 @@ authoring change actually improves outcomes rather than just sounding better.
 7. Use `skill-creator-analyzer` to surface patterns hidden by aggregate metrics.
 8. Iterate on the bundled skill or pack content and repeat.
 
+For skill-vs-skill comparisons, use
+[skill-comparison.md](skill-comparison.md) first. It adds a source-structure
+audit and blind output comparison on top of this generic eval loop.
+
 ## Workspace shape
 
 ```text
@@ -30,3 +34,6 @@ authoring change actually improves outcomes rather than just sounding better.
 
 The bundled references include JSON shapes for `eval_metadata.json`,
 `grading.json`, and `benchmark.json`.
+
+Use `scripts/bootstrap_skill_comparison.py` when you need repeatable directory
+setup for two-skill comparisons.

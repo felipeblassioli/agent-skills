@@ -58,7 +58,7 @@
       "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and a bundled orientation skill."
     },
     "cursor-skill-creator": {
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": "felipeblassioli",
       "path": "packs/cursor-skill-creator",
       "targets": [
@@ -83,7 +83,7 @@
         "evaluation",
         "subagents"
       ],
-      "description": "Portable Cursor authoring pack with a bundled workflow skill, evaluation toolkit, and helper subagents for adapting source material into bundled skills and installable packs."
+      "description": "Portable Cursor authoring pack with a bundled workflow skill, evaluation toolkit, and helper subagents for adapting and comparing source material as bundled skills and installable packs."
     },
     "engineering-workflows": {
       "version": "0.1.0",

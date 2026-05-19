@@ -10,7 +10,8 @@ When adapting source material into Cursor-native artifacts:
 1. Classify first.
 2. Define the artifact matrix before editing.
 3. Prefer bundled skills for reusable guidance that should install with the pack.
-4. Prefer subagents for bounded helper work such as grading or blind comparison.
+4. Prefer subagents for bounded helper work such as grading, source auditing, or
+   blind comparison.
 5. Keep long explanations in guides or references, not in strict rules.
 
 Avoid these mistakes:
