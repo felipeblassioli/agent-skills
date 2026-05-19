@@ -1,14 +1,21 @@
 ---
-name: cursor-skill-creator
-version: "0.2.0"
-description: Portable authoring pack for creating, adapting, and comparing Cursor-native skills and packs with a bundled workflow skill, evaluation toolkit, and helper subagents.
+name: cursor-skill-studio
+version: "0.3.0"
+description: Cursor pack covering the full skill lifecycle (write, maintain, audit). Successor to cursor-skill-creator; per-job bundled skills (skill-studio-write/-maintain/-audit) are lifted in subsequent PRs per ADR-0005.
 ---
 
-# Cursor Skill Creator
+# Cursor Skill Studio
 
-`cursor-skill-creator` packages a reusable authoring workflow for turning
+> Renamed from `cursor-skill-creator` in 0.3.0. The pack now covers the full
+> skill lifecycle (write, maintain, audit), not only creation. See
+> [`docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md`](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)
+> and the [CHANGELOG](CHANGELOG.md) for the migration plan.
+
+`cursor-skill-studio` packages a reusable authoring workflow for turning
 reference material, existing skills, and Claude-style plugin bundles into
-installable Cursor-native artifacts.
+installable Cursor-native artifacts, and (from the 0.3.0 line onward) extends
+that into maintenance and audit workflows for skills and packs already in the
+repository.
 
 The pack combines three layers:
 
@@ -42,14 +49,26 @@ rather than a `~/.cursor/rules/` directory.
 
 ## Included runtime assets
 
+Authoring helpers (existing):
+
 - `.cursor/agents/skill-creator-bootstrapper.md`
 - `.cursor/agents/skill-creator-grader.md`
 - `.cursor/agents/skill-creator-analyzer.md`
 - `.cursor/agents/skill-creator-comparator.md`
 - `.cursor/agents/skill-creator-structural-auditor.md`
-- bundled installed skill at `.cursor/skills/cursor-skill-creator-workflow/`
-  or `~/.cursor/skills/cursor-skill-creator-workflow/`
-- optional strict rules under `.cursor/rules/`
+
+Audit helpers (merged in 0.3.0 from the deprecated `skill-consistency-auditor` pack):
+
+- `.cursor/agents/skill-overlap-clusterer.md`
+- `.cursor/agents/skill-architecture-checker.md`
+- `.cursor/agents/skill-consolidation-advisor.md`
+
+Bundled installed skills:
+
+- `cursor-skill-creator-workflow` (existing; replaced by `skill-studio-write` in PR 2)
+- `skill-studio-write` / `skill-studio-maintain` / `skill-studio-audit` (skeleton in 0.3.0; lifted in PRs 2-4)
+
+Optional strict project rules under `.cursor/rules/`.
 
 ## What the bundled skill covers
 

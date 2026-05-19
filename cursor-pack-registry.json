@@ -57,10 +57,10 @@
       ],
       "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and a bundled orientation skill."
     },
-    "cursor-skill-creator": {
-      "version": "0.2.0",
+    "cursor-skill-studio": {
+      "version": "0.3.0",
       "author": "felipeblassioli",
-      "path": "packs/cursor-skill-creator",
+      "path": "packs/cursor-skill-studio",
       "targets": [
         "project-cursor",
         "user-cursor"
@@ -80,10 +80,12 @@
         "skills",
         "packs",
         "authoring",
+        "maintenance",
+        "audit",
         "evaluation",
         "subagents"
       ],
-      "description": "Portable Cursor authoring pack with a bundled workflow skill, evaluation toolkit, and helper subagents for adapting and comparing source material as bundled skills and installable packs."
+      "description": "Cursor pack covering the full skill lifecycle (write, maintain, audit). Renamed from cursor-skill-creator in 0.3.0; per-job bundled skills (skill-studio-write/-maintain/-audit) are lifted in subsequent PRs per ADR-0005."
     },
     "engineering-workflows": {
       "version": "0.1.0",
