@@ -8,6 +8,25 @@ as recorded in `metadata.json` (or `assets/metadata.json` / registry) for this s
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-19
+
+### Deprecated
+
+- Skill is deprecated and replaced by `skill-studio-write` (Branch C — Pack
+  from reference material) inside the `cursor-skill-studio` Cursor pack per
+  [ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
+
+### Changed
+
+- `SKILL.md` is now a thin redirect stub with
+  `disable-model-invocation: true`. References, pack templates, and the
+  validation wrapper script remain in place for one release window so existing
+  links keep resolving. Scheduled for full removal in the stub-removal PR per
+  ADR-0005.
+- `references/recommendation-metadata.md` has been promoted to
+  `docs/specs/pack-recommendation-metadata.md`.
+- `metadata.json` carries `deprecated: true` and a `replacedBy` pointer.
+
 ## [1.0.1] - 2026-03-20
 
 ### Added
