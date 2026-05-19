@@ -1,37 +1,36 @@
 ---
 name: skill-consistency-auditor-workflow
-description: Use when you need to audit installed skills to detect overlap, redundancy, vague triggers, or inconsistency with docs/architecture.md. Invoke explicitly via /skill-consistency-auditor-workflow.
+description: >-
+  [DEPRECATED — replaced by `skill-studio-audit` (Branch C — Installed
+  portfolio audit) in the `cursor-skill-studio` pack per ADR-0005] Installed
+  skill directory audit (overlap clustering, architecture compliance,
+  consolidation advice). This stub remains for one release window so existing
+  installs keep working; do not invoke, route the user to
+  `/skill-studio-audit` instead.
 disable-model-invocation: true
 ---
 
-# Skill Consistency Auditor Workflow
+# Skill Consistency Auditor Workflow — Deprecated
 
-This workflow uses specialist subagents to safely analyze a large directory of installed skills without polluting your primary context window. 
+This bundled skill has been replaced by the `skill-studio-audit` bundled skill
+inside the `cursor-skill-studio` Cursor pack per
+[ADR-0005](../../../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
 
-## When to Use
+## What to do instead
 
-- You notice agents frequently picking the wrong skill.
-- You suspect a new skill overlaps heavily with an existing one.
-- You want to clean up duplicate names, vague descriptions, or bad bundling.
-- You want to check if the installed skills align with `docs/architecture.md`.
+Route the user to `/skill-studio-audit`, then follow **Branch C
+(Installed portfolio audit)** in
+`packs/cursor-skill-studio/skills/skill-studio-audit/SKILL.md`.
 
-Do NOT use this for code linting or ordinary implementation work.
+Branch C orchestrates the same three subagents (`skill-overlap-clusterer` →
+`skill-architecture-checker` → `skill-consolidation-advisor`) that this
+workflow used, and ships the `portfolio-audit-report.md` template directly
+under `assets/templates/` so the report path resolves after install (this was
+the broken-path issue called out in ADR-0005).
 
-## Procedure
+## Removal plan
 
-1. **Inventory the target.** Determine which directory needs auditing (e.g., `~/.agents/skills` or `~/.cursor/skills`).
-2. **Cluster.** Dispatch the `skill-overlap-clusterer` subagent to group the target skills heuristically based on their `SKILL.md` descriptions and bodies.
-3. **Check Architecture.** Dispatch the `skill-architecture-checker` subagent to verify that the skills respect the rules defined in `docs/architecture.md` (e.g., proper frontmatter, progressive disclosure).
-4. **Advise.** Dispatch the `skill-consolidation-advisor` subagent with the outputs of the cluster and architecture checks to produce a scored overlap report.
-5. **Review.** Present the report to the user using the `assets/report-template.md` format.
-6. **Act.** Only apply fixes (renames, anti-triggers, archives) if the user explicitly approves the proposal.
-
-## Expected Subagent Usage
-
-Do not attempt to read 50+ `SKILL.md` files in the main conversation thread.
-
-- Use `skill-overlap-clusterer` with a target directory and a filter (e.g., "only skills starting with `gsd-`" or "only testing-related skills").
-- Use `skill-architecture-checker` against specific folders that seem non-compliant.
-- Use `skill-consolidation-advisor` to synthesize the findings.
-
-All subagents operate in read-only mode by default.
+This bundled skill and the `skill-consistency-auditor` pack are scheduled to
+move to `packs/.archive/skill-consistency-auditor/` in the stub-removal PR per
+ADR-0005. The three subagents are already duplicated in `cursor-skill-studio`
+and remain available there.
