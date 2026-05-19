@@ -168,6 +168,33 @@
         "subagents"
       ],
       "description": "Portable Node and Jest verifier pack with a reusable subagent for low-noise, pass-fail-first verification with explicit evidence and optional coverage."
+    },
+    "skill-consistency-auditor": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "path": "packs/skill-consistency-auditor",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "installPolicy": {
+        "backupOnConflict": true,
+        "defaultProfile": "lite",
+        "projectRules": "none",
+        "mcp": "none"
+      },
+      "tags": [
+        "cursor",
+        "skills",
+        "packs",
+        "governance",
+        "subagents",
+        "authoring"
+      ],
+      "description": "Cursor pack for auditing installed skills to detect overlap, vagueness, duplicate aliases, and inconsistencies with docs/architecture.md."
     }
   },
   "targetPaths": {

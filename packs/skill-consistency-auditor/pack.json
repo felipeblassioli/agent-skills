@@ -1,0 +1,57 @@
+{
+  "$schema": "../../cursor-pack.schema.json",
+  "name": "skill-consistency-auditor",
+  "version": "0.1.0",
+  "description": "Cursor pack for auditing installed skills to detect overlap, vagueness, duplicate aliases, and inconsistencies with docs/architecture.md.",
+  "author": "felipeblassioli",
+  "targets": [
+    "project-cursor",
+    "user-cursor"
+  ],
+  "profiles": {
+    "lite": {
+      "description": "Installs the bundled auditor skill and helper subagents for clustering and consolidation advice."
+    }
+  },
+  "artifacts": [
+    {
+      "id": "agents",
+      "source": ".cursor/agents",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "projectPath": ".cursor/agents",
+      "userPath": "agents"
+    },
+    {
+      "id": "bundled-skill-workflow",
+      "kind": "skill",
+      "skillId": "skill-consistency-auditor-workflow",
+      "source": "skills/skill-consistency-auditor-workflow",
+      "targets": [
+        "project-cursor",
+        "user-cursor"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "notes": [
+        "Installs to .cursor/skills/skill-consistency-auditor-workflow/ (project) or ~/.cursor/skills/skill-consistency-auditor-workflow/ (user).",
+        "This bundled skill is pack-scoped and is not listed in skill-registry.json."
+      ]
+    }
+  ],
+  "install": {
+    "defaultProfile": "lite",
+    "backupOnConflict": true,
+    "stageRoot": ".work/cursor-pack-staging",
+    "backupRoot": ".work/cursor-pack-backups",
+    "manifestFile": ".cursor-pack-manifest.json",
+    "conflictPolicy": "backup-and-overwrite",
+    "mcpPolicy": "none"
+  }
+}
