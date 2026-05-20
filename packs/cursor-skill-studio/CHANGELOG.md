@@ -5,6 +5,61 @@ will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows SemVer.
 
+## [0.6.0] - 2026-05-20
+
+### Added
+
+- New bundled skill `skill-studio-maintain` consolidates the maintain-side
+  surface into one explicit-only entry point
+  (`disable-model-invocation: true`) with six intent branches:
+  - Branch A — Root skill release
+    (was `skills/personal-skill-maintainer`)
+  - Branch B — Pack release
+    (was `skills/personal-pack-maintainer`)
+  - Branch C — Bundled-skill artifact (shared by both source skills)
+  - Branch D — Promotion / demotion (shared)
+  - Branch E — Maturity & backlog (ADR-0003 routing, shared)
+  - Branch F — Install verification
+    (was `skills/personal-pack-maintainer`)
+- 13 merged references: `root-skill-package-model.md`,
+  `root-skill-docs-model.md`, `skill-versioning-and-release.md` (lifted from
+  the skill maintainer); `pack-package-model.md`, `manifest-and-registry.md`,
+  `targets-profiles-artifacts.md`, `pack-release-artifacts.md`,
+  `pack-lifecycle-scripts.md`, `safety-and-mcp-policy.md` (lifted verbatim
+  from the pack maintainer); `bundled-skills.md` (merged the two source
+  references — skill maintainer + pack maintainer); plus three new thin
+  pointers: `pack-versioning-and-release.md` (splits the bump ritual out of
+  the lifecycle reference), `maturity-and-backlog.md` (thin pointer to
+  ADR-0003 + the artifact maintenance workflow spec), and
+  `script-tool-maintenance.md` (codifies the `scripts/<tool>/SPEC.md` +
+  tests contract that previously only lived as a checklist item).
+- Pack manifest gains a fourth bundled-skill artifact entry
+  (`bundled-skill-studio-maintain`) targeting both `project-cursor` and
+  `user-cursor` in `lite` and `strict` profiles.
+
+### Deprecated
+
+- `skills/personal-skill-maintainer` and `skills/personal-pack-maintainer`
+  are now thin redirect stubs (`disable-model-invocation: true`) pointing
+  to `/skill-studio-maintain` (Branches A/C/D/E and B/C/E/F respectively).
+  Reference files retained for one release window. Registry entries bumped
+  to `1.2.0` with the `deprecated` tag and `[DEPRECATED]` description
+  prefix.
+
+### Changed
+
+- Pack `description` updated to mention the third bundled skill and the
+  completed maintain workflow.
+- `cursor-pack-registry.json` description updated likewise.
+
+### Verification
+
+- `cursor-pack-verify.sh --pack=cursor-skill-studio`: pass.
+- `validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-maintain`:
+  see `VERIFICATION.md` for line count and warning details.
+- Dry-run installs for `project` (lite + strict) and `user` (lite) targets;
+  see `VERIFICATION.md` for copy/conflict counts.
+
 ## [0.5.0] - 2026-05-19
 
 ### Added

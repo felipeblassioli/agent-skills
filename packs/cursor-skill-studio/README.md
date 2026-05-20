@@ -1,16 +1,17 @@
 ---
 name: cursor-skill-studio
-version: "0.5.0"
-description: Cursor pack covering the full skill lifecycle (write, maintain, audit). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop) and skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit); the maintain workflow lands in PR 4 per ADR-0005.
+version: "0.6.0"
+description: Cursor pack covering the full skill lifecycle (write, maintain, audit). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification).
 ---
 
 # Cursor Skill Studio
 
-> Renamed from `cursor-skill-creator` in 0.3.0. **0.5.0 lifts the audit-side
-> surface into one consolidated bundled skill, `skill-studio-audit`**, stubs
-> the source root skills (`audit-skill-for-cursor`,
-> `improving-agent-artifacts`), and marks `packs/skill-consistency-auditor`
-> deprecated.  See
+> Renamed from `cursor-skill-creator` in 0.3.0. **0.6.0 lifts the
+> maintain-side surface into one consolidated bundled skill,
+> `skill-studio-maintain`**, and stubs the two source root skills
+> (`personal-skill-maintainer`, `personal-pack-maintainer`). All three
+> studio bundled skills (write / audit / maintain) now ship together.
+> See
 > [`docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md`](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)
 > and the [CHANGELOG](CHANGELOG.md) for the full migration plan.
 
@@ -77,9 +78,12 @@ Bundled installed skills:
   pack, installed portfolio audit (three-subagent pipeline), and the deep
   repo-first-party overlap methodology. Invoke explicitly via
   `/skill-studio-audit`.
+- **`skill-studio-maintain`** (0.6.0) — consolidated maintain surface:
+  root-skill release, pack release, bundled-skill artifact edits,
+  promotion/demotion, maturity classification (ADR-0003), and install
+  verification. Invoke explicitly via `/skill-studio-maintain`.
 - `cursor-skill-creator-workflow` (deprecated in 0.4.0; superseded by
-  `skill-studio-write`).
-- `skill-studio-maintain` (skeleton; lifted in PR 4).
+  `skill-studio-write`; removal planned in PR 6).
 
 Optional strict project rules under `.cursor/rules/`.
 
@@ -110,6 +114,26 @@ Invoke it with `/skill-studio-audit` to route into one of four branches:
 | D — Repo-first-party overlap audit | The user wants the deep methodology in `docs/specs/skill-overlap-audit.md` applied to repo `skills/` (e.g., to inform a consolidation ADR). |
 
 Audits are read-only and propose-don't-apply by default.
+
+## What `skill-studio-maintain` covers
+
+`skill-studio-maintain` is the consolidated governance and release entry
+point. Invoke it with `/skill-studio-maintain` to route into one of six
+branches:
+
+| Branch | Use when |
+|---|---|
+| A — Root skill release | The user wants to bump a SemVer on `skills/<name>/`, refresh CHANGELOG/README, and sync `skill-registry.json`. |
+| B — Pack release | The user wants to bump a pack, refresh CHANGELOG/VERIFICATION/ROADMAP, and sync `cursor-pack-registry.json`. |
+| C — Bundled-skill artifact | The user wants to add, edit, or remove a `kind: "skill"` artifact in `pack.json`. |
+| D — Promotion / demotion | The user wants to promote a pack-bundled skill into a root skill (or stop bundling one). |
+| E — Maturity & backlog | The user wants to classify or reclassify an artifact under ADR-0003. |
+| F — Install verification | The user wants to run `cursor-pack-verify.sh` plus per-profile `cursor-pack-sync.sh --dry-run` before merge. |
+
+Maintain proposes changes first and applies them only after explicit
+approval. Bump scripts (`scripts/skill-version.sh`,
+`scripts/cursor-pack-version.sh`) and verify scripts live at the repo root;
+the bundled skill orchestrates them.
 
 The hot-path `SKILL.md` stays compact and routes to one-hop references,
 templates, and bundled scripts (`validate-skill.sh`, `validate-pack.sh`,
