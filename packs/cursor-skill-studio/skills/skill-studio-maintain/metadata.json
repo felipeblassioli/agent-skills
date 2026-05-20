@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "May 2026",
+  "abstract": "Maintain governed root skills, pack-bundled skills, Cursor packs, and repo scripts/tools in felipeblassioli/agent-skills: SemVer bumps, registry alignment, release-artifact refreshes, bundled-skill artifact edits, promotion/demotion decisions, maturity classification per ADR-0003, and install verification. Invoke explicitly via /skill-studio-maintain."
+}
