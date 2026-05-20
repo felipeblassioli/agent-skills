@@ -436,7 +436,7 @@
       "description": "Write, execute, and assert HTTP requests safely using Hurl text files."
     },
     "kysely-typescript": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -449,7 +449,7 @@
         "sql",
         "typesafe"
       ],
-      "description": "Type-safe SQL query building in TypeScript using Kysely"
+      "description": "Type-safe SQL query building in TypeScript using Kysely. Use when writing or reviewing Kysely queries, schema types, migrations, raw SQL snippets, dynamic filters, conditional selects, transactions, or reusable query helpers."
     },
     "linear-specialist": {
       "version": "1.0.0",
