@@ -33,6 +33,9 @@ skill-blassioli-code-reviewer@<version>
 
 ## Related Skills Or Packs
 
-- `audit-skill-for-cursor`
-- `personal-skill-maintainer`
+- `cursor-skill-studio` Cursor pack — `/skill-studio-audit` (compliance,
+  overlap, improvement recommendations) and `/skill-studio-maintain`
+  (releases, registry alignment, install verification). Replaces the
+  former `audit-skill-for-cursor` and `personal-skill-maintainer` root
+  skills per ADR-0005.
 - `cloud-design-patterns`

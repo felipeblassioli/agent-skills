@@ -40,7 +40,7 @@ bash scripts/skill-sync.sh --dry-run
 ### 3) Validate a skill package (recommended for PRs)
 
 ```bash
-bash skills/create-skill-from-refs/scripts/validate-skill.sh skills/<skill-name>
+bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh skills/<skill-name>
 ```
 
 ### 4) Sync skills to targets
@@ -250,7 +250,6 @@ For the full pack contract and usage guidance, see
 This repository currently contains skills including:
 
 - `commit-hygiene`
-- `create-skill-from-refs`
 - `firebase-functions-node`
 - `gcloud-logging`
 - `gh-pr-creator`

@@ -500,7 +500,8 @@ one real pack.
 - Agentic skill and pack authoring:
   `docs/specs/agentic-skill-pack-authoring.md`
 - Personal pack maintainer:
-  `.agents/skills/personal-pack-maintainer/SKILL.md`
+  `packs/cursor-skill-studio/skills/skill-studio-maintain/SKILL.md`
+  (consolidates the former `personal-pack-maintainer` root skill per ADR-0005)
 - Claude Code plugin marketplaces:
   `https://code.claude.com/docs/en/plugin-marketplaces`
 - Claude Code plugin reference:

@@ -4,21 +4,33 @@ The pack is mid-migration per
 [ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
 Each milestone below maps to one PR.
 
-## In progress (0.6.0 — this release)
+## In progress (1.0.0 — this release)
 
-- Lift content from `skills/personal-skill-maintainer` and
-  `skills/personal-pack-maintainer` into `skill-studio-maintain` (six
-  branches: A root skill release, B pack release, C bundled-skill artifact,
-  D promotion/demotion, E maturity & backlog, F install verification).
-  **Done.**
-- Stub the two source root skills (`disable-model-invocation: true`,
-  redirect body, version bumped to `1.2.0` with `[DEPRECATED]` description
-  and `deprecated` tag). **Done.**
-- Merge the duplicate `bundled-skills.md` reference (it existed in both
-  source skills) into a single bundled-skill reference. **Done.**
-- Split the bundled-skill maintenance workflow for repo scripts/tools into
-  its own reference (`script-tool-maintenance.md`) so future PRs can drop
-  the source skills cleanly. **Done.**
+- **PR 5 of ADR-0005 — documentation finalize.** Updated
+  `docs/agent-skills.md`, `docs/architecture.md`, `docs/cursor-packs.md`,
+  the root `README.md`, `.cursor/rules/30-pr-workflow.mdc`,
+  `.github/copilot-instructions.md`,
+  `.github/instructions/skills.instructions.md`,
+  `.github/pull_request_template.md`, ADR-0003 / ADR-0004, the
+  `pack-recommendation-metadata` / `skill-overlap-audit` /
+  `claude-plugin-export-from-packs` / `artifact-maintenance-workflow`
+  specs, and the `blassioli-code-reviewer` skill cross-references to
+  route through `cursor-skill-studio` and the three studio bundled
+  skills instead of the deprecated root names. **Done.**
+- Promoted pack maturity to **stable**: `pack.json` 1.0.0, refreshed
+  description, release artifacts updated, full verification matrix run on
+  both targets and profiles. **Done.**
+- Verified the live in-pack routing line in
+  `skill-studio-write/references/import-paths.md` (line 62) and the See
+  Also block in `skill-studio-write/SKILL.md` no longer name the
+  deprecated root skills as the active path. **Done.**
+
+## Shipped (0.6.0)
+
+- Lifted `personal-skill-maintainer` and `personal-pack-maintainer` into
+  `skill-studio-maintain` (six intent branches); stubbed both source
+  skills; merged duplicate `bundled-skills.md`; split repo
+  scripts/tools maintenance into `script-tool-maintenance.md`.
 
 ## Shipped (0.5.0)
 
@@ -48,11 +60,7 @@ Each milestone below maps to one PR.
 
 ## Next
 
-- **1.0.0 (PR 5):** finalize routing, update `docs/architecture.md`,
-  `docs/agent-skills.md`, root `AGENTS.md`, and any incoming references
-  from `docs/specs/` and `docs/ADR/`. Full VERIFICATION matrix across the
-  three studio bundled skills.
-- **Post-1.0.0 (PR 6, one release later):** delete deprecated root skill
+- **PR 6 (one release after 1.0.0):** delete deprecated root skill
   directories (`writing-cursor-skills`, `create-skill-from-refs`,
   `create-cursor-pack-from-refs`, `external-skill-intake`,
   `claude-plugin-to-cursor-pack`, `audit-skill-for-cursor`,

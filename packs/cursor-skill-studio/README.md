@@ -1,19 +1,29 @@
 ---
 name: cursor-skill-studio
-version: "0.6.0"
-description: Cursor pack covering the full skill lifecycle (write, maintain, audit). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification).
+version: "1.0.0"
+description: Stable consolidated Cursor pack for the full skill lifecycle (write, audit, maintain). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification).
 ---
 
 # Cursor Skill Studio
 
-> Renamed from `cursor-skill-creator` in 0.3.0. **0.6.0 lifts the
-> maintain-side surface into one consolidated bundled skill,
-> `skill-studio-maintain`**, and stubs the two source root skills
-> (`personal-skill-maintainer`, `personal-pack-maintainer`). All three
-> studio bundled skills (write / audit / maintain) now ship together.
-> See
+> **1.0.0 — stable.** Renamed from `cursor-skill-creator` in 0.3.0; the
+> 0.4.0 / 0.5.0 / 0.6.0 line lifted the write / audit / maintain surfaces
+> into three explicit-only bundled skills. **1.0.0 finalizes the
+> documentation contracts** described by
 > [`docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md`](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)
-> and the [CHANGELOG](CHANGELOG.md) for the full migration plan.
+> — `docs/agent-skills.md`, `docs/architecture.md`, `docs/cursor-packs.md`,
+> the root `README.md`, `.cursor/rules/30-pr-workflow.mdc`,
+> `.github/copilot-instructions.md`, ADR-0003 / ADR-0004, and the
+> `blassioli-code-reviewer` cross-references now route through
+> `cursor-skill-studio` and its three bundled skills. The nine deprecated
+> root skills (`writing-cursor-skills`, `create-skill-from-refs`,
+> `create-cursor-pack-from-refs`, `external-skill-intake`,
+> `claude-plugin-to-cursor-pack`, `audit-skill-for-cursor`,
+> `improving-agent-artifacts`, `personal-skill-maintainer`,
+> `personal-pack-maintainer`) remain installed as redirect stubs for one
+> release; PR 6 of ADR-0005 deletes them and archives the
+> `skill-consistency-auditor` pack. See the [CHANGELOG](CHANGELOG.md) for
+> the full sweep.
 
 `cursor-skill-studio` packages a reusable authoring workflow for turning
 reference material, existing skills, and Claude-style plugin bundles into
@@ -69,16 +79,16 @@ Audit helpers (merged in 0.3.0 from the deprecated `skill-consistency-auditor` p
 
 Bundled installed skills:
 
-- **`skill-studio-write`** (0.4.0) — consolidated authoring surface for
+- **`skill-studio-write`** — consolidated authoring surface for
   greenfield skills, distilling reference material, scaffolding packs,
   external skill intake, Claude-plugin adaptation, and the eval/comparison
   loop. Invoke explicitly via `/skill-studio-write`.
-- **`skill-studio-audit`** (0.5.0) — consolidated audit surface: single-skill
+- **`skill-studio-audit`** — consolidated audit surface: single-skill
   compliance audit, improvement recommendations for an existing skill or
   pack, installed portfolio audit (three-subagent pipeline), and the deep
   repo-first-party overlap methodology. Invoke explicitly via
   `/skill-studio-audit`.
-- **`skill-studio-maintain`** (0.6.0) — consolidated maintain surface:
+- **`skill-studio-maintain`** — consolidated maintain surface:
   root-skill release, pack release, bundled-skill artifact edits,
   promotion/demotion, maturity classification (ADR-0003), and install
   verification. Invoke explicitly via `/skill-studio-maintain`.

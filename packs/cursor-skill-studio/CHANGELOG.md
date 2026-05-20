@@ -5,6 +5,70 @@ will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows SemVer.
 
+## [1.0.0] - 2026-05-20
+
+### Changed
+
+- **Stable 1.0.0.** Finalizes the skill-studio surface defined by
+  [ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
+  The three explicit-only bundled skills — `skill-studio-write`,
+  `skill-studio-audit`, and `skill-studio-maintain` — are now the canonical
+  authoring, audit, and maintain entry points for this repository.
+- Promoted the pack to maturity level **stable** per
+  [ADR-0003](../../docs/ADR/ADR-0003-artifact-maturity-model.md): documented
+  release artifacts (`README.md`, `CHANGELOG.md`, `VERIFICATION.md`,
+  `RELEASE-POLICY.md`, `ROADMAP.md`), explicit-only bundled-skill
+  invocation, and verified install on both `project-cursor` and
+  `user-cursor` targets across `lite` and `strict` profiles.
+
+### Documentation sweep (PR 5 of ADR-0005)
+
+- `docs/agent-skills.md` — collapsed nine deprecated root-skill rows into a
+  single ADR-0005 redirect block; updated the pack-bundled table to list
+  `skill-studio-write`, `skill-studio-audit`, `skill-studio-maintain`, and
+  marked `cursor-skill-creator-workflow` as deprecated.
+- `docs/architecture.md` — Pattern 3 "Pack With Bundled Skill" example now
+  uses `cursor-skill-studio` / `skill-studio-write`.
+- `docs/cursor-packs.md` — replaced the `cursor-skill-creator` quick-start
+  entry with `cursor-skill-studio` and added a deprecation row for
+  `skill-consistency-auditor`.
+- `README.md` — pointed the PR validation example at the bundled
+  `validate-skill.sh` under `skill-studio-write` and removed the
+  deprecated `create-skill-from-refs` row from "Selected Skills".
+- `.cursor/rules/30-pr-workflow.mdc`, `.github/copilot-instructions.md`,
+  `.github/instructions/skills.instructions.md`,
+  `.github/pull_request_template.md` — repointed all `validate-skill.sh`
+  and quality-checklist citations at the bundled
+  `skill-studio-write/scripts/` and `references/` paths.
+- `docs/ADR/ADR-0003-artifact-maturity-model.md` and
+  `docs/ADR/ADR-0004-cross-runtime-agent-packaging-model.md` —
+  amendments pointing the maintainer references at `skill-studio-maintain`
+  while preserving the original decisions.
+- `docs/specs/claude-plugin-export-from-packs.md`,
+  `docs/specs/artifact-maintenance-workflow.md`,
+  `docs/specs/skill-overlap-audit.md`,
+  `docs/specs/pack-recommendation-metadata.md` —
+  cross-references and example commits updated.
+- `skills/blassioli-code-reviewer/SKILL.md` and `README.md` — anti-trigger
+  and "Related Skills Or Packs" sections now route to `cursor-skill-studio`
+  bundled skills instead of the deprecated root skills.
+- Pack internals: `pack.json` (1.0.0 + refreshed description); bundled
+  `references/import-paths.md` line 62 now routes to
+  `/skill-studio-write` Branch B; `skill-studio-write/SKILL.md` See-Also
+  rephrased to drop the deprecated routing name; `bundled-skills.md` and
+  `platform-audit-lenses.md` already pointed at the new bundled paths.
+
+### Provenance / non-changes
+
+- Stub root skills (the nine deprecated entries) and the deprecated
+  `skill-consistency-auditor` pack stay installed for one more release; PR 6
+  of ADR-0005 deletes the stubs and archives the pack.
+- Legacy `cursor-skill-creator-workflow` bundled skill stays installed in
+  1.0.0 to avoid an in-flight break for users mid-upgrade; PR 6 removes it.
+- "Was `skills/<deprecated>`" provenance lines in this changelog,
+  `VERIFICATION.md` historical sections, and the merged `references/*.md`
+  banners are intentionally retained as historical context.
+
 ## [0.6.0] - 2026-05-20
 
 ### Added

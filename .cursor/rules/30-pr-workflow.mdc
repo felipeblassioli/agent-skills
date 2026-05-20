@@ -67,7 +67,7 @@ A reviewer should understand the goal before reading code.
 The template includes a checklist derived from the skill standard.
 Tick every applicable item before requesting review.
 
-Key checks (from `create-skill-from-refs/references/quality-checklist.md`):
+Key checks (from `packs/cursor-skill-studio/skills/skill-studio-write/references/skill-quality-checklist.md`):
 - `skill-registry.json` updated when skills are added/removed/versioned
 - `metadata.json` version matches the registry entry
 - SKILL.md frontmatter: `name` matches folder, `description` includes WHAT + WHEN
@@ -79,7 +79,7 @@ Key checks (from `create-skill-from-refs/references/quality-checklist.md`):
 Include actual commands and results. Examples:
 ```
 - `bash scripts/skill-sync.sh --dry-run` → OK
-- `bash skills/create-skill-from-refs/scripts/validate-skill.sh skills/<name>` → all pass
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh skills/<name>` → all pass
 ```
 
 ## What makes a good PR in this repo
@@ -96,7 +96,7 @@ empty body is the fastest way to get a PR ignored.
 ### Validate with the skill standard
 For PRs that add or substantially modify a skill, run the validation script:
 ```bash
-bash skills/create-skill-from-refs/scripts/validate-skill.sh skills/<name>
+bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh skills/<name>
 ```
 Include the output in the Validation section.
 
@@ -159,4 +159,4 @@ EOF
 | Update PR body | `gh pr edit <N> --repo felipeblassioli/agent-skills --body-file .work/body-pr-<slug>.md` |
 | Add comment | `gh pr comment <N> --repo felipeblassioli/agent-skills --body "..."` |
 | Check CI status | `gh pr checks <N> --repo felipeblassioli/agent-skills` |
-| Validate skill | `bash skills/create-skill-from-refs/scripts/validate-skill.sh skills/<name>` |
+| Validate skill | `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh skills/<name>` |
