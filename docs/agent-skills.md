@@ -54,17 +54,34 @@ explicitly promoted to the root registry.
 
 | Skill | Version | Targets | Use when |
 | --- | --- | --- | --- |
-| `audit-skill-for-cursor` | 1.1.0 | cursor | Auditing a Cursor skill or skills directory for compatibility, safe invocation, and index-style quality. |
 | `bmad-specialist` | 1.1.0 | cursor, agents | Auditing or customizing installed BMAD projects and deciding where behavior belongs. |
-| `claude-plugin-to-cursor-pack` | 1.0.1 | cursor | Adapting Claude-style plugins into Cursor-native packs, skills, docs, and MCP templates. |
-| `create-cursor-pack-from-refs` | 1.0.1 | cursor | Creating Cursor packs from reference material and repository context. |
-| `create-skill-from-refs` | 1.0.0 | cursor | Creating Agent Skills from reference documents, examples, URLs, or local source material. |
-| `external-skill-intake` | 1.0.0 | cursor | Evaluating an external skill-like folder before importing or normalizing it. |
-| `improving-agent-artifacts` | 1.0.1 | cursor | Refining existing skills or packs to reduce noise, sharpen triggers, and improve behavior. |
 | `nested-agents-routing` | 1.0.2 | cursor, agents | Designing repo-local agent guidance with `AGENTS.md`, Cursor rules, skills, packs, and bundled skills. |
-| `personal-pack-maintainer` | 1.1.0 | cursor | Auditing and maintaining Cursor packs against this repository's pack contract and release model. |
-| `personal-skill-maintainer` | 1.1.0 | cursor | Auditing and maintaining skills, scripts, and packs against repository governance. |
-| `writing-cursor-skills` | 1.1.0 | cursor | Authoring context-efficient Cursor skills through discovery, progressive disclosure, and quality gates. |
+
+> **Authoring / audit / maintain consolidated into `cursor-skill-studio` per
+> [ADR-0005](./ADR/ADR-0005-skill-authoring-surface-consolidation.md).**
+> The nine former root skills (`writing-cursor-skills`,
+> `create-skill-from-refs`, `create-cursor-pack-from-refs`,
+> `external-skill-intake`, `claude-plugin-to-cursor-pack`,
+> `audit-skill-for-cursor`, `improving-agent-artifacts`,
+> `personal-skill-maintainer`, `personal-pack-maintainer`) are now thin
+> redirect stubs pointing at three bundled skills inside the
+> `cursor-skill-studio` Cursor pack:
+>
+> - `/skill-studio-write` — greenfield authoring, distillation from
+>   reference material, pack scaffolding, external skill intake,
+>   Claude-plugin adaptation, eval / comparison loop.
+> - `/skill-studio-audit` — single-skill compliance audit, improvement
+>   recommendations, installed portfolio audit (overlap clusterer +
+>   architecture checker + consolidation advisor), deep repo-first-party
+>   overlap audit.
+> - `/skill-studio-maintain` — root-skill and pack releases, registry
+>   alignment, bundled-skill artifact edits, promotion / demotion,
+>   maturity classification (ADR-0003), install verification.
+>
+> See the "Pack-Bundled Skills" section below for the canonical entries and
+> [`packs/cursor-skill-studio/README.md`](../packs/cursor-skill-studio/README.md)
+> for installation. The stubs are scheduled for full removal once the
+> consolidation reaches PR 6 of ADR-0005.
 
 ### Review, GitHub, and Delivery Workflow
 
@@ -159,7 +176,10 @@ be added to `skill-registry.json` unless intentionally promoted.
 | --- | --- | --- |
 | `agentic-artifact-discovery` | `agentic-artifact-discovery-workflow` | Entry point for exploring skill systems, workflow frameworks, subagent bundles, and plugin-like artifacts. |
 | `cursor-companion` | `cursor-companion-pack-overview` | Orientation skill for the companion pack's subagents, rules, hooks, MCP examples, and guides. |
-| `cursor-skill-creator` | `cursor-skill-creator-workflow` | Workflow entry point for adapting source material into Cursor-native packs and bundled skills. |
+| `cursor-skill-studio` | `skill-studio-write` | Consolidated authoring surface: greenfield skills, distillation from refs, pack scaffolding, external intake, Claude-plugin adaptation, eval/comparison loop. Invoke `/skill-studio-write`. |
+| `cursor-skill-studio` | `skill-studio-audit` | Consolidated audit surface: single-skill compliance, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit. Invoke `/skill-studio-audit`. |
+| `cursor-skill-studio` | `skill-studio-maintain` | Consolidated maintain surface: root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification. Invoke `/skill-studio-maintain`. |
+| `cursor-skill-studio` | `cursor-skill-creator-workflow` | _Deprecated_ — legacy workflow superseded by `skill-studio-write`; still installed for one release, scheduled for removal per ADR-0005 PR 6. |
 | `engineering-workflows` | `engineering-architecture` | Architecture decision and design guidance. |
 | `engineering-workflows` | `engineering-code-review` | Structured code review workflow guidance. |
 | `engineering-workflows` | `engineering-debug` | Systematic debugging workflow guidance. |

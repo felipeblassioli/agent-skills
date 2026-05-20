@@ -192,7 +192,9 @@ Adopt this ADR through documentation and agent guidance first:
 1. Add a practical workflow spec at
    `docs/specs/artifact-maintenance-workflow.md`.
 2. Update `AGENTS.md` so agents route through maturity checks before editing.
-3. Update the `personal-skill-maintainer` skill to include ADR-0003.
+3. Update the `skill-studio-maintain` bundled skill (in the
+   `cursor-skill-studio` Cursor pack, formerly the `personal-skill-maintainer`
+   root skill per ADR-0005) to include ADR-0003.
 4. Add or update Cursor rules when deterministic agent direction is useful.
 5. Seed `skill-directory-sync` with a linked backlog item for `--pretty`.
 
@@ -214,7 +216,9 @@ This ADR is implemented when:
 - `scripts/skill-directory-sync/SPEC.md`
 - `scripts/skill-directory-sync/tests/run-tests.sh`
 - `AGENTS.md`
-- `skills/personal-skill-maintainer/SKILL.md`
+- `packs/cursor-skill-studio/skills/skill-studio-maintain/SKILL.md`
+  (consolidates the former `skills/personal-skill-maintainer` and
+  `skills/personal-pack-maintainer` root skills per ADR-0005)
 
 ## Changelog
 

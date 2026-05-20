@@ -166,7 +166,7 @@ Issue titles should be concrete and scoped:
 
 ```text
 feat(skill-directory-sync): add pretty human output mode
-docs(personal-skill-maintainer): route through ADR-0003
+docs(skill-studio-maintain): route through ADR-0003
 test(cursor-pack-sync): cover backup restore metadata
 ```
 

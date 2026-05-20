@@ -51,7 +51,7 @@
 
 <!-- Commands run and their output. Example: -->
 <!-- - `bash scripts/skill-sync.sh --dry-run` → OK -->
-<!-- - `bash skills/create-skill-from-refs/scripts/validate-skill.sh skills/<name>` → all checks pass -->
+<!-- - `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh skills/<name>` → all checks pass -->
 <!-- - `bash scripts/cursor-pack-verify.sh --pack=<name>` → OK -->
 <!-- - `bash scripts/cursor-pack-sync.sh --pack=<name> --target=project --project-root="$PWD" --profile=strict --dry-run` → OK -->
 

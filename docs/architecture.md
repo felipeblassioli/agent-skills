@@ -232,12 +232,12 @@ The pack registry controls version, profiles, install targets, and install polic
 Use a bundled skill when a pack needs a discoverable workflow entrypoint:
 
 ```text
-packs/cursor-skill-creator/
+packs/cursor-skill-studio/
 +-- pack.json
 +-- .cursor/agents/
 +-- .cursor/rules/
 +-- skills/
-    +-- cursor-skill-creator-workflow/
+    +-- skill-studio-write/
         +-- SKILL.md
         +-- metadata.json
 ```

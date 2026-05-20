@@ -20,7 +20,7 @@ Review skill quality, not just structure:
 - Prefer concrete, domain-specific examples over abstract pseudocode.
 - Flag descriptions or names that are vague, generic, or misleading.
 
-Mirror the checks from `skills/create-skill-from-refs/scripts/validate-skill.sh` and the authoring checklist:
+Mirror the checks from `packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh` and the authoring checklist:
 - broken relative links from `SKILL.md`
 - empty directories
 - Windows-style paths in markdown
@@ -31,7 +31,7 @@ Mirror the checks from `skills/create-skill-from-refs/scripts/validate-skill.sh`
 For standard skills, prefer structures like `skills/kysely-typescript/SKILL.md`: an applicability gate, direct routing table, short procedure, and confirmation policy for risky actions.
 
 In PR review, ask for evidence when it is missing. For skill additions or substantial rewrites, expect validation such as:
-- `bash skills/create-skill-from-refs/scripts/validate-skill.sh skills/<name>`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh skills/<name>`
 - `bash scripts/skill-sync.sh --list` or `bash scripts/skill-sync.sh --dry-run`
 
 If a PR changes skill content but also includes unrelated registry, build, or repo-config edits, flag the scope creep.

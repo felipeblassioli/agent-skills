@@ -23,7 +23,7 @@ Use this skill when the user asks for any of the following:
 
 - The user wants commit message hygiene or PR description polishing without review (use `commit-hygiene` or `gh-pr-creator`).
 - The user wants a generic correctness/security/maintainability pass without distributed-systems framing (use `code-review`).
-- The user wants to author or refactor a Cursor skill or pack (use `writing-cursor-skills`, `audit-skill-for-cursor`, or `improving-agent-artifacts`).
+- The user wants to author or refactor a Cursor skill or pack (use `/skill-studio-write` for authoring or `/skill-studio-audit` for compliance review and improvement recommendations — both bundled in the `cursor-skill-studio` Cursor pack).
 - The user wants to run tests or coverage (use `test-verifier`).
 
 ## Operating mode in Cursor

@@ -117,7 +117,7 @@ Split skills into 2–3 topical groups. Example split:
 
 - **Cluster A — Testing and quality:** `tdd-classicist`, `test-verifier`, `vitest-monorepo`, `typescript-testing-organization`, `hurl-testing`, `typescript-quality`, `typescript-error-handling`.
 - **Cluster B — TypeScript and GCP/platform:** `esm-typescript`, `nx-monorepo`, `firebase-functions-node`, `gcloud-logging`, `gcp-error-reporting-nodejs`, `gcp-opentelemetry-nodejs`, and optionally `vercel-deploy-claimable` if under `skills/`.
-- **Cluster C — Frontend and repo-meta:** `react-best-practices`, `react-native-skills`, `composition-patterns`, `web-design-guidelines`, `commit-hygiene`, `gh-pr-creator`, `create-skill-from-refs`, `create-cursor-pack-from-refs`, `ts-module-documentation`, `go-package-documentation`.
+- **Cluster C — Frontend and repo-meta:** `react-best-practices`, `react-native-skills`, `composition-patterns`, `web-design-guidelines`, `commit-hygiene`, `gh-pr-creator`, `ts-module-documentation`, `go-package-documentation`. (Authoring/audit/maintain artifacts are consolidated under `cursor-skill-studio` per ADR-0005; exclude them from a repo-skills overlap audit unless explicitly in scope.)
 
 **Prompt per cluster (replace CLUSTER_LABEL and skill list):**
 
@@ -190,7 +190,6 @@ flowchart TD
 When running the audit, these pairs have historically shown the strongest potential overlap and are worth explicit review:
 
 - `commit-hygiene` + `gh-pr-creator`
-- `create-skill-from-refs` + `create-cursor-pack-from-refs`
 - `gcp-error-reporting-nodejs` + `gcp-opentelemetry-nodejs`
 - Testing family: `tdd-classicist`, `test-verifier`, `vitest-monorepo`, `typescript-testing-organization`
 

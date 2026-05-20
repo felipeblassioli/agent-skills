@@ -408,7 +408,8 @@ Promotion to L1 requires:
 This ADR is implemented when:
 
 - `docs/ADR/README.md` indexes ADR-0004
-- the ADR preserves `personal-pack-maintainer` requirements
+- the ADR preserves the pack-maintainer requirements now lifted into
+  `skill-studio-maintain` (in `cursor-skill-studio`) per ADR-0005
 - the ADR does not rename current operational pack surfaces
 - the ADR keeps MCP activation as a separate trust decision
 - the ADR references Cursor Plugin and Claude Plugin distribution as future
@@ -425,7 +426,8 @@ This ADR is implemented when:
 - ADR-0002: `docs/ADR/ADR-0002-governed-skill-maintenance-model.md`
 - ADR-0003: `docs/ADR/ADR-0003-artifact-maturity-model.md`
 - `AGENTS.md`
-- `.agents/skills/personal-pack-maintainer/SKILL.md`
+- `packs/cursor-skill-studio/skills/skill-studio-maintain/SKILL.md`
+  (consolidates the former `personal-pack-maintainer` root skill per ADR-0005)
 - `docs/specs/cursor-pack-specification.md`
 - `docs/specs/agentic-skill-pack-authoring.md`
 - `.references/cursor/Cursor Docs - Cursor Plugins.md`

@@ -20,14 +20,17 @@ bash scripts/cursor-pack-sync.sh --pack=cursor-companion --target=project --proj
 Installs companion auditors, MCP examples, and an orientation skill. Use `strict`
 when a project should also adopt hook and rule guardrails.
 
-**cursor-skill-creator** - Skill and pack authoring workflow
+**cursor-skill-studio** - Skill and pack lifecycle workflow (write / audit / maintain)
 
 ```bash
-bash scripts/cursor-pack-sync.sh --pack=cursor-skill-creator --target=project --project-root="$PWD" --profile=lite --dry-run
+bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root="$PWD" --profile=lite --dry-run
 ```
 
-Installs helper agents and a bundled workflow skill for adapting source material
-into Cursor-native skills and packs.
+Installs helper and audit agents plus three explicit-only bundled skills:
+`/skill-studio-write` (authoring), `/skill-studio-audit` (compliance and
+overlap audits), and `/skill-studio-maintain` (releases, registry alignment,
+install verification). Renamed from `cursor-skill-creator` in 0.3.0 and
+consolidated under ADR-0005.
 
 **node-test-verifier** - Low-noise Node/Jest verification
 
@@ -65,7 +68,8 @@ skill systems, workflow frameworks, subagent bundles, and plugin-like artifacts.
 | Pack | Version | Profiles | Includes | Description |
 | --- | --- | --- | --- | --- |
 | [`cursor-companion`](../packs/cursor-companion) | 0.1.3 | lite, strict | agents, rules, hooks, MCP example, bundled skill | Cursor runtime bundle with companion subagents, project rules, hook guardrails, MCP templates, operational guides, and an orientation skill. |
-| [`cursor-skill-creator`](../packs/cursor-skill-creator) | 0.2.0 | lite, strict | agents, rules, bundled skill | Portable authoring pack with a bundled workflow skill, evaluation toolkit, and helper agents for adapting and comparing skill material. |
+| [`cursor-skill-studio`](../packs/cursor-skill-studio) | 1.0.0 | lite, strict | agents, rules, three bundled skills | Consolidated skill-lifecycle pack covering authoring (`/skill-studio-write`), audit and improvement (`/skill-studio-audit`), and release/governance (`/skill-studio-maintain`). Renamed from `cursor-skill-creator` in 0.3.0 per ADR-0005. |
+| [`skill-consistency-auditor`](../packs/skill-consistency-auditor) | 0.2.0 | lite | agents, bundled skill | _Deprecated — use `cursor-skill-studio` and `/skill-studio-audit` (Branch C — Installed portfolio audit) instead._ Pack still installs through 0.2.0; scheduled to move to `packs/.archive/` per ADR-0005 PR 6. |
 
 ### Engineering Workflows
 
