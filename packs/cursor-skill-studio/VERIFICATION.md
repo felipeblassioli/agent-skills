@@ -1,5 +1,68 @@
 # Verification
 
+## 0.6.0
+
+### Commands
+
+- `bash scripts/cursor-pack-verify.sh --pack=cursor-skill-studio`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-maintain`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=".work/pr4-smoke" --profile=lite   --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=".work/pr4-smoke" --profile=strict --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user   --profile=lite   --dry-run`
+
+### Outcome (recorded 2026-05-20)
+
+- `cursor-pack-verify.sh --pack=cursor-skill-studio` returned
+  `{"pass": true, "packsChecked": 1, "errors": [], "warnings": []}`.
+- `validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-maintain`
+  returned `{"pass": true, "skill": "skill-studio-maintain", "lines": 256,
+  "errors": [], "warnings": []}` — `SKILL.md` is 256 lines (above the
+  ≤200-line authoring target but well below the 500-line hard limit; the
+  extra mass is the unified 19-item review checklist that merges the skill
+  maintainer's 10 items with the pack maintainer's 16 items, deduped, plus
+  the six-branch router) with no broken in-tree references.
+- Project dry-run `lite` against a fresh `.work/pr4-smoke` staging root:
+  copied 87, updated 0, conflicts 0, unchanged 0 (up from 72 in 0.5.0; the
+  +15 files are the `skill-studio-maintain` SKILL.md + metadata.json + 13
+  references).
+- Project dry-run `strict`: copied 89, updated 0, conflicts 0, unchanged 0
+  (lite + the two project rules).
+- User-target dry-run `lite`: copied 83, updated 3, conflicts 3, unchanged 1.
+  The conflicts/updates match the 0.4.0/0.5.0 pattern (legacy
+  `cursor-skill-creator` install on this host) — no new conflicts introduced
+  by `skill-studio-maintain`.
+
+### Diagnosis
+
+- All three studio bundled skills (`skill-studio-write` 0.4.0,
+  `skill-studio-audit` 0.5.0, `skill-studio-maintain` 0.6.0) install
+  side-by-side with no overlap, conflict, or shared file collision.
+- The duplicate `bundled-skills.md` reference that lived in both
+  `personal-skill-maintainer/references/` and
+  `personal-pack-maintainer/references/` is collapsed into a single merged
+  reference in the bundled skill. The duplicates remain in the deprecated
+  source skills for one release window so existing links keep resolving.
+- Pack manifest now declares four `kind: "skill"` artifacts (write, audit,
+  maintain, legacy workflow). The legacy `cursor-skill-creator-workflow` is
+  still installed for compatibility; removal target is PR 6.
+
+### Residual risks
+
+- User-target conflicts on this host are inherited from the
+  `cursor-skill-creator` → `cursor-skill-studio` rename in 0.3.0 and are
+  unrelated to PR 4. A clean host install will copy zero conflicts.
+- The maintain skill `SKILL.md` is intentionally above the ≤200-line target
+  (256 lines) because the unified review checklist replaces two separate
+  review checklists from the source skills. If this becomes a hot-path cost
+  concern, the checklist can be lifted into
+  `references/review-checklist.md` in a follow-up patch.
+- Several specs and ADRs still link to `personal-skill-maintainer` /
+  `personal-pack-maintainer` paths (`docs/specs/claude-plugin-export-from-packs.md`,
+  `docs/ADR/ADR-0003-artifact-maturity-model.md`,
+  `docs/ADR/ADR-0004-cross-runtime-agent-packaging-model.md`,
+  `docs/agent-skills.md`). Those incoming references are updated in PR 5
+  (the 1.0.0 documentation sweep) per ADR-0005.
+
 ## 0.5.0
 
 ### Commands
