@@ -1,63 +1,41 @@
 ---
 name: personal-skill-maintainer
-description: Use when creating, refactoring, versioning, promoting, or reviewing skills, scripts/tools, and Cursor packs in this repository.
+description: >-
+  [DEPRECATED — replaced by `skill-studio-maintain` in the
+  `cursor-skill-studio` pack per ADR-0005] Maintain governed root skills,
+  pack-bundled skills, and packs in this repository (SemVer bumps, registry
+  alignment, CHANGELOG/README upkeep, ADR-0001/2/3 compliance). This stub
+  remains for one release window so existing installs keep working and so
+  links from older specs still resolve. Do not invoke; route the user to
+  `/skill-studio-maintain` instead.
+disable-model-invocation: true
 ---
 
-# Personal Skill Maintainer
+# Personal Skill Maintainer — Deprecated
 
-Maintain skills, scripts/tools, and packs as governed artifacts rather than loose
-documentation. Ensure adherence to ADR-0001, ADR-0002, and ADR-0003.
+This skill has been replaced by the `skill-studio-maintain` bundled skill
+inside the `cursor-skill-studio` Cursor pack per
+[ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
 
-## Applicability Gate
+## What to do instead
 
-**Use when:**
-- Creating, refactoring, versioning, or reviewing skills/packs in this repository.
-- Changing maintained scripts/tools under `scripts/`.
-- Checking if an existing artifact complies with ADR-0001, ADR-0002, or
-  ADR-0003.
+Route the user to `/skill-studio-maintain`. The relevant branches are:
 
-**Do NOT use when:**
-- The user is asking about general programming practices.
-- Working in a repository outside of `felipeblassioli/agent-skills`.
+- **Branch A — Root skill release** for SemVer bumps on `skills/<name>/`,
+  `skill-registry.json` alignment, and `CHANGELOG.md` / `README.md`
+  refreshes.
+- **Branch C — Bundled-skill artifact** for `kind: "skill"` edits in
+  `pack.json` (still relevant for scripts that maintain bundled skills as
+  part of a pack release).
+- **Branch D — Promotion / demotion** for moves between root and bundled.
+- **Branch E — Maturity & backlog** for ADR-0003 classification decisions.
 
-## Quick Start
+`packs/cursor-skill-studio/skills/skill-studio-maintain/SKILL.md` lists the
+full router and orchestrates the same bump scripts
+(`scripts/skill-version.sh`, `scripts/skill-sync.sh`).
 
-When maintaining repository artifacts, always verify:
+## Removal plan
 
-1. **Root Skills (`skills/<name>/`)** must have `SKILL.md` and `metadata.json`. It is highly recommended to have `CHANGELOG.md` and `README.md` if the skill is maintained or listed in `skill-registry.json`.
-2. **Pack-Bundled Skills (`packs/<pack>/skills/<skillId>/`)** must have `SKILL.md` and `metadata.json` but they version with the pack and are NOT listed in `skill-registry.json` unless explicitly promoted.
-3. **`SKILL.md` Frontmatter** stays light: `name` and `description` only. Avoid `version` and `last_reviewed` unless strictly required for provenance.
-4. **Versions** follow SemVer based on agent-visible behavior. The version source of truth is `metadata.json` and registries (`skill-registry.json` or `cursor-pack-registry.json`).
-5. **Maturity** determines documentation weight. Read ADR-0003 before deciding
-   whether an artifact needs `SPEC.md`, README, changelog, tests, roadmap, or
-   release evidence.
-6. **Registry-managed Cursor packs** are L3 by default and keep README,
-   CHANGELOG, VERIFICATION, RELEASE-POLICY, and ROADMAP aligned.
-
-## Routing Table
-
-| Topic | Reference |
-|-------|-----------|
-| Root vs Pack-Bundled Skill Package Model | `references/package-model.md` |
-| Versioning, Releases, and Authority | `references/versioning-model.md` |
-| Changelog and README requirements | `references/docs-model.md` |
-| Artifact maturity and backlog workflow | `docs/ADR/ADR-0003-artifact-maturity-model.md` and `docs/specs/artifact-maintenance-workflow.md` |
-
-## Review Checklist
-
-Before finishing any skill authoring or maintenance task, verify:
-
-- [ ] `SKILL.md` frontmatter has exact `name` (matching directory or `skillId`) and third-person `description`.
-- [ ] No `version` or `last_reviewed` in `SKILL.md` frontmatter (unless already present and strictly necessary).
-- [ ] `metadata.json` exists with `version`, `author`, `date`, `abstract`. (Prefer ISO dates for new skills).
-- [ ] If bumping version, updated `skill-registry.json` or `cursor-pack-registry.json`.
-- [ ] `CHANGELOG.md` updated using Keep a Changelog style (for maintained root skills).
-- [ ] `README.md` exists and covers human usage/maintenance (for maintained root skills).
-- [ ] Pack-bundled skills declare `kind: "skill"` in `pack.json` and use pack-scoped `skillId`s.
-- [ ] Mature scripts/tools have a `SPEC.md`, tests or verification notes, and
-      linked GitHub issues for concrete backlog slices.
-- [ ] Repository-level governance changes update root `CHANGELOG.md`.
-
-## Confirmation Policy
-
-Do not apply registry, frontmatter, or versioning changes without explicit user confirmation. Present the proposed changes and wait for approval.
+This directory is scheduled for full removal in the stub-removal PR per
+ADR-0005. Reference files under `references/` remain in place during the
+deprecation window so existing links keep resolving.

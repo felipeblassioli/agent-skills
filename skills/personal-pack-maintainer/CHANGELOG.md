@@ -2,6 +2,20 @@
 
 All notable changes to this skill will be documented in this file.
 
+## [1.2.0] - 2026-05-20
+
+### Deprecated
+- Skill is deprecated and replaced by `skill-studio-maintain` (Branches B,
+  C, E, F) inside the `cursor-skill-studio` Cursor pack per
+  [ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
+
+### Changed
+- `SKILL.md` is now a thin redirect stub with
+  `disable-model-invocation: true`. Reference files under `references/`
+  remain in place for one release window so existing links keep resolving.
+  Scheduled for full removal in the stub-removal PR per ADR-0005.
+- `metadata.json` carries `deprecated: true` and a `replacedBy` pointer.
+
 ## [1.1.0] - 2026-05-19
 
 ### Added

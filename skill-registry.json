@@ -667,7 +667,7 @@
       "description": "Use when the user asks to draft or refine a Product Requirements Document with clear scope, measurable success criteria, and implementation-ready requirement structure."
     },
     "personal-skill-maintainer": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -677,12 +677,13 @@
         "meta",
         "authoring",
         "maintainer",
-        "governance"
+        "governance",
+        "deprecated"
       ],
-      "description": "Audit and maintain Cursor skills, scripts/tools, and packs against the repository governed maintenance model (ADR-0002), artifact maturity model (ADR-0003), and registry-driven releases (ADR-0001)."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-maintain (Branches A, C, D, E) per ADR-0005] Maintain Cursor skills, scripts/tools, and packs against the repository governed maintenance model (ADR-0002), artifact maturity model (ADR-0003), and registry-driven releases (ADR-0001). Stub redirect retained for one release window."
     },
     "personal-pack-maintainer": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -693,9 +694,10 @@
         "authoring",
         "maintainer",
         "packs",
-        "governance"
+        "governance",
+        "deprecated"
       ],
-      "description": "Audit and maintain Cursor packs against the repository pack contract, release artifacts, install safety policy, and artifact maturity model (ADR-0003)."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-maintain (Branches B, C, E, F) per ADR-0005] Maintain Cursor packs against the repository pack contract, release artifacts, install safety policy, and artifact maturity model (ADR-0003). Stub redirect retained for one release window."
     },
     "audit-skill-for-cursor": {
       "version": "1.2.0",

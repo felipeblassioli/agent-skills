@@ -1,17 +1,8 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "felipeblassioli",
-  "date": "2026-05-19",
-  "abstract": "Audit and maintain Cursor packs in this repository against the pack contract, registry alignment, release artifacts, target/profile correctness, install safety policy, and artifact maturity model.",
-  "references": [
-    "references/pack-package-model.md",
-    "references/manifest-and-registry.md",
-    "references/targets-profiles-artifacts.md",
-    "references/bundled-skills.md",
-    "references/lifecycle-scripts.md",
-    "references/safety-and-mcp-policy.md",
-    "references/release-artifacts.md",
-    "docs/ADR/ADR-0003-artifact-maturity-model.md",
-    "docs/specs/artifact-maintenance-workflow.md"
-  ]
+  "date": "May 2026",
+  "abstract": "[DEPRECATED] Stub redirecting to skill-studio-maintain (Branches B, C, E, F) in the cursor-skill-studio Cursor pack. Slated for removal in the stub-removal PR per ADR-0005.",
+  "deprecated": true,
+  "replacedBy": "cursor-skill-studio/skill-studio-maintain"
 }
