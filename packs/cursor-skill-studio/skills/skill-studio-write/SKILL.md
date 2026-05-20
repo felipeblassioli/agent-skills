@@ -212,4 +212,5 @@ Do not write files until the current phase is approved. Pause after:
 - `docs/specs/skill-authoring-checklist.md` — compact authoring checklist.
 - `docs/specs/agentic-skill-pack-authoring.md` — skill-vs-pack doctrine.
 - `docs/specs/pack-recommendation-metadata.md` — future advisory-MCP schema
-  (formerly bundled inside `create-cursor-pack-from-refs`).
+  (formerly bundled inside the deprecated `create-cursor-pack-from-refs`
+  root skill; lifted to `docs/specs/` per ADR-0005).

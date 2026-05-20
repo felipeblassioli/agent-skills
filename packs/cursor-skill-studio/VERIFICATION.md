@@ -1,5 +1,69 @@
 # Verification
 
+## 1.0.0
+
+### Commands
+
+- `bash scripts/cursor-pack-verify.sh --pack=cursor-skill-studio`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-write`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-audit`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-maintain`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=/tmp/skill-studio-pr5-smoke --profile=lite   --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=/tmp/skill-studio-pr5-smoke --profile=strict --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user   --profile=lite   --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user   --profile=strict --dry-run`
+
+### Outcome (recorded 2026-05-20)
+
+- `cursor-pack-verify.sh --pack=cursor-skill-studio` returned
+  `{"pass": true, "packsChecked": 1, "errors": [], "warnings": []}`.
+- All three studio bundled skills validate clean:
+  - `skill-studio-write`: `{"pass": true, "lines": 216, "errors": [], "warnings": []}`.
+  - `skill-studio-audit`: `{"pass": true, "lines": 197, "errors": [], "warnings": []}`.
+  - `skill-studio-maintain`: `{"pass": true, "lines": 256, "errors": [], "warnings": []}`.
+- Project dry-run `lite` against a fresh `/tmp/skill-studio-pr5-smoke`
+  staging root: copied 87, updated 0, conflicts 0, unchanged 0. Identical
+  file count to 0.6.0 (no install footprint regression).
+- Project dry-run `strict`: copied 89, updated 0, conflicts 0, unchanged 0
+  (lite + the two project rules).
+- User-target dry-run `lite`: copied 83, updated 3, conflicts 3, unchanged 1.
+- User-target dry-run `strict`: copied 83, updated 3, conflicts 3, unchanged 1.
+
+### Diagnosis
+
+- Pack maturity promoted to **stable** per ADR-0003. All three studio
+  bundled skills are explicit-only (`disable-model-invocation: true`) and
+  install side-by-side with no overlap or file collisions.
+- Documentation contracts (the PR 5 sweep) are now self-consistent: every
+  in-repo routing surface points at `/skill-studio-write`,
+  `/skill-studio-audit`, `/skill-studio-maintain`, or the bundled
+  `validate-skill.sh` script under `skill-studio-write`. The nine
+  deprecated root skills are referenced only in (a) their own redirect
+  stubs, (b) the `cursor-skill-studio` pack's release artifacts as
+  provenance, and (c) ADR-0005 itself. The PR 5 survey enumerated every
+  remaining incoming reference and confirmed no live routing edge points
+  at a deprecated name.
+- The 3 user-target updates/conflicts are pre-existing — they mirror the
+  0.6.0 outcome and originate from a legacy `cursor-skill-creator`
+  install on this host. No new conflicts were introduced by the 1.0.0
+  documentation sweep (no runtime files changed).
+
+### Residual risk and PR 6 follow-ups
+
+- The legacy `cursor-skill-creator-workflow` bundled skill still ships at
+  1.0.0 to avoid an in-flight break for users mid-upgrade; PR 6 removes
+  it together with the nine root-skill stubs and the deprecated
+  `packs/skill-consistency-auditor/` pack.
+- `skills/create-skill-from-refs/scripts/validate-skill.sh` is still
+  present on disk as a thin redirect (the canonical copy lives under
+  `skill-studio-write/scripts/`); PR 6 deletes the stub tree.
+- Three `.cursor/plans/*.plan.md` files reference the deprecated skills
+  as historical planning context; they were intentionally left untouched
+  in PR 5.
+- Public README link in `skills/gh-post-code-review/README.md` (line 56)
+  points at a GitHub `tree/main` URL for `writing-cursor-skills`; PR 6
+  redirects after the stub directory is removed.
+
 ## 0.6.0
 
 ### Commands

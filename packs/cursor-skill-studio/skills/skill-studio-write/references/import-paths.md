@@ -59,7 +59,8 @@ Stop when:
 Recommended next step:
 
 - rework the source in place, or
-- recreate the useful parts with `create-skill-from-refs`
+- recreate the useful parts with `/skill-studio-write` Branch B
+  (skill from reference material)
 
 ## Metadata Normalization
 
