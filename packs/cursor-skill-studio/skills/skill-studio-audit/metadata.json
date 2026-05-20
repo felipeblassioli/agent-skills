@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "May 2026",
+  "abstract": "Audit and improve existing Cursor skills and packs, and review installed or repo-first-party skill portfolios for overlap, trigger collisions, and compliance with docs/architecture.md. Covers single-skill compliance audit, improvement recommendations, installed portfolio audit, and the deep repo-first-party overlap methodology. Invoke explicitly via /skill-studio-audit."
+}

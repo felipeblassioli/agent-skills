@@ -5,6 +5,66 @@ will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows SemVer.
 
+## [0.5.0] - 2026-05-19
+
+### Added
+
+- New bundled skill `skill-studio-audit` consolidates the audit-side surface
+  into one explicit-only entry point (`disable-model-invocation: true`) with
+  four intent branches:
+  - Branch A — Single-skill compliance audit
+    (was `skills/audit-skill-for-cursor`)
+  - Branch B — Improvement recommendation
+    (was `skills/improving-agent-artifacts`)
+  - Branch C — Installed portfolio audit
+    (was `packs/skill-consistency-auditor/skills/skill-consistency-auditor-workflow`)
+  - Branch D — Repo-first-party overlap audit
+    (thin adapter to `docs/specs/skill-overlap-audit.md`)
+- Six merged references: `single-skill-audit.md` (lifted audit procedure),
+  `skill-improvement.md`, `pack-improvement.md`, `platform-audit-lenses.md`
+  (Cursor + Anthropic + Codex lenses merged into one file),
+  `portfolio-audit-workflow.md` (lifted from the deprecated bundled
+  workflow), and `repo-skills-overlap-audit.md`.
+- Two asset templates under `assets/templates/`:
+  `improvement-recommendation.md` (lifted) and `portfolio-audit-report.md`
+  (lifted from the broken `packs/skill-consistency-auditor/assets/`
+  path — now actually installs with the bundled skill, closing the
+  ADR-0005 FAIL).
+- Pack manifest gains a third bundled-skill artifact entry
+  (`bundled-skill-studio-audit`) targeting both `project-cursor` and
+  `user-cursor` in `lite` and `strict` profiles.
+
+### Deprecated
+
+- `skills/audit-skill-for-cursor` and `skills/improving-agent-artifacts`
+  are now thin redirect stubs (`disable-model-invocation: true`) pointing to
+  `/skill-studio-audit` (Branches A and B). Reference files and assets are
+  retained for one release window. Registry entries bumped to deprecated.
+- `packs/skill-consistency-auditor` is marked deprecated in `pack.json`,
+  `README.md`, and `cursor-pack-registry.json` (description prefixed
+  `[DEPRECATED]`, tag `deprecated` added). Pack still installs through this
+  release for compatibility. The bundled
+  `skill-consistency-auditor-workflow` is a redirect stub; the three audit
+  subagents remain functional inside the pack and are duplicated in
+  `cursor-skill-studio`. Scheduled to move to `packs/.archive/` in the
+  stub-removal PR per ADR-0005.
+
+### Changed
+
+- `skill-consolidation-advisor` subagent updated to point at the installed
+  template path (`skill-studio-audit/assets/templates/portfolio-audit-report.md`)
+  so the report path actually resolves after install.
+- `pack.json` description updated to mention both bundled skills and the
+  pending maintain workflow.
+
+### Verification
+
+- `cursor-pack-verify.sh --pack=cursor-skill-studio`: pass.
+- `validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-audit`:
+  see `VERIFICATION.md` for line count and warning details.
+- Dry-run installs for `project` (lite + strict) and `user` (lite) targets;
+  see `VERIFICATION.md` for copy/conflict counts.
+
 ## [0.4.0] - 2026-05-19
 
 ### Added

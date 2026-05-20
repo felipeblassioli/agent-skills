@@ -1,8 +1,8 @@
 {
   "$schema": "../../cursor-pack.schema.json",
   "name": "skill-consistency-auditor",
-  "version": "0.1.0",
-  "description": "Cursor pack for auditing installed skills to detect overlap, vagueness, duplicate aliases, and inconsistencies with docs/architecture.md.",
+  "version": "0.2.0",
+  "description": "[DEPRECATED — superseded by cursor-skill-studio/skill-studio-audit per ADR-0005] Cursor pack for auditing installed skills to detect overlap, vagueness, duplicate aliases, and inconsistencies with docs/architecture.md. Still installs through this release; scheduled to move to packs/.archive/ in the stub-removal PR.",
   "author": "felipeblassioli",
   "targets": [
     "project-cursor",
@@ -41,7 +41,8 @@
       ],
       "notes": [
         "Installs to .cursor/skills/skill-consistency-auditor-workflow/ (project) or ~/.cursor/skills/skill-consistency-auditor-workflow/ (user).",
-        "This bundled skill is pack-scoped and is not listed in skill-registry.json."
+        "This bundled skill is pack-scoped and is not listed in skill-registry.json.",
+        "Deprecated in 0.2.0: superseded by cursor-skill-studio/skill-studio-audit (Branch C — installed portfolio audit) per ADR-0005. Bundled SKILL.md is now a thin redirect stub with disable-model-invocation: true; the three subagents are duplicated in cursor-skill-studio and remain functional here for the deprecation window."
       ]
     }
   ],

@@ -568,7 +568,7 @@
       "description": "Design repository-local agent guidance using root and nested AGENTS.md files, scoped Cursor rules, reusable skills, pack-owned runtime assets, and optional pack-bundled skills."
     },
     "improving-agent-artifacts": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -579,9 +579,10 @@
         "authoring",
         "improvement",
         "skills",
-        "packs"
+        "packs",
+        "deprecated"
       ],
-      "description": "Improve existing Cursor skills and Cursor packs by asking focused diagnostic questions, then recommending concrete changes with expected outcomes. Pack reviews cover optional bundled skills (kind: skill). Use when refining an existing skill or pack, reducing noise or token cost, sharpening subagent delegation, or deciding which improvement will have the highest leverage."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-audit (Branch B — Improvement recommendation) per ADR-0005] Improve existing Cursor skills and Cursor packs by asking focused diagnostic questions, then recommending concrete changes with expected outcomes. Stub redirect retained for one release window."
     },
     "gh-issue-verifier": {
       "version": "1.0.0",
@@ -697,7 +698,7 @@
       "description": "Audit and maintain Cursor packs against the repository pack contract, release artifacts, install safety policy, and artifact maturity model (ADR-0003)."
     },
     "audit-skill-for-cursor": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
@@ -706,9 +707,10 @@
       "tags": [
         "audit",
         "cursor-skill",
-        "maintenance"
+        "maintenance",
+        "deprecated"
       ],
-      "description": "Audit a Cursor skill (or skills directory) for Cursor compatibility, safe auto-invocation, and index-style SKILL.md quality. Propose a remediation plan and unapplied diffs; apply ONLY after explicit user confirmation."
+      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-audit (Branch A — Single-skill compliance audit) per ADR-0005] Audit a Cursor skill (or skills directory) for index-style SKILL.md quality, context efficiency, and progressive disclosure. Stub redirect retained for one release window."
     },
     "babysit": {
       "version": "1.0.0",

@@ -1,6 +1,8 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "felipeblassioli",
-  "date": "2026-05-19",
-  "abstract": "Workflow for auditing installed skills for consistency and overlap."
+  "date": "May 2026",
+  "abstract": "[DEPRECATED] Stub bundled skill redirecting to skill-studio-audit (Branch C) in the cursor-skill-studio Cursor pack. Slated for removal alongside the parent pack in the stub-removal PR per ADR-0005.",
+  "deprecated": true,
+  "replacedBy": "cursor-skill-studio/skill-studio-audit"
 }

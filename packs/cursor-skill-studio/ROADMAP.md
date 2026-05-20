@@ -4,19 +4,29 @@ The pack is mid-migration per
 [ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
 Each milestone below maps to one PR.
 
-## In progress (0.4.0 — this release)
+## In progress (0.5.0 — this release)
 
-- Lift content from `skills/writing-cursor-skills`,
-  `skills/create-skill-from-refs`, `skills/create-cursor-pack-from-refs`,
-  `skills/external-skill-intake`, and `skills/claude-plugin-to-cursor-pack`
-  into `skill-studio-write`. **Done.**
-- Stub the five source root skills (`disable-model-invocation: true`,
-  redirect body, bumped registry version with `[DEPRECATED]` description).
-  **Done.**
-- Relocate `recommendation-metadata.md` to
-  `docs/specs/pack-recommendation-metadata.md`. **Done.**
-- Mark `cursor-skill-creator-workflow` deprecated in `pack.json` notes.
-  **Done.** (Bundled skill stays in 0.4.0 to avoid breaking installs.)
+- Lift content from `skills/audit-skill-for-cursor`,
+  `skills/improving-agent-artifacts`, and
+  `packs/skill-consistency-auditor/skills/skill-consistency-auditor-workflow`
+  into `skill-studio-audit` (four branches: A/B/C/D). **Done.**
+- Stub the two source root skills and the bundled auditor workflow
+  (`disable-model-invocation: true`, redirect body, bumped registry/manifest
+  versions with `[DEPRECATED]` description). **Done.**
+- Mark `packs/skill-consistency-auditor/` deprecated in `pack.json`,
+  `README.md`, `CHANGELOG.md`, and `cursor-pack-registry.json`. Pack still
+  installs through this release. **Done.**
+- Fix the broken `assets/report-template.md` install path by relocating the
+  template under `skill-studio-audit/assets/templates/portfolio-audit-report.md`
+  and updating `skill-consolidation-advisor`. **Done.**
+
+## Shipped (0.4.0)
+
+- Lifted the five write-side root skills into `skill-studio-write` and
+  stubbed the originals.
+- Relocated `recommendation-metadata.md` to
+  `docs/specs/pack-recommendation-metadata.md`.
+- Marked `cursor-skill-creator-workflow` deprecated in `pack.json` notes.
 
 ## Shipped (0.3.0)
 
@@ -29,11 +39,6 @@ Each milestone below maps to one PR.
 
 ## Next
 
-- **0.5.0 (PR 3):** lift content from `skills/audit-skill-for-cursor`,
-  `skills/improving-agent-artifacts`, and
-  `packs/skill-consistency-auditor/skills/skill-consistency-auditor-workflow`
-  into `skill-studio-audit`. Stub the originals; mark the auditor pack
-  deprecated.
 - **0.6.0 (PR 4):** lift content from `skills/personal-skill-maintainer` and
   `skills/personal-pack-maintainer` into `skill-studio-maintain`. Stub the
   originals.

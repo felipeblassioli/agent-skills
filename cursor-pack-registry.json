@@ -58,7 +58,7 @@
       "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and a bundled orientation skill."
     },
     "cursor-skill-studio": {
-      "version": "0.4.0",
+      "version": "0.5.0",
       "author": "felipeblassioli",
       "path": "packs/cursor-skill-studio",
       "targets": [
@@ -85,7 +85,7 @@
         "evaluation",
         "subagents"
       ],
-      "description": "Cursor pack covering the full skill lifecycle (write, maintain, audit). Ships the skill-studio-write bundled skill as the consolidated authoring surface (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop). Maintain/audit workflows land in later PRs per ADR-0005."
+      "description": "Cursor pack covering the full skill lifecycle (write, maintain, audit). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop) and skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit). Maintain workflow lands in PR 4 per ADR-0005."
     },
     "engineering-workflows": {
       "version": "0.1.0",
@@ -172,7 +172,7 @@
       "description": "Portable Node and Jest verifier pack with a reusable subagent for low-noise, pass-fail-first verification with explicit evidence and optional coverage."
     },
     "skill-consistency-auditor": {
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": "felipeblassioli",
       "path": "packs/skill-consistency-auditor",
       "targets": [
@@ -194,9 +194,10 @@
         "packs",
         "governance",
         "subagents",
-        "authoring"
+        "authoring",
+        "deprecated"
       ],
-      "description": "Cursor pack for auditing installed skills to detect overlap, vagueness, duplicate aliases, and inconsistencies with docs/architecture.md."
+      "description": "[DEPRECATED — superseded by cursor-skill-studio/skill-studio-audit per ADR-0005] Cursor pack for auditing installed skills to detect overlap, vagueness, duplicate aliases, and inconsistencies with docs/architecture.md. Pack still installs through this release; scheduled to move to packs/.archive/ in the stub-removal PR."
     }
   },
   "targetPaths": {
