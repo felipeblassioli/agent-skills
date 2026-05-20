@@ -79,9 +79,10 @@ skill or **Branch B** for a pack — deprecation is a versioned release.
 
 These apply to every branch.
 
-- **Propose, then apply.** Present the proposed file changes (registry
-  edits, version bumps, manifest edits, CHANGELOG entries) and wait for
-  explicit approval before writing. See "Confirmation Policy" below.
+- **Propose, then apply.** The flow is always: restate the scope
+  (which artifact, what change) → present the proposed diff → pause
+  for approval → apply, and report back with verification evidence
+  (script output, dry-run numbers, registry diff).
 - **Registry is the source of truth.** Versions in `metadata.json` /
   `pack.json` MUST match the corresponding `skill-registry.json` /
   `cursor-pack-registry.json` entry. Never bump one without the other.
@@ -227,17 +228,30 @@ the branch can be skipped — but every applicable item MUST be confirmed.
 - [ ] Release tag follows `skill-<name>@<version>` for root skills or
       `pack-<name>@<version>` for packs.
 
-## Confirmation Policy
+## Gotchas
 
-Do not modify `skill-registry.json`, `cursor-pack-registry.json`,
-`pack.json`, release artifacts, or version files without explicit user
-confirmation. The flow is always:
-
-1. Restate the scope (which artifact, what change).
-2. Present the proposed diff.
-3. **Pause for approval.**
-4. Apply the change and report back with the verification evidence
-   (script output, dry-run numbers).
+- `metadata.json.version` MUST equal
+  `skill-registry.json.skills.<name>.version`. Bumping one without the
+  other is the #1 cause of `skill-sync.sh --list` drift.
+- `pack.json.version` MUST equal
+  `cursor-pack-registry.json.packs.<name>.version`. Same drift rule
+  for packs.
+- **Deprecation is a versioned release, not a tag flip.** One commit:
+  bump version, prefix description with `[DEPRECATED]`, add the
+  `deprecated` tag, set `replacedBy`. Skipping the version bump leaves
+  the registry inconsistent and `skill-sync.sh --list` won't notice.
+- `VERIFICATION.md` must contain actual command output (copy/update/
+  conflict counts, validator JSON), not paraphrases. Reviewers grep
+  for the numbers.
+- Cursor user installs skip project-only rules. If a strict-only
+  artifact must reach user installs, declare it under both `lite` and
+  `strict` user paths — don't assume `strict` cascades.
+- Bundled skills version with their pack. Don't bump a bundled
+  `metadata.json` independently of the pack release; that's a
+  promotion decision (Branch D), not a maintenance one.
+- Use `git mv` (not delete + add) when archiving a pack to
+  `packs/.archive/`. The discovery scripts skip `.archive/` already,
+  but git history is the audit trail.
 
 ## Repo-Only Operations
 

@@ -168,6 +168,24 @@ These steps only work inside `felipeblassioli/agent-skills`:
 Audit branches that target installed user directories (Branch C) work in any
 workspace.
 
+## Gotchas
+
+- `skill-overlap-clusterer` becomes unactionable on >~50 skills. Scope
+  it with a glob filter (for example `gsd-*` or `engineering-*`) before
+  dispatching, or the output is noise.
+- `skill-architecture-checker` reads `docs/architecture.md` directly.
+  Outside `felipeblassioli/agent-skills`, pass an architecture excerpt
+  to the subagent instead — do NOT assume the path exists.
+- Every improvement recommendation MUST state an **expected outcome**
+  AND an **effort/risk level**. Without both, the recommendation is
+  unactionable and the user will re-ask the same question next session.
+- Audits propose; they never apply. File operations only happen after
+  explicit approval — even renames, even anti-trigger edits, even
+  obvious deletions.
+- Branch A vs Branch F boundary: a portfolio overlap audit does NOT
+  run the eval/comparison loop. A/B comparison of two skill candidates
+  is `/skill-studio-write` Branch F. Hand off cleanly.
+
 ## Output Contracts
 
 | Branch | Final artifact to present |
@@ -175,16 +193,6 @@ workspace.
 | A | Unapplied remediation plan: findings table (severity, file, rule, evidence) + proposed diffs/file moves. |
 | B | Filled `improvement-recommendation.md` with 1–3 ranked changes, expected outcomes, and effort/risk. |
 | C, D | Filled `portfolio-audit-report.md` with executive summary, clusters, architecture violations, and proposed actions with confidence scores. |
-
-## Confirmation Policy
-
-Audits propose; they do not apply. Pause after:
-
-1. Scope confirmation (which skills, which directories).
-2. Initial findings (so the user can re-scope before deep work).
-3. Final remediation plan or recommendation table.
-
-Only apply file operations after explicit approval.
 
 ## See Also
 

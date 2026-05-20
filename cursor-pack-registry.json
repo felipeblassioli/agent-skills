@@ -58,7 +58,7 @@
       "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and a bundled orientation skill."
     },
     "cursor-skill-studio": {
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": "felipeblassioli",
       "path": "packs/cursor-skill-studio",
       "targets": [

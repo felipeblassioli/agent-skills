@@ -185,6 +185,26 @@ These steps only work inside `felipeblassioli/agent-skills`:
 If the user is in another workspace, stop and report the missing dependency
 rather than improvising.
 
+## Gotchas
+
+- `metadata.json` MUST exist alongside `SKILL.md`. The bundled
+  `scripts/validate-skill.sh` reports a missing `metadata.json` as a
+  hard failure, not a warning.
+- For pack-bundled skills, the `skillId` in `pack.json` MUST equal the
+  `name` in `SKILL.md`, or `cursor-pack-verify.sh` rejects the manifest.
+- Pack-bundled skills are NOT auto-added to `skill-registry.json`.
+  Adding one is a **promotion** (`skill-studio-maintain` Branch D) and
+  flips version authority from the pack to the root registry.
+- Cursor user installs (`--target=user`) skip `.cursor/rules/`. Anything
+  that must persist for user installs cannot live in `rules/` — move it
+  to a subagent, bundled skill, or guide.
+- `disable-model-invocation: true` does NOT shrink the description — it
+  still ships and still counts against the listing budget. Keep the
+  description tight even on explicit-only router skills.
+- Pack templates ship with `mcpPolicy: "none"` by default. If the pack
+  legitimately needs MCP examples, set `"example-only"` — never write a
+  live `mcp.json` from the install path.
+
 ## Output Contracts
 
 | Branch | Final artifact to present |
@@ -194,16 +214,6 @@ rather than improvising.
 | D | `skill-intake-report.md` filled with classification, blocking issues, suggested destination. |
 | E | `adaptation-report.md` with destination matrix, MCP classification, blocking concerns, smallest viable migration plan. |
 | F | Analyzer JSON (`analysis.json`) with recommendation, evidence, residual risks. |
-
-## Confirmation Policy
-
-Do not write files until the current phase is approved. Pause after:
-
-1. Surface decision (when applicable).
-2. Skill contract or intake summary.
-3. Archetype / pack contract.
-4. Draft `SKILL.md` / `pack.json` and supporting files.
-5. Validation results.
 
 ## See Also
 
