@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "May 2026",
+  "abstract": "Keep a pull request merge-ready by triaging review comments (including Bugbot), resolving merge conflicts when intent is clear, and fixing CI with small scoped changes until checks are green. Invoke explicitly when the user wants a PR babysat to merge-ready state."
+}

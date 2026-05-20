@@ -69,8 +69,6 @@ skill systems, workflow frameworks, subagent bundles, and plugin-like artifacts.
 | --- | --- | --- | --- | --- |
 | [`cursor-companion`](../packs/cursor-companion) | 0.1.3 | lite, strict | agents, rules, hooks, MCP example, bundled skill | Cursor runtime bundle with companion subagents, project rules, hook guardrails, MCP templates, operational guides, and an orientation skill. |
 | [`cursor-skill-studio`](../packs/cursor-skill-studio) | 1.0.0 | lite, strict | agents, rules, three bundled skills | Consolidated skill-lifecycle pack covering authoring (`/skill-studio-write`), audit and improvement (`/skill-studio-audit`), and release/governance (`/skill-studio-maintain`). Renamed from `cursor-skill-creator` in 0.3.0 per ADR-0005. |
-| [`skill-consistency-auditor`](../packs/skill-consistency-auditor) | 0.2.0 | lite | agents, bundled skill | _Deprecated — use `cursor-skill-studio` and `/skill-studio-audit` (Branch C — Installed portfolio audit) instead._ Pack still installs through 0.2.0; scheduled to move to `packs/.archive/` per ADR-0005 PR 6. |
-
 ### Engineering Workflows
 
 | Pack | Version | Profiles | Includes | Description |

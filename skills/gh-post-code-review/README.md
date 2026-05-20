@@ -53,5 +53,7 @@ anchors or side-aware comments.
 ## Authoring
 
 Skill follows the
-[writing-cursor-skills](https://github.com/felipeblassioli/agent-skills/tree/main/skills/writing-cursor-skills)
-authoring contract. Edit `SKILL.md` directly; deploy via `bash scripts/skill-sync.sh --skill=gh-post-code-review`.
+[`skill-studio-write`](https://github.com/felipeblassioli/agent-skills/tree/main/packs/cursor-skill-studio/skills/skill-studio-write)
+authoring contract (bundled skill inside the `cursor-skill-studio`
+Cursor pack; supersedes the former `writing-cursor-skills` root skill
+per ADR-0005). Edit `SKILL.md` directly; deploy via `bash scripts/skill-sync.sh --skill=gh-post-code-review`.

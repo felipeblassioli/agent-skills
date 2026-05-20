@@ -72,18 +72,25 @@ configuration safety.
 | [`hook-policy-reviewer`](../packs/cursor-companion/.cursor/agents/hook-policy-reviewer.md) | fast | read-only | Reviews Cursor hook policies, command blocking behavior, file-read protection, and lifecycle guardrails. |
 | [`mcp-config-reviewer`](../packs/cursor-companion/.cursor/agents/mcp-config-reviewer.md) | fast | read-only | Reviews MCP server trust boundaries, environment interpolation, portability, and safe installation practices. |
 
-### Cursor Skill Creator
+### Cursor Skill Studio
 
-The `cursor-skill-creator` pack provides helper agents for adapting source
-material into Cursor-native skills and packs, then evaluating the outputs with
-bounded evidence.
+The `cursor-skill-studio` pack (renamed from `cursor-skill-creator` in
+0.3.0) provides helper and audit agents that back the three studio
+bundled skills (`skill-studio-write`, `skill-studio-audit`,
+`skill-studio-maintain`). The helpers below adapt source material into
+Cursor-native skills and packs, then evaluate the outputs with bounded
+evidence.
 
 | Agent | Model | Mode | Description |
 | --- | --- | --- | --- |
-| [`skill-creator-bootstrapper`](../packs/cursor-skill-creator/.cursor/agents/skill-creator-bootstrapper.md) | fast | read-only | Classifies source trees and recommends the smallest correct artifact matrix before scaffolding a pack or bundled skill. |
-| [`skill-creator-grader`](../packs/cursor-skill-creator/.cursor/agents/skill-creator-grader.md) | fast | read-only | Grades eval outputs against explicit expectations and records evidence in a structured grading result. |
-| [`skill-creator-comparator`](../packs/cursor-skill-creator/.cursor/agents/skill-creator-comparator.md) | fast | read-only | Compares two candidate outputs blindly without inferring which skill or pack variant produced them. |
-| [`skill-creator-analyzer`](../packs/cursor-skill-creator/.cursor/agents/skill-creator-analyzer.md) | fast | read-only | Analyzes benchmark or comparison results to identify patterns, interpretation, follow-up changes, and residual risks. |
+| [`skill-creator-bootstrapper`](../packs/cursor-skill-studio/.cursor/agents/skill-creator-bootstrapper.md) | fast | read-only | Classifies source trees and recommends the smallest correct artifact matrix before scaffolding a pack or bundled skill. |
+| [`skill-creator-grader`](../packs/cursor-skill-studio/.cursor/agents/skill-creator-grader.md) | fast | read-only | Grades eval outputs against explicit expectations and records evidence in a structured grading result. |
+| [`skill-creator-comparator`](../packs/cursor-skill-studio/.cursor/agents/skill-creator-comparator.md) | fast | read-only | Compares two candidate outputs blindly without inferring which skill or pack variant produced them. |
+| [`skill-creator-analyzer`](../packs/cursor-skill-studio/.cursor/agents/skill-creator-analyzer.md) | fast | read-only | Analyzes benchmark or comparison results to identify patterns, interpretation, follow-up changes, and residual risks. |
+| [`skill-creator-structural-auditor`](../packs/cursor-skill-studio/.cursor/agents/skill-creator-structural-auditor.md) | fast | read-only | Audits a candidate skill against the structural authoring contract before promotion. |
+| [`skill-overlap-clusterer`](../packs/cursor-skill-studio/.cursor/agents/skill-overlap-clusterer.md) | fast | read-only | Backs `/skill-studio-audit` Branch C — clusters skills by overlap signal across installed surfaces. |
+| [`skill-architecture-checker`](../packs/cursor-skill-studio/.cursor/agents/skill-architecture-checker.md) | fast | read-only | Backs `/skill-studio-audit` Branch C — validates installed skills against the pack/skill architecture contract. |
+| [`skill-consolidation-advisor`](../packs/cursor-skill-studio/.cursor/agents/skill-consolidation-advisor.md) | fast | read-only | Backs `/skill-studio-audit` Branch C — recommends consolidation moves based on the clusterer and checker output. |
 
 ### GCP Log Investigation
 

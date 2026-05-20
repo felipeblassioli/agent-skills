@@ -41,7 +41,7 @@ Prepare an `evals.json` file:
 Bootstrap the workspace:
 
 ```bash
-python3 packs/cursor-skill-creator/skills/cursor-skill-creator-workflow/scripts/bootstrap_skill_comparison.py \
+python3 packs/cursor-skill-studio/skills/skill-studio-write/scripts/bootstrap_skill_comparison.py \
   --comparison-name candidate-vs-current \
   --skill-a skills/current-skill \
   --skill-b tmp/candidate-skill \

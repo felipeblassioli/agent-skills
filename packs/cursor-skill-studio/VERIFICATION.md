@@ -1,5 +1,85 @@
 # Verification
 
+## 1.1.0
+
+### Commands
+
+- `bash scripts/cursor-pack-verify.sh --pack=cursor-skill-studio`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-write`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-audit`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-maintain`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=/tmp/skill-studio-pr6-smoke --profile=lite   --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=/tmp/skill-studio-pr6-smoke --profile=strict --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user   --profile=lite   --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user   --profile=strict --dry-run`
+- `bash scripts/skill-sync.sh --list` (sanity check after `skill-registry.json` cleanup)
+- `jq '.skills | length' skill-registry.json` and `jq -r '.packs | keys[]' cursor-pack-registry.json` (registry cleanup verification)
+
+### Outcome (recorded 2026-05-20)
+
+- `cursor-pack-verify.sh --pack=cursor-skill-studio` returned
+  `{"pass": true, "packsChecked": 1, "errors": [], "warnings": []}`.
+- All three studio bundled skills validate clean (unchanged from 1.0.0):
+  - `skill-studio-write`: pass, 216 lines.
+  - `skill-studio-audit`: pass, 197 lines.
+  - `skill-studio-maintain`: pass, 256 lines.
+- Project dry-run `lite` against a fresh `/tmp/skill-studio-pr6-smoke`
+  staging root: **copied 75** (down from 87 in 1.0.0), updated 0,
+  conflicts 0, unchanged 0. The 12-file drop is exactly the deleted
+  `cursor-skill-creator-workflow` tree (`SKILL.md`, `metadata.json`,
+  `references/skill-comparison-workflow.md`, two Python scripts under
+  `scripts/`, and the seven `eval-viewer/` files).
+- Project dry-run `strict`: copied 77, updated 0, conflicts 0, unchanged 0
+  (lite + the two project rules).
+- User-target dry-run `lite`: copied 71, updated 3, conflicts 3, unchanged 1.
+- User-target dry-run `strict`: copied 71, updated 3, conflicts 3, unchanged 1.
+- `skill-registry.json` length: 40 (was 49 in 1.0.0). The 9 deprecated
+  root-skill entries are gone; the remaining 40 root skills are intact.
+- `cursor-pack-registry.json` keys: `agentic-artifact-discovery`,
+  `cursor-companion`, `cursor-skill-studio`, `engineering-workflows`,
+  `gcp-log-investigation`, `node-test-verifier`. `skill-consistency-auditor`
+  was removed; the source tree lives at
+  `packs/.archive/skill-consistency-auditor/`.
+
+### Diagnosis
+
+- PR 6 (ADR-0005 final cleanup) is complete. The repository now contains
+  exactly the post-consolidation set: 40 root skills, six registered
+  Cursor packs, and `cursor-skill-studio` 1.1.0 as the canonical
+  authoring / audit / maintain surface.
+- No live in-repo routing surface references a deleted artifact. Live
+  routing was audited with `rg` for `skills/<deprecated-name>/`,
+  `cursor-skill-creator-workflow`, `packs/skill-consistency-auditor`,
+  and `packs/cursor-skill-creator`; all remaining hits are intentional
+  historical context (CHANGELOG, this VERIFICATION file, ADR-0005, and
+  the merged `references/*.md` provenance banners).
+- `docs/agents.md` table rewritten in this release: legacy
+  `../packs/cursor-skill-creator/.cursor/agents/...` URLs now point at
+  `../packs/cursor-skill-studio/.cursor/agents/...`, and the
+  newly-included audit agents (`skill-overlap-clusterer`,
+  `skill-architecture-checker`, `skill-consolidation-advisor`) and
+  `skill-creator-structural-auditor` are now listed.
+- `docs/agent-skills.md` and `docs/cursor-packs.md` no longer carry the
+  PR-5-era transitional rows (`cursor-skill-creator-workflow`
+  deprecated entry and `skill-consistency-auditor` deprecation row).
+- The 3 user-target updates/conflicts are still pre-existing on this
+  host (legacy `cursor-skill-creator` install). No new conflicts were
+  introduced.
+
+### Residual risk
+
+- Downstream installs that synced an older `cursor-skill-creator` /
+  `cursor-skill-studio ≤ 1.0.0` will still have
+  `~/.cursor/skills/cursor-skill-creator-workflow/` on disk; re-syncing
+  the pack does not auto-delete it. Users should remove that directory
+  manually after upgrading.
+- `packs/.archive/` is intentionally outside the verify/sync discovery
+  path. If a future archive promotion is needed, move the pack back
+  into `packs/` and re-register it in `cursor-pack-registry.json`.
+- ADR-0005 is preserved verbatim and still names the deprecated
+  artifacts in its decision narrative; this is intentional historical
+  record, not a live pointer.
+
 ## 1.0.0
 
 ### Commands

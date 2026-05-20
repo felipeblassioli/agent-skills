@@ -160,41 +160,6 @@
       ],
       "description": "Diagnose and fix ESM errors in TypeScript projects"
     },
-    "external-skill-intake": {
-      "version": "1.1.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "meta",
-        "authoring",
-        "import",
-        "intake",
-        "skills",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch D) per ADR-0005] Evaluate a candidate Cursor skill from another repository or arbitrary path, decide whether it should be imported into this repository, and route the import through the correct normalization path."
-    },
-    "claude-plugin-to-cursor-pack": {
-      "version": "1.1.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "meta",
-        "authoring",
-        "claude",
-        "cursor",
-        "packs",
-        "migration",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch E) per ADR-0005] Evaluates a Claude-style plugin or plugin-like folder and recommends how to adapt it into Cursor-native pack assets, repo-root companion skills, optional pack-bundled skills (kind: skill), docs, and MCP templates."
-    },
     "nx-monorepo": {
       "version": "2.0.0",
       "author": "felipeblassioli",
@@ -342,54 +307,6 @@
         "interop"
       ],
       "description": "Production-grade Deno guidance centered on least-privilege permissions, ESM-first dependency strategy, Deno-native testing and style conventions, and deliberate Node/npm interoperability."
-    },
-    "create-skill-from-refs": {
-      "version": "1.1.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "meta",
-        "authoring",
-        "skill-creation",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch B) per ADR-0005] Create Cursor Agent Skills from user-provided reference material (documents, code, examples, URLs). Guides through intake, archetype selection, scaffolding, and reference distillation into a well-structured skill package."
-    },
-    "writing-cursor-skills": {
-      "version": "1.2.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "meta",
-        "authoring",
-        "cursor",
-        "skill-creation",
-        "quality",
-        "context-efficiency",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch A) per ADR-0005] Create context-efficient Cursor skills through Socratic discovery, progressive disclosure, strict scope control, and quality-gated scaffolding."
-    },
-    "create-cursor-pack-from-refs": {
-      "version": "1.1.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "meta",
-        "authoring",
-        "cursor-pack",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-write (Branch C) per ADR-0005] Create Cursor packs from user-provided reference material and repo context. Guides through intake, pack archetype selection, pack scaffolding under `packs/<name>/`, registry updates, and verification against this repository's pack conventions, including optional pack-bundled skills (kind: skill)."
     },
     "firebase-functions-node": {
       "version": "1.0.0",
@@ -567,23 +484,6 @@
       ],
       "description": "Design repository-local agent guidance using root and nested AGENTS.md files, scoped Cursor rules, reusable skills, pack-owned runtime assets, and optional pack-bundled skills."
     },
-    "improving-agent-artifacts": {
-      "version": "1.1.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "meta",
-        "authoring",
-        "improvement",
-        "skills",
-        "packs",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-audit (Branch B — Improvement recommendation) per ADR-0005] Improve existing Cursor skills and Cursor packs by asking focused diagnostic questions, then recommending concrete changes with expected outcomes. Stub redirect retained for one release window."
-    },
     "gh-issue-verifier": {
       "version": "1.0.0",
       "author": "felipeblassioli",
@@ -665,54 +565,6 @@
         "specification"
       ],
       "description": "Use when the user asks to draft or refine a Product Requirements Document with clear scope, measurable success criteria, and implementation-ready requirement structure."
-    },
-    "personal-skill-maintainer": {
-      "version": "1.2.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "meta",
-        "authoring",
-        "maintainer",
-        "governance",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-maintain (Branches A, C, D, E) per ADR-0005] Maintain Cursor skills, scripts/tools, and packs against the repository governed maintenance model (ADR-0002), artifact maturity model (ADR-0003), and registry-driven releases (ADR-0001). Stub redirect retained for one release window."
-    },
-    "personal-pack-maintainer": {
-      "version": "1.2.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "meta",
-        "authoring",
-        "maintainer",
-        "packs",
-        "governance",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-maintain (Branches B, C, E, F) per ADR-0005] Maintain Cursor packs against the repository pack contract, release artifacts, install safety policy, and artifact maturity model (ADR-0003). Stub redirect retained for one release window."
-    },
-    "audit-skill-for-cursor": {
-      "version": "1.2.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "audit",
-        "cursor-skill",
-        "maintenance",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — replaced by cursor-skill-studio/skill-studio-audit (Branch A — Single-skill compliance audit) per ADR-0005] Audit a Cursor skill (or skills directory) for index-style SKILL.md quality, context efficiency, and progressive disclosure. Stub redirect retained for one release window."
     },
     "babysit": {
       "version": "1.0.0",
