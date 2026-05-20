@@ -5,6 +5,69 @@ will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows SemVer.
 
+## [1.2.0] - 2026-05-20
+
+### Added — Gotchas sections in all three studio bundled skills
+
+Apply the highest-leverage best-practice from
+[agentskills.io best practices for skill creators](https://agentskills.io/skill-creation/best-practices)
+("the highest-value content in many skills is a list of gotchas —
+environment-specific facts that defy reasonable assumptions"). Each
+gotcha captures a concrete correction we have actually made during
+PRs 1–6 of ADR-0005, not generic advice.
+
+- `skill-studio-write/SKILL.md`: 6 gotchas — `metadata.json` required
+  by `validate-skill.sh`, `skillId`/`name` matching rule for bundled
+  skills, promotion semantics for `skill-registry.json` entries, user
+  installs skipping `.cursor/rules/`, `disable-model-invocation: true`
+  not shrinking the description budget, `mcpPolicy` defaults.
+- `skill-studio-audit/SKILL.md`: 5 gotchas — `skill-overlap-clusterer`
+  noise threshold, `skill-architecture-checker` path assumption,
+  required outcome + effort/risk on every improvement recommendation,
+  audits propose-not-apply invariant, the audit-vs-eval boundary.
+- `skill-studio-maintain/SKILL.md`: 7 gotchas — version drift between
+  `metadata.json` / `skill-registry.json`, the equivalent pack drift,
+  deprecation-as-versioned-release rule, `VERIFICATION.md` raw-output
+  requirement, user installs skipping project rules, bundled-skill
+  version authority, `git mv` for archived packs.
+
+### Removed — redundant Confirmation Policy sections
+
+Drop the top-level `## Confirmation Policy` block from all three
+studio bundled skills. Per-branch `**Pause for approval.**` callouts
+already carry the per-branch pause points, and the top-level
+enumeration risked the agent following a generic 5-step pause list
+instead of the branch-specific procedure.
+
+- `skill-studio-write`: deleted the 5-item pause list (surface
+  decision / contract / archetype / draft / validation). Per-branch
+  callouts remain.
+- `skill-studio-audit`: deleted the 3-item pause list (scope /
+  initial findings / final remediation). Per-branch callouts remain.
+- `skill-studio-maintain`: deleted the 4-step flow ("restate scope →
+  propose → pause → apply with verification evidence") and folded the
+  unique content into the "Propose, then apply" shared principle, so
+  the flow is stated once instead of twice.
+
+### Changed
+
+- `pack.json` and `cursor-pack-registry.json` bumped to 1.2.0.
+- README version field updated.
+- VERIFICATION.md records the 1.2.0 evidence.
+
+### Non-changes (intentional)
+
+- Descriptions on the three studio bundled skills were NOT tightened
+  in this release. That work is deferred to a follow-up PR so the
+  trigger surface diff stays isolated and can be rolled back
+  independently if anything regresses.
+- The `Unified Review Checklist` in `skill-studio-maintain` was kept
+  as-is — it serves a different purpose (release self-audit) than
+  the deleted Confirmation Policy.
+- Reference and template files were not touched. Their mentions of a
+  generic "Confirmation Policy" section are prescriptive guidance for
+  skills *being authored*, not cross-references to the deleted block.
+
 ## [1.1.0] - 2026-05-20
 
 ### Removed (ADR-0005 PR 6 — final cleanup)

@@ -1,5 +1,71 @@
 # Verification
 
+## 1.2.0
+
+### Commands
+
+- `bash scripts/cursor-pack-verify.sh --pack=cursor-skill-studio`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-write`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-audit`
+- `bash packs/cursor-skill-studio/skills/skill-studio-write/scripts/validate-skill.sh packs/cursor-skill-studio/skills/skill-studio-maintain`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=/tmp/studio-1.2-smoke --profile=lite   --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=project --project-root=/tmp/studio-1.2-smoke --profile=strict --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user   --profile=lite   --dry-run`
+- `bash scripts/cursor-pack-sync.sh --pack=cursor-skill-studio --target=user   --profile=strict --dry-run`
+
+### Outcome (recorded 2026-05-20)
+
+- `cursor-pack-verify.sh --pack=cursor-skill-studio` returned
+  `{"pass": true, "packsChecked": 1, "errors": [], "warnings": []}`.
+- All three studio bundled skills validate clean. Line counts grew
+  modestly (Gotchas added, Confirmation Policy removed):
+  - `skill-studio-write`: pass, **226 lines** (was 216 in 1.1.0; +10).
+  - `skill-studio-audit`: pass, **205 lines** (was 197 in 1.1.0; +8).
+  - `skill-studio-maintain`: pass, **270 lines** (was 256 in 1.1.0;
+    +14). All three remain well under the 500-line authoring target
+    and the 5,000-token progressive-disclosure budget recommended by
+    agentskills.io.
+- Project dry-run `lite`: copied 75, updated 0, conflicts 0,
+  unchanged 0 — **identical to 1.1.0**, confirming no install
+  footprint change (the diff is content-only inside `SKILL.md` files
+  that were already installed).
+- Project dry-run `strict`: copied 77 (lite + the two project rules);
+  unchanged.
+- User-target dry-run `lite` and `strict`: 71 copied + 3 pre-existing
+  conflicts on this host (legacy `cursor-skill-creator` install).
+  Unchanged from 1.1.0.
+
+### Diagnosis
+
+- The 1.2.0 release lands the two highest-leverage improvements from
+  the agentskills.io best-practices review (read in 2026-05-19):
+  per-skill `## Gotchas` sections and removal of the duplicate
+  top-level `## Confirmation Policy` blocks. No other surface changed.
+- Net effect per skill: the deleted Confirmation Policy block (5–11
+  lines) was replaced by the Gotchas block (16–20 lines), so the
+  three skills grew by ~10–14 lines each. That's well within the
+  authoring budget and earns its keep — every gotcha captures a real
+  correction made during PRs 1–6 of ADR-0005.
+- `skill-studio-maintain` lost the dangling cross-reference: the
+  "Propose, then apply" shared principle previously said
+  `See "Confirmation Policy" below`; it now states the four-step flow
+  inline so the principle is self-contained.
+
+### Residual risk
+
+- Description tightening (Proposal 3 from the best-practices review)
+  is intentionally deferred to a follow-up PR. The current
+  descriptions are over the recommended "few sentences to a short
+  paragraph" length but still well under the 1024-char specification
+  cap, and they remain effective triggers for explicit-only
+  invocation.
+- Two reference/template files (`skill-studio-write/references/skill-archetypes.md`,
+  `skill-studio-write/assets/templates/skill-archetypes/knowledge-hub.md`)
+  still mention a generic "Confirmation Policy" section as
+  prescriptive advice for skills *being authored*. Those references
+  are intentionally retained — they apply to the skills users author
+  via Branch A/B, not to the studio bundled skills themselves.
+
 ## 1.1.0
 
 ### Commands

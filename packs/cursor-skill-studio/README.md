@@ -1,6 +1,6 @@
 ---
 name: cursor-skill-studio
-version: "1.1.0"
+version: "1.2.0"
 description: Stable consolidated Cursor pack for the full skill lifecycle (write, audit, maintain). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification).
 ---
 

@@ -5,6 +5,14 @@ ADR-0005 migration is complete as of 1.1.0
 The pack now has only forward-looking work; the migration milestones
 below are kept for context.
 
+## Shipped (1.2.0)
+
+- **Gotchas + lean Confirmation Policy.** Added project-specific
+  Gotchas sections to all three studio bundled skills (the single
+  highest-leverage best-practice from agentskills.io) and removed the
+  duplicate top-level Confirmation Policy blocks. Net effect: more
+  actionable density, fewer competing instructions.
+
 ## Shipped (1.1.0)
 
 - **PR 6 of ADR-0005 — final cleanup.** Deleted the nine deprecated
@@ -71,9 +79,14 @@ below are kept for context.
 
 ## Next
 
+- **Description tightening (Proposal 3 from the best-practices review).**
+  Trim the three studio bundled-skill descriptions by ~40% — lead with
+  user intent instead of an implementation enumeration, drop the
+  redundant `Invoke explicitly via /skill-studio-X` clause. Land as
+  its own PR so the trigger-surface diff is isolated.
 - Watch for downstream installs that still reference the removed
-  artifacts and respond with `cursor-pack-sync.sh` migration guidance
-  rather than reintroducing the deprecated names.
+  artifacts (PR 6) and respond with `cursor-pack-sync.sh` migration
+  guidance rather than reintroducing the deprecated names.
 - Optionally promote `docs/specs/pack-recommendation-metadata.md` to a
   first-class advisory surface once the MCP recommendation server lands.
 
