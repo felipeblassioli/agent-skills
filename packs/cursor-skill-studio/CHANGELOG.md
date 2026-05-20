@@ -5,6 +5,55 @@ will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows SemVer.
 
+## [1.1.0] - 2026-05-20
+
+### Removed (ADR-0005 PR 6 — final cleanup)
+
+- **Nine deprecated root-skill stub directories** deleted from `skills/`
+  and unregistered from `skill-registry.json`:
+  `writing-cursor-skills`, `create-skill-from-refs`,
+  `create-cursor-pack-from-refs`, `external-skill-intake`,
+  `claude-plugin-to-cursor-pack`, `audit-skill-for-cursor`,
+  `improving-agent-artifacts`, `personal-skill-maintainer`,
+  `personal-pack-maintainer`. Invoke `/skill-studio-write`,
+  `/skill-studio-audit`, or `/skill-studio-maintain` instead.
+- **Deprecated `skill-consistency-auditor` Cursor pack** moved to
+  `packs/.archive/skill-consistency-auditor/` and removed from
+  `cursor-pack-registry.json`. Its installed portfolio audit lives in
+  `/skill-studio-audit` Branch C.
+- **Legacy `cursor-skill-creator-workflow` bundled skill** removed from
+  this pack (`packs/cursor-skill-studio/skills/cursor-skill-creator-workflow/`
+  deleted; `bundled-skill-workflow` artifact dropped from `pack.json`).
+  Superseded by `skill-studio-write` since 0.4.0. Existing user installs
+  should re-sync `cursor-skill-studio` to drop the stale files under
+  `~/.cursor/skills/cursor-skill-creator-workflow/`.
+
+### Changed
+
+- `pack.json` and `cursor-pack-registry.json` bumped to 1.1.0; pack
+  description refreshed to drop the legacy-bundled-skill clause.
+- `skills/gh-post-code-review/README.md` — public GitHub link now points
+  at `packs/cursor-skill-studio/skills/skill-studio-write` instead of
+  the removed `skills/writing-cursor-skills` directory.
+
+### Migration notes
+
+- Nothing in the active 1.0.x install surface relied on the deleted
+  stubs or on `cursor-skill-creator-workflow`; PR 5's documentation
+  sweep already moved every routing surface to the studio bundled
+  skills. The 1.1.0 → user re-sync is recommended only to keep
+  `~/.cursor/skills/` tidy.
+- `packs/.archive/` is excluded from `cursor-pack-verify.sh` discovery,
+  so the archived auditor pack will not appear in registry listings or
+  install commands.
+
+### Provenance / non-changes
+
+- ADR-0005 itself is preserved verbatim as the decision record for the
+  consolidation; routing tables there still name the deprecated
+  surfaces as historical context. The "current routing" column added
+  in 1.0.0 remains the live pointer.
+
 ## [1.0.0] - 2026-05-20
 
 ### Changed

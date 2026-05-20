@@ -58,7 +58,7 @@
       "description": "Cursor runtime bundle with companion subagents, project rules, hook guard-rails, MCP templates, operational guides, and a bundled orientation skill."
     },
     "cursor-skill-studio": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "path": "packs/cursor-skill-studio",
       "targets": [
@@ -170,34 +170,6 @@
         "subagents"
       ],
       "description": "Portable Node and Jest verifier pack with a reusable subagent for low-noise, pass-fail-first verification with explicit evidence and optional coverage."
-    },
-    "skill-consistency-auditor": {
-      "version": "0.2.0",
-      "author": "felipeblassioli",
-      "path": "packs/skill-consistency-auditor",
-      "targets": [
-        "project-cursor",
-        "user-cursor"
-      ],
-      "profiles": [
-        "lite"
-      ],
-      "installPolicy": {
-        "backupOnConflict": true,
-        "defaultProfile": "lite",
-        "projectRules": "none",
-        "mcp": "none"
-      },
-      "tags": [
-        "cursor",
-        "skills",
-        "packs",
-        "governance",
-        "subagents",
-        "authoring",
-        "deprecated"
-      ],
-      "description": "[DEPRECATED — superseded by cursor-skill-studio/skill-studio-audit per ADR-0005] Cursor pack for auditing installed skills to detect overlap, vagueness, duplicate aliases, and inconsistencies with docs/architecture.md. Pack still installs through this release; scheduled to move to packs/.archive/ in the stub-removal PR."
     }
   },
   "targetPaths": {

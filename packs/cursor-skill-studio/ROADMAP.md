@@ -1,10 +1,21 @@
 # Roadmap
 
-The pack is mid-migration per
-[ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md).
-Each milestone below maps to one PR.
+ADR-0005 migration is complete as of 1.1.0
+([decision record](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)).
+The pack now has only forward-looking work; the migration milestones
+below are kept for context.
 
-## In progress (1.0.0 — this release)
+## Shipped (1.1.0)
+
+- **PR 6 of ADR-0005 — final cleanup.** Deleted the nine deprecated
+  root-skill stub directories and unregistered them from
+  `skill-registry.json`; moved the deprecated `skill-consistency-auditor`
+  pack to `packs/.archive/` and removed it from
+  `cursor-pack-registry.json`; dropped the legacy
+  `cursor-skill-creator-workflow` bundled skill from this pack;
+  repointed the public link in `skills/gh-post-code-review/README.md`.
+
+## Shipped (1.0.0)
 
 - **PR 5 of ADR-0005 — documentation finalize.** Updated
   `docs/agent-skills.md`, `docs/architecture.md`, `docs/cursor-packs.md`,
@@ -60,14 +71,11 @@ Each milestone below maps to one PR.
 
 ## Next
 
-- **PR 6 (one release after 1.0.0):** delete deprecated root skill
-  directories (`writing-cursor-skills`, `create-skill-from-refs`,
-  `create-cursor-pack-from-refs`, `external-skill-intake`,
-  `claude-plugin-to-cursor-pack`, `audit-skill-for-cursor`,
-  `improving-agent-artifacts`, `personal-skill-maintainer`,
-  `personal-pack-maintainer`) and their registry entries; move
-  `packs/skill-consistency-auditor/` to `packs/.archive/`; drop the legacy
-  `cursor-skill-creator-workflow` bundled skill.
+- Watch for downstream installs that still reference the removed
+  artifacts and respond with `cursor-pack-sync.sh` migration guidance
+  rather than reintroducing the deprecated names.
+- Optionally promote `docs/specs/pack-recommendation-metadata.md` to a
+  first-class advisory surface once the MCP recommendation server lands.
 
 ## Pre-existing follow-ups (kept from 0.2.0)
 

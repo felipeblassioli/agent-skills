@@ -1,8 +1,8 @@
 {
   "$schema": "../../cursor-pack.schema.json",
   "name": "cursor-skill-studio",
-  "version": "1.0.0",
-  "description": "Stable consolidated pack for the full skill lifecycle: writing, auditing, and maintaining skills and packs. Renamed from cursor-skill-creator in 0.3.0 and finalized as the canonical skill-studio surface in 1.0.0 per ADR-0005. Ships three explicit-only bundled skills — skill-studio-write (greenfield authoring, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification) — together with authoring helper subagents, audit subagents (overlap clusterer, architecture checker, consolidation advisor), and the legacy cursor-skill-creator-workflow during its final deprecation window.",
+  "version": "1.1.0",
+  "description": "Stable consolidated pack for the full skill lifecycle: writing, auditing, and maintaining skills and packs. Renamed from cursor-skill-creator in 0.3.0 and finalized as the canonical skill-studio surface in 1.0.0 per ADR-0005. Ships three explicit-only bundled skills — skill-studio-write (greenfield authoring, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification) — together with authoring helper subagents and audit subagents (overlap clusterer, architecture checker, consolidation advisor). The deprecated cursor-skill-creator-workflow bundled skill was removed in 1.1.0; users mid-upgrade should re-sync to drop stale install files.",
   "author": "felipeblassioli",
   "targets": [
     "project-cursor",
@@ -101,24 +101,6 @@
         "Installs to .cursor/skills/skill-studio-maintain/ (project) or ~/.cursor/skills/skill-studio-maintain/ (user).",
         "Pack-scoped: not listed in skill-registry.json. Invoke explicitly via /skill-studio-maintain.",
         "Consolidates skills/personal-skill-maintainer and skills/personal-pack-maintainer per ADR-0005."
-      ]
-    },
-    {
-      "id": "bundled-skill-workflow",
-      "kind": "skill",
-      "skillId": "cursor-skill-creator-workflow",
-      "source": "skills/cursor-skill-creator-workflow",
-      "targets": [
-        "project-cursor",
-        "user-cursor"
-      ],
-      "profiles": [
-        "lite",
-        "strict"
-      ],
-      "notes": [
-        "Installs to .cursor/skills/cursor-skill-creator-workflow/ (project) or ~/.cursor/skills/cursor-skill-creator-workflow/ (user).",
-        "Deprecated: superseded by skill-studio-write in 0.4.0. Kept here for one release to avoid breaking existing installs; removal target is 0.5.0 per ADR-0005."
       ]
     }
   ],

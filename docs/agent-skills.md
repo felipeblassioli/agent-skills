@@ -179,7 +179,6 @@ be added to `skill-registry.json` unless intentionally promoted.
 | `cursor-skill-studio` | `skill-studio-write` | Consolidated authoring surface: greenfield skills, distillation from refs, pack scaffolding, external intake, Claude-plugin adaptation, eval/comparison loop. Invoke `/skill-studio-write`. |
 | `cursor-skill-studio` | `skill-studio-audit` | Consolidated audit surface: single-skill compliance, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit. Invoke `/skill-studio-audit`. |
 | `cursor-skill-studio` | `skill-studio-maintain` | Consolidated maintain surface: root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification. Invoke `/skill-studio-maintain`. |
-| `cursor-skill-studio` | `cursor-skill-creator-workflow` | _Deprecated_ — legacy workflow superseded by `skill-studio-write`; still installed for one release, scheduled for removal per ADR-0005 PR 6. |
 | `engineering-workflows` | `engineering-architecture` | Architecture decision and design guidance. |
 | `engineering-workflows` | `engineering-code-review` | Structured code review workflow guidance. |
 | `engineering-workflows` | `engineering-debug` | Systematic debugging workflow guidance. |

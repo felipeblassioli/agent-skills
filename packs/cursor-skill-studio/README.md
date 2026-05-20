@@ -1,29 +1,25 @@
 ---
 name: cursor-skill-studio
-version: "1.0.0"
+version: "1.1.0"
 description: Stable consolidated Cursor pack for the full skill lifecycle (write, audit, maintain). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification).
 ---
 
 # Cursor Skill Studio
 
-> **1.0.0 — stable.** Renamed from `cursor-skill-creator` in 0.3.0; the
-> 0.4.0 / 0.5.0 / 0.6.0 line lifted the write / audit / maintain surfaces
-> into three explicit-only bundled skills. **1.0.0 finalizes the
-> documentation contracts** described by
-> [`docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md`](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)
-> — `docs/agent-skills.md`, `docs/architecture.md`, `docs/cursor-packs.md`,
-> the root `README.md`, `.cursor/rules/30-pr-workflow.mdc`,
-> `.github/copilot-instructions.md`, ADR-0003 / ADR-0004, and the
-> `blassioli-code-reviewer` cross-references now route through
-> `cursor-skill-studio` and its three bundled skills. The nine deprecated
-> root skills (`writing-cursor-skills`, `create-skill-from-refs`,
+> **1.1.0 — ADR-0005 cleanup complete.** PR 6 of
+> [ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)
+> deletes the nine deprecated root-skill stub directories
+> (`writing-cursor-skills`, `create-skill-from-refs`,
 > `create-cursor-pack-from-refs`, `external-skill-intake`,
 > `claude-plugin-to-cursor-pack`, `audit-skill-for-cursor`,
 > `improving-agent-artifacts`, `personal-skill-maintainer`,
-> `personal-pack-maintainer`) remain installed as redirect stubs for one
-> release; PR 6 of ADR-0005 deletes them and archives the
-> `skill-consistency-auditor` pack. See the [CHANGELOG](CHANGELOG.md) for
-> the full sweep.
+> `personal-pack-maintainer`) and their `skill-registry.json` entries,
+> moves the deprecated `skill-consistency-auditor` pack to
+> `packs/.archive/`, and drops the legacy
+> `cursor-skill-creator-workflow` bundled skill from this pack. The
+> three explicit-only studio bundled skills (`skill-studio-write`,
+> `skill-studio-audit`, `skill-studio-maintain`) are now the only
+> authoring / audit / maintain entry points in the repo.
 
 `cursor-skill-studio` packages a reusable authoring workflow for turning
 reference material, existing skills, and Claude-style plugin bundles into
@@ -92,8 +88,10 @@ Bundled installed skills:
   root-skill release, pack release, bundled-skill artifact edits,
   promotion/demotion, maturity classification (ADR-0003), and install
   verification. Invoke explicitly via `/skill-studio-maintain`.
-- `cursor-skill-creator-workflow` (deprecated in 0.4.0; superseded by
-  `skill-studio-write`; removal planned in PR 6).
+
+The legacy `cursor-skill-creator-workflow` bundled skill (deprecated
+in 0.4.0, superseded by `skill-studio-write`) was removed in 1.1.0.
+Existing user installs should re-sync to drop the stale files.
 
 Optional strict project rules under `.cursor/rules/`.
 
