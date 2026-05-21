@@ -64,6 +64,26 @@ variants.
 
 Formula: `<verb-phrase of capabilities>. Use when <trigger 1>, <trigger 2>. Do not use when <anti-trigger>.`
 
+### Description token economy
+
+Descriptions ship to the routing surface even when
+`disable-model-invocation: true` is set. They are hot-path text.
+
+- **Default (auto-invoked skills):** use the `Use when ... Do not use when ...`
+  formula above. The prose pays for itself because the model uses it to
+  decide whether to load the skill.
+- **Router exception (`disable-model-invocation: true`):** prefer a
+  compact keyword-tag form. The skill is invoked explicitly by slash
+  command, so the description does not gate loading — but it still costs
+  characters on every routing pass.
+  - Yes: `Skill Studio audit and improvement | single-skill compliance | portfolio overlap | repo-first-party deep audit`
+  - No: `Audit and improve existing Cursor skills and packs ... Invoke explicitly via /skill-studio-audit. Do not use for ...`
+
+The `skill_hot_path_audit.py` script in `skill-studio-audit` emits a
+`procedural_description` finding for router skills that still use the
+`Use when` form. That finding is informational by design — it points
+authors at this exception, not at a bug in the formula.
+
 ## Name rules
 
 - Lowercase letters, numbers, hyphens only.

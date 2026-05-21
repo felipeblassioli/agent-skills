@@ -83,7 +83,11 @@ below are kept for context.
   Trim the three studio bundled-skill descriptions by ~40% — lead with
   user intent instead of an implementation enumeration, drop the
   redundant `Invoke explicitly via /skill-studio-X` clause. Land as
-  its own PR so the trigger-surface diff is isolated.
+  its own PR so the trigger-surface diff is isolated. Evidence: the
+  `skill_hot_path_audit.py` self-audit currently fires `long_description`
+  (warn) and `procedural_description` (info) on all three studio
+  routers; that is the calibration baseline this slice is expected to
+  cite (see spec D3).
 - Watch for downstream installs that still reference the removed
   artifacts (PR 6) and respond with `cursor-pack-sync.sh` migration
   guidance rather than reintroducing the deprecated names.
@@ -94,8 +98,8 @@ below are kept for context.
 
 - Add a Cursor-native trigger-rate evaluation path if automatic skill
   activation needs to be measured in addition to output quality.
-- Adapt the remaining Claude-only description-optimization flow into a
-  Cursor-friendly orchestration path.
+- ~~Adapt the remaining Claude-only description-optimization flow into a
+  Cursor-friendly orchestration path.~~ (Replaced by `skill_hot_path_audit.py` token-economy audit)
 - Add more bundled templates for pack guides, rule stubs, and eval assertions.
 - Add deeper smoke fixtures for multi-run skill comparisons with generated
   `comparison.json`, `skill_inventory.json`, and analyzer output.
