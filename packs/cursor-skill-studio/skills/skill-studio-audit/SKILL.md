@@ -55,8 +55,8 @@ subagents to load on demand.
 
 | Signal | Branch | Primary references | Subagents / templates |
 |---|---|---|---|
-| Audit / review one skill (or a small set) for compliance, context efficiency, progressive disclosure | **A. Single-skill compliance audit** | `references/single-skill-audit.md`, `references/platform-audit-lenses.md` | Optional `skill-architecture-checker` for one folder |
-| Diagnose an existing skill or pack and recommend the highest-leverage change | **B. Improvement recommendation** | `references/skill-improvement.md` (skill), `references/pack-improvement.md` (pack) | `assets/templates/improvement-recommendation.md` |
+| Audit / review one skill (or a small set) for compliance, token economy, context efficiency, progressive disclosure | **A. Single-skill compliance audit** | `references/single-skill-audit.md`, `references/platform-audit-lenses.md` | Optional `skill-architecture-checker`, `scripts/skill_hot_path_audit.py` |
+| Diagnose an existing skill or pack (including token-economy pressure) and recommend the highest-leverage change | **B. Improvement recommendation** | `references/skill-improvement.md` (skill), `references/pack-improvement.md` (pack) | `assets/templates/improvement-recommendation.md`, `scripts/skill_hot_path_audit.py` |
 | Audit an installed skill directory for overlap, vague triggers, bad bundling | **C. Installed portfolio audit** | `references/portfolio-audit-workflow.md` | `skill-overlap-clusterer` → `skill-architecture-checker` → `skill-consolidation-advisor`; `assets/templates/portfolio-audit-report.md` |
 | Deep repo-first-party overlap audit (consolidation ADR input) | **D. Repo-first-party overlap audit** | `references/repo-skills-overlap-audit.md`, [`docs/specs/skill-overlap-audit.md`](../../../../docs/specs/skill-overlap-audit.md) | Parallel cheap subagents per spec; `assets/templates/portfolio-audit-report.md` |
 
@@ -90,30 +90,37 @@ load reference files only when needed.
 
 ### A. Single-skill compliance audit
 1. Resolve the target — a skill folder or a single `SKILL.md` file.
-2. Apply the cross-platform procedure in `references/single-skill-audit.md`
+2. Run `python3 scripts/skill_hot_path_audit.py <target> --json` to
+   generate hot-path evidence (v1 schema: `hot_path_metrics`,
+   `duplication_buckets`, `findings`, `thresholds`).
+3. Apply the cross-platform procedure in `references/single-skill-audit.md`
    (Context Litmus Test, trigger accuracy, progressive disclosure, strict
    outputs, cheap-agent delegation).
-3. Apply the matching ecosystem lens in `references/platform-audit-lenses.md`
+4. Apply the matching ecosystem lens in `references/platform-audit-lenses.md`
    (Cursor / Anthropic / Codex) only when the audited artifact targets that
    ecosystem.
-4. Optionally dispatch `skill-architecture-checker` on the target folder for a
+5. Optionally dispatch `skill-architecture-checker` on the target folder for a
    compliance spot-check against `docs/architecture.md`.
-5. Produce an unapplied remediation plan with proposed diffs or file moves.
+6. Produce an unapplied remediation plan with proposed diffs or file moves.
    **Pause for approval.**
 
 ### B. Improvement recommendation
 1. Restate the artifact's current job in one sentence.
-2. Identify the primary problem (trigger/routing quality, hot-path token
+2. Run `python3 scripts/skill_hot_path_audit.py <target> --json` to
+   identify prompt-visible surface problems. For packs, inspect
+   `pack.cross_skill_duplication_buckets` for `multi_skill_shared_phrase`
+   and `pack_readme_duplicates_intent_table` findings.
+3. Identify the primary problem (trigger/routing quality, hot-path token
    cost, reusable-vs-local boundary, subagent design, install/runtime
    behavior).
-3. Read only the matching reference:
+4. Read only the matching reference:
    - `references/skill-improvement.md` for skills.
    - `references/pack-improvement.md` for packs.
-4. Ask the smallest set of follow-up questions needed to clarify the
+5. Ask the smallest set of follow-up questions needed to clarify the
    recommendation (one at a time, multiple choice when practical).
-5. Recommend 1–3 changes, not a rewrite by default. For each: improvement,
+6. Recommend 1–3 changes, not a rewrite by default. For each: improvement,
    why it belongs there, expected outcome, effort/risk level.
-6. Present using `assets/templates/improvement-recommendation.md`.
+7. Present using `assets/templates/improvement-recommendation.md`.
    **Pause for approval.**
 
 ### C. Installed portfolio audit

@@ -72,6 +72,10 @@ Audit helpers (merged in 0.3.0 from the deprecated `skill-consistency-auditor` p
 - `.cursor/agents/skill-overlap-clusterer.md`
 - `.cursor/agents/skill-architecture-checker.md`
 - `.cursor/agents/skill-consolidation-advisor.md`
+- `skills/skill-studio-audit/scripts/skill_hot_path_audit.py` — hot-path
+  evidence generator (v1 JSON schema with character counts, named
+  duplication buckets, and echoed thresholds). Snapshot-tested via
+  `skills/skill-studio-audit/scripts/tests/run_audit_snapshot.sh`.
 
 Bundled installed skills:
 
@@ -116,7 +120,7 @@ Invoke it with `/skill-studio-audit` to route into one of four branches:
 
 | Branch | Use when |
 |---|---|
-| A — Single-skill compliance audit | The user wants to audit one skill (or a small set) for context efficiency, progressive disclosure, and compliance with `docs/architecture.md`. |
+| A — Single-skill compliance audit | The user wants to audit one skill (or a small set) for compliance, token economy, context efficiency, and progressive disclosure. |
 | B — Improvement recommendation | The user wants 1–3 highest-leverage recommendations for an existing skill or pack before any rewrite. |
 | C — Installed portfolio audit | The user wants to audit `~/.cursor/skills`, `~/.agents/skills`, or `~/.claude/skills` for overlap, vague triggers, and bad bundling. Uses the three audit subagents in pipeline. |
 | D — Repo-first-party overlap audit | The user wants the deep methodology in `docs/specs/skill-overlap-audit.md` applied to repo `skills/` (e.g., to inform a consolidation ADR). |

@@ -55,9 +55,29 @@ Read minimal body:
 - Recommend moving `rules/` or massive texts to `references/`.
 - Recommend moving templates/snippets to `assets/`.
 
-### 7) Invocation Precision Audit
+### 7) Invocation Precision and Token Economy Audit
 - Inspect `description` for specific triggers and anti-triggers.
 - Flag HIGH if vague (e.g., "best practices").
+- Run `python3 scripts/skill_hot_path_audit.py <target> --json` to
+  produce evidence. Cite the v1 schema fields below — do NOT paraphrase
+  them as token estimates (the auditor does not call a tokenizer):
+  - `skills[].hot_path_metrics.description_chars`
+  - `skills[].hot_path_metrics.skill_md_lines`
+  - `skills[].findings[].id` (one of: `long_description_info`,
+    `long_description`, `description_exceeds_cursor_limit`,
+    `router_too_long`, `router_over_hard_cap`,
+    `procedural_description`)
+  - `skills[].duplication_buckets[]` (named buckets:
+    `description_repeats_body_heading`,
+    `applicability_gate_repeats_description`)
+  - `thresholds` (the auditor echoes the rule values it used).
+- Treat `procedural_description` as a routing-style hint, not a defect:
+  it fires only when `disable-model-invocation: true` AND the
+  description still uses `Use when` / `Invoke explicitly via` prose.
+  See `references/cursor-skill-standard.md` "Description token
+  economy" for the router exception.
+- Flag MEDIUM if the description acts like a markdown tutorial instead
+  of a routing tag.
 
 ## Improvement Workflow (Deep Check)
 

@@ -15,9 +15,23 @@ Check the skill in this order:
    - Does the description match realistic user prompts?
    - Is the description too broad or too workflow-heavy?
 
-3. **Hot path**
+3. **Hot path and Token Economy**
+   - Hot path for a skill = the frontmatter `description` (always
+     shipped, even with `disable-model-invocation: true`) plus the
+     `SKILL.md` body once the skill is invoked. Everything under
+     `references/`, `assets/`, and `scripts/` is cold path.
    - Is `SKILL.md` routing well, or trying to teach everything inline?
    - What repeated or obvious content can move out?
+   - Are there prompt-visible surfaces (like long descriptions) that
+     could be tighter? Cite
+     `skills[].hot_path_metrics.description_chars` from
+     `skill_hot_path_audit.py` for evidence, not paraphrased token
+     estimates.
+   - **Router exception:** if `disable-model-invocation: true`, prefer
+     compact keyword-tag form over the `Use when` formula (see
+     `cursor-skill-standard.md` → "Description token economy"). A
+     `procedural_description` finding from the auditor points at this
+     rule, not at a defect in the formula itself.
 
 4. **Progressive disclosure**
    - Are references one hop away?
@@ -48,6 +62,7 @@ Ask only what is missing:
 | Problem | Recommendation | Expected outcome |
 |---|---|---|
 | Description is broad or vague | Rewrite the description around real triggers and anti-triggers | Better activation and fewer false positives |
+| Description acts like marketing copy or a tutorial | Convert to keyword-dense routing tags | Lower token cost and better routing |
 | `SKILL.md` is too large | Move heavy detail to one-hop references | Lower hot-path token cost |
 | Multiple jobs mixed together | Split into sibling skills or reduce scope | Cleaner boundaries and easier discovery |
 | Repeated process text everywhere | Keep only routing and critical policy in `SKILL.md` | Faster decisions with less noise |

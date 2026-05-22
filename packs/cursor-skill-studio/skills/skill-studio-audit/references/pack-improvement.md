@@ -20,10 +20,29 @@ Check the pack in this order:
    - Which subagent should run rarely?
    - Does a frequent subagent re-discover too much context?
 
-4. **Steady-state context cost**
+4. **Steady-state context cost and Token Economy**
+   - Pack hot path = every bundled skill's frontmatter `description`
+     (always shipped) + `pack.json` `description` + rules with
+     `alwaysApply: true` + subagent descriptions under
+     `.cursor/agents/`. Bundled scripts, references, and
+     `alwaysApply: false` rules are cold path.
    - What does the frequent path read today?
    - Can a bootstrap step write a small local contract so the common path stays
      cheap?
+   - Run `python3 skills/skill-studio-audit/scripts/skill_hot_path_audit.py <pack> --json`
+     and inspect `pack.cross_skill_duplication_buckets`. The named
+     buckets are:
+     - `multi_skill_shared_phrase` — identical 8+ word phrase across
+       multiple bundled `SKILL.md` files (candidate for a shared
+       reference).
+     - `pack_readme_duplicates_intent_table` — README mirrors a
+       bundled skill's intent-router table (recommend a one-line
+       pointer instead).
+   - Are there prompt-visible surfaces (long bundled skill
+     descriptions, `pack.json.description`, agent descriptions) that
+     bloat the payload? Cite
+     `pack.pack_json_description_chars` and
+     `pack.agents[].description_chars` for evidence.
 
 5. **Rules and docs**
    - Are strict rules thin routing nudges, or are they reteaching the whole pack?
