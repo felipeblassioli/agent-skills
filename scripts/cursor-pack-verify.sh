@@ -38,7 +38,7 @@ validate_supported_target() {
   local value="$2"
 
   case "$value" in
-    project-cursor|user-cursor) ;;
+    project-cursor|user-cursor|project-codex|user-codex) ;;
     *) add_error "$label: unsupported target '$value'" ;;
   esac
 }
@@ -436,26 +436,26 @@ validate_pack() {
   missing_project_paths=$(jq -r '
     .artifacts[]
     | select((.kind // "runtime") == "runtime")
-    | select((.targets | index("project-cursor")) != null)
+    | select(((.targets | index("project-cursor")) != null) or ((.targets | index("project-codex")) != null))
     | select((.projectPath // "") == "")
     | .id
   ' "$pack_json")
   while IFS= read -r artifact_id; do
     [[ -n "$artifact_id" ]] || continue
-    add_error "$actual_path/pack.json: runtime artifact '$artifact_id' targets project-cursor but is missing projectPath"
+    add_error "$actual_path/pack.json: runtime artifact '$artifact_id' targets a project target but is missing projectPath"
   done <<<"$missing_project_paths"
 
   local missing_user_paths
   missing_user_paths=$(jq -r '
     .artifacts[]
     | select((.kind // "runtime") == "runtime")
-    | select((.targets | index("user-cursor")) != null)
+    | select(((.targets | index("user-cursor")) != null) or ((.targets | index("user-codex")) != null))
     | select((.userPath // "") == "")
     | .id
   ' "$pack_json")
   while IFS= read -r artifact_id; do
     [[ -n "$artifact_id" ]] || continue
-    add_error "$actual_path/pack.json: runtime artifact '$artifact_id' targets user-cursor but is missing userPath"
+    add_error "$actual_path/pack.json: runtime artifact '$artifact_id' targets a user target but is missing userPath"
   done <<<"$missing_user_paths"
 
   local live_mcp_artifacts
@@ -464,7 +464,9 @@ validate_pack() {
     | select((.kind // "runtime") == "runtime")
     | select(
         (.source == ".cursor/mcp.json")
+        or (.source == ".codex/mcp.json")
         or (.projectPath == ".cursor/mcp.json")
+        or (.projectPath == ".codex/mcp.json")
         or (.userPath == "mcp.json")
       )
     | .id
@@ -482,6 +484,12 @@ validate_pack() {
     while IFS= read -r file; do
       validate_subagent "$file"
     done < <(rg --files "$pack_dir/.cursor/agents" -g '*.md')
+  fi
+
+  if [[ -d "$pack_dir/.codex/agents" ]]; then
+    while IFS= read -r file; do
+      validate_subagent "$file"
+    done < <(rg --files "$pack_dir/.codex/agents" -g '*.md')
   fi
 
   if [[ -d "$pack_dir/.cursor/rules" ]]; then

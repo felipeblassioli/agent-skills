@@ -104,12 +104,13 @@ Each `cursor-pack-registry.json` entry must include:
 | Surface | Typical path | Guidance |
 |---|---|---|
 | Subagents | `.cursor/agents/*.md` | Use for noisy, parallel, or context-heavy helper work |
+| Codex subagents | `.codex/agents/*.md` | Use when the pack targets Codex project/user installs |
 | Rules | `.cursor/rules/*.mdc` | Use for durable project guidance |
 | Hook configs | `.cursor/hooks.project.json`, `.cursor/hooks.user.json` | Use for runtime enforcement wiring |
 | Hook scripts | `.cursor/hooks/*` | Must be executable and pack-local |
 | MCP examples | `.cursor/mcp.example.json` | Keep example-only by default |
 | Guides | `guides/*.md` | Explain installation, usage, and safety trade-offs |
-| Bundled skills | `skills/<folder>/` under pack root | `kind: "skill"` artifacts; install to `.cursor/skills/<skillId>/` or `~/.cursor/skills/<skillId>/` |
+| Bundled skills | `skills/<folder>/` under pack root | `kind: "skill"` artifacts; install to the target runtime's `skills/<skillId>/` discovery path |
 
 ## Authoring constraints
 

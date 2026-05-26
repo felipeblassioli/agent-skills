@@ -170,10 +170,40 @@
         "subagents"
       ],
       "description": "Portable Node and Jest verifier pack with a reusable subagent for low-noise, pass-fail-first verification with explicit evidence and optional coverage."
+    },
+    "shell-scripting": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "path": "packs/shell-scripting",
+      "targets": [
+        "project-codex",
+        "user-codex"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "installPolicy": {
+        "backupOnConflict": true,
+        "defaultProfile": "lite",
+        "projectRules": "none",
+        "mcp": "none"
+      },
+      "tags": [
+        "codex",
+        "skills",
+        "subagents",
+        "shell",
+        "bash",
+        "posix",
+        "testing"
+      ],
+      "description": "Codex pack adapted from the shell-scripting Claude plugin with Bash and POSIX shell subagents plus bundled skills for defensive Bash, Bats tests, and ShellCheck configuration."
     }
   },
   "targetPaths": {
     "project-cursor": ".cursor",
-    "user-cursor": "~/.cursor"
+    "user-cursor": "~/.cursor",
+    "project-codex": ".codex",
+    "user-codex": "~/.codex"
   }
 }
