@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Usage: scripts/cursor-pack-sync.sh --pack=NAME --target=project|user [options]
-# Stage and install a Cursor pack with conflict-aware backups and manifest updates.
+# Usage: scripts/cursor-pack-sync.sh --pack=NAME --target=project|user|codex-project|codex-user [options]
+# Stage and install a pack with conflict-aware backups and manifest updates.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -27,7 +27,7 @@ for arg in "$@"; do
     --dry-run) DRY_RUN=true ;;
     --force) FORCE=true ;;
     --help)
-      echo "Usage: $0 --pack=NAME --target=project|user [--profile=lite|strict] [--project-root=PATH] [--stage-dir=PATH] [--backup-dir=PATH] [--dry-run] [--force]"
+      echo "Usage: $0 --pack=NAME --target=project|user|codex-project|codex-user [--profile=lite|strict] [--project-root=PATH] [--stage-dir=PATH] [--backup-dir=PATH] [--dry-run] [--force]"
       exit 0
       ;;
     *)
@@ -53,7 +53,7 @@ if [[ -z "$PROFILE" ]]; then
 fi
 cursor_pack_has_profile "$PACK_JSON" "$PROFILE" || cursor_pack_die "Unknown profile '$PROFILE' for pack '$PACK_NAME'"
 
-if [[ "$TARGET" == "project-cursor" ]]; then
+if [[ "$TARGET" == "project-cursor" || "$TARGET" == "project-codex" ]]; then
   if [[ -z "$PROJECT_ROOT" ]]; then
     PROJECT_ROOT="$PWD"
   fi
@@ -248,7 +248,7 @@ fi
 
 echo -e "${CURSOR_PACK_BOLD}$PACK_NAME${CURSOR_PACK_NC} (${PACK_VERSION})"
 echo "Target: $TARGET"
-if [[ "$TARGET" == "project-cursor" ]]; then
+if [[ "$TARGET" == "project-cursor" || "$TARGET" == "project-codex" ]]; then
   echo "Project root: $PROJECT_ROOT"
 fi
 echo "Profile: $PROFILE"

@@ -39,7 +39,9 @@
         "type": "string",
         "enum": [
           "project-cursor",
-          "user-cursor"
+          "user-cursor",
+          "project-codex",
+          "user-codex"
         ]
       }
     },
@@ -90,7 +92,9 @@
                   "type": "string",
                   "enum": [
                     "project-cursor",
-                    "user-cursor"
+                    "user-cursor",
+                    "project-codex",
+                    "user-codex"
                   ]
                 }
               },
@@ -149,7 +153,9 @@
                   "type": "string",
                   "enum": [
                     "project-cursor",
-                    "user-cursor"
+                    "user-cursor",
+                    "project-codex",
+                    "user-codex"
                   ]
                 }
               },

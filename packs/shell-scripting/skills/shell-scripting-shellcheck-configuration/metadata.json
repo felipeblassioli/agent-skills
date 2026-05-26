@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "Ryan Snodgrass adapted by felipeblassioli",
+  "date": "2026-05-26",
+  "abstract": "Pack-bundled skill for ShellCheck configuration, suppression policy, analysis modes, and shell lint CI wiring."
+}

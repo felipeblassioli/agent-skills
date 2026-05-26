@@ -164,14 +164,16 @@ local pack directories are not installable through `scripts/cursor-pack-sync.sh`
 
 ## Targets
 
-The initial target set is:
+The target set is:
 
 - `project-cursor`: install into a project-local `.cursor/` tree
 - `user-cursor`: install into the user's `~/.cursor/` tree
+- `project-codex`: install into a project-local `.codex/` tree
+- `user-codex`: install into the user's `~/.codex/` tree
 
 These are the manifest and registry target names. The CLI intentionally uses the
-shorter flag values `--target=project` and `--target=user` for the same two
-destinations.
+shorter flag values `--target=project`, `--target=user`, `--target=codex-project`,
+and `--target=codex-user` for the same destinations.
 
 Project installs are appropriate for repository-specific rules, hooks, and
 subagents.
@@ -220,8 +222,10 @@ It MAY declare:
 
 For selected runtime artifacts, destination fields are conditionally required:
 
-- `projectPath` is required when `targets` includes `project-cursor`
-- `userPath` is required when `targets` includes `user-cursor`
+- `projectPath` is required when `targets` includes a project target
+  (`project-cursor` or `project-codex`)
+- `userPath` is required when `targets` includes a user target
+  (`user-cursor` or `user-codex`)
 
 Runtime artifacts SHOULD be grouped by responsibility. For example, subagents,
 rules, hooks, and MCP examples should be separate artifacts rather than one

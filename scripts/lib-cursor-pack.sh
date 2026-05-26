@@ -53,6 +53,8 @@ cursor_pack_resolve_target_name() {
   case "$raw_target" in
     project|project-cursor) echo "project-cursor" ;;
     user|user-cursor) echo "user-cursor" ;;
+    codex-project|project-codex) echo "project-codex" ;;
+    codex-user|user-codex) echo "user-codex" ;;
     *) cursor_pack_die "Unsupported target: $raw_target" ;;
   esac
 }
@@ -62,12 +64,15 @@ cursor_pack_target_root() {
   local project_root="${2:-}"
 
   case "$target" in
-    project-cursor)
+    project-cursor|project-codex)
       [[ -n "$project_root" ]] || cursor_pack_die "--project-root is required for project installs"
       echo "$project_root"
       ;;
     user-cursor)
       echo "$HOME/.cursor"
+      ;;
+    user-codex)
+      echo "$HOME/.codex"
       ;;
     *)
       cursor_pack_die "Unknown target: $target"
@@ -83,7 +88,9 @@ cursor_pack_manifest_rel_path() {
 
   case "$target" in
     project-cursor) echo ".cursor/$manifest_file" ;;
+    project-codex) echo ".codex/$manifest_file" ;;
     user-cursor) echo "$manifest_file" ;;
+    user-codex) echo "$manifest_file" ;;
     *) cursor_pack_die "Unknown target: $target" ;;
   esac
 }
@@ -129,15 +136,17 @@ cursor_pack_artifact_dest_rel() {
 
     case "$target" in
       project-cursor) echo ".cursor/skills/$skill_id" ;;
+      project-codex) echo ".codex/skills/$skill_id" ;;
       user-cursor) echo "skills/$skill_id" ;;
+      user-codex) echo "skills/$skill_id" ;;
       *) cursor_pack_die "Unknown target: $target" ;;
     esac
     return 0
   fi
 
   case "$target" in
-    project-cursor) jq -r '.projectPath // empty' <<<"$artifact_json" ;;
-    user-cursor) jq -r '.userPath // empty' <<<"$artifact_json" ;;
+    project-cursor|project-codex) jq -r '.projectPath // empty' <<<"$artifact_json" ;;
+    user-cursor|user-codex) jq -r '.userPath // empty' <<<"$artifact_json" ;;
     *) cursor_pack_die "Unknown target: $target" ;;
   esac
 }

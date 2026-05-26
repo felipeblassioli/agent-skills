@@ -6,6 +6,8 @@
 |------------------------|----------|-------------|
 | `project-cursor`       | `--target=project` | `<project>/.cursor/` |
 | `user-cursor`          | `--target=user`    | `~/.cursor/` |
+| `project-codex`        | `--target=codex-project` | `<project>/.codex/` |
+| `user-codex`           | `--target=codex-user`    | `~/.codex/` |
 
 Project installs are appropriate for repository-specific rules, hooks, and subagents.
 User installs are appropriate for reusable skills, subagents, hooks, and MCP examples shared across projects.
@@ -43,8 +45,8 @@ Rules:
 Required: `id`, `source`, `targets`, `profiles`.
 Conditionally required:
 
-- `projectPath` — required when `targets` includes `project-cursor`.
-- `userPath`    — required when `targets` includes `user-cursor`.
+- `projectPath` — required when `targets` includes a project target.
+- `userPath`    — required when `targets` includes a user target.
 
 Group runtime artifacts by responsibility (subagents, rules, hooks, MCP examples), not as one big mixed directory.
 
@@ -68,11 +70,13 @@ Rules (full set in `references/bundled-skills.md`):
 - Source dir MUST contain `SKILL.md` and `metadata.json`.
 - `SKILL.md` frontmatter `name` MUST equal `skillId`.
 - Bundled skills are NOT entries in `skill-registry.json` unless explicitly promoted.
-- Destinations are derived from `skillId` (project install → `<project>/.cursor/skills/<skillId>/`; user install → `~/.cursor/skills/<skillId>/`).
+- Destinations are derived from `skillId` and the selected target runtime
+  (for example, project Codex installs use
+  `<project>/.codex/skills/<skillId>/`).
 
 ## Common artifact mistakes to flag
 
-- Runtime artifact missing `projectPath` despite targeting `project-cursor`.
+- Runtime artifact missing `projectPath` despite targeting a project runtime.
 - Bundled skill omitted `kind: "skill"` (treated as runtime, paths break).
 - `skillId` collides with a root skill name in `skill-registry.json`.
 - Artifact references a profile not declared in `profiles[]`.

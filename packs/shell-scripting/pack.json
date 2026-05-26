@@ -1,0 +1,79 @@
+{
+  "$schema": "../../cursor-pack.schema.json",
+  "name": "shell-scripting",
+  "version": "0.1.0",
+  "description": "Codex pack with Bash and POSIX shell subagents plus bundled skills for defensive Bash, Bats tests, and ShellCheck configuration.",
+  "author": "felipeblassioli",
+  "targets": [
+    "project-codex",
+    "user-codex"
+  ],
+  "profiles": {
+    "lite": {
+      "description": "Installs the Codex shell-scripting subagents and bundled skills without rules, hooks, or MCP configuration."
+    }
+  },
+  "artifacts": [
+    {
+      "id": "codex-agents",
+      "source": ".codex/agents",
+      "targets": [
+        "project-codex",
+        "user-codex"
+      ],
+      "profiles": [
+        "lite"
+      ],
+      "projectPath": ".codex/agents",
+      "userPath": "agents"
+    },
+    {
+      "id": "bundled-skill-bash-defensive-patterns",
+      "kind": "skill",
+      "skillId": "shell-scripting-bash-defensive-patterns",
+      "source": "skills/shell-scripting-bash-defensive-patterns",
+      "targets": [
+        "project-codex",
+        "user-codex"
+      ],
+      "profiles": [
+        "lite"
+      ]
+    },
+    {
+      "id": "bundled-skill-bats-testing-patterns",
+      "kind": "skill",
+      "skillId": "shell-scripting-bats-testing-patterns",
+      "source": "skills/shell-scripting-bats-testing-patterns",
+      "targets": [
+        "project-codex",
+        "user-codex"
+      ],
+      "profiles": [
+        "lite"
+      ]
+    },
+    {
+      "id": "bundled-skill-shellcheck-configuration",
+      "kind": "skill",
+      "skillId": "shell-scripting-shellcheck-configuration",
+      "source": "skills/shell-scripting-shellcheck-configuration",
+      "targets": [
+        "project-codex",
+        "user-codex"
+      ],
+      "profiles": [
+        "lite"
+      ]
+    }
+  ],
+  "install": {
+    "defaultProfile": "lite",
+    "backupOnConflict": true,
+    "stageRoot": ".work/cursor-pack-staging",
+    "backupRoot": ".work/cursor-pack-backups",
+    "manifestFile": ".cursor-pack-manifest.json",
+    "conflictPolicy": "backup-and-overwrite",
+    "mcpPolicy": "none"
+  }
+}
