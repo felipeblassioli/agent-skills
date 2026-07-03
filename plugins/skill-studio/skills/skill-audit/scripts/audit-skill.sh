@@ -91,14 +91,14 @@ audit_one() {
           if [[ ! -x "$f" ]]; then basename "$f"; fi
         done | jq -R . | jq -s 'map(select(. != ""))')"
     # Run-invocations of a bundled script via a relative path break after the
-    # install cache-copy. Match command forms (bash/sh/node/./ + scripts/...)
+    # install cache-copy. Match command forms (bash/sh/node/python/deno/bun/./ + scripts/...)
     # across common script extensions, keep whole lines so the CLAUDE_* filter
     # can see a correct ${CLAUDE_SKILL_DIR} prefix, and exclude those. Only
     # model-facing files count: SKILL.md and references/ — human docs
     # (README.md, CHANGELOG.md) carry example commands, not runtime
     # instructions. Markdown link hrefs (](scripts/...)) are doc navigation and
     # are not matched.
-    rel_calls="$(grep -rhE '(bash |sh |node |\./)scripts/[A-Za-z0-9_.-]+\.(sh|py|mjs|cjs|js|mts|ts)' "$dir" --include='*.md' --exclude=README.md --exclude=CHANGELOG.md 2>/dev/null \
+    rel_calls="$(grep -rhE '(bash |sh |node |python3? |deno |bun |\./)scripts/[A-Za-z0-9_.-]+\.(sh|py|mjs|cjs|js|mts|ts)' "$dir" --include='*.md' --exclude=README.md --exclude=CHANGELOG.md 2>/dev/null \
       | grep -vE 'CLAUDE_(SKILL_DIR|PLUGIN_ROOT)' | grep -c .)"
   fi
   [[ -z "$nonexec" ]] && nonexec='[]'

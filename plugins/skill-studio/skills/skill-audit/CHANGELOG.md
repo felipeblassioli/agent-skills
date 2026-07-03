@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.2.0 - 2026-07-03
+
+### Fixed
+
+- **`audit-skill.sh` now flags `python`/`python3`-prefixed bare bundled-script
+  calls.** The `relative_bundled_script_calls` cache-safety check matched only
+  `(bash|sh|node|./)`, so `python3 scripts/x.py` invocations slipped through and
+  the auditor reported `0` while real cache-unsafe calls existed (surfaced while
+  promoting `gh-post-code-review`, #103/#114). Extended the runtime alternation to
+  `(bash|sh|node|python|python3|deno|bun|./)`.
+
+### Added
+
+- **First regression test for `audit-skill.sh`:** `tests/test_rel_script_calls.sh`
+  pins the runtime coverage — bare `bash`/`sh`/`node`/`python`/`python3`/`./`
+  script calls are flagged, while `${CLAUDE_SKILL_DIR}` paths and markdown doc
+  links are not. (The prior `tests/` suite only covered `skill_hot_path_audit.py`.)
+
 ## 0.1.0 - 2026-07-02
 
 ### Added

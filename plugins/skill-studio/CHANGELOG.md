@@ -4,6 +4,16 @@ All notable changes to the `skill-studio` plugin are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/) and the plugin
 uses [Semantic Versioning](https://semver.org/).
 
+## 0.1.1 - 2026-07-03
+
+### Fixed
+
+- **`skill-audit` (0.1.0 → 0.2.0):** `audit-skill.sh` now flags `python`/`python3`-prefixed
+  bare bundled-script calls in its cache-safety check (previously matched only
+  `bash`/`sh`/`node`/`./`, so `python3 scripts/x.py` slipped through). Added the first
+  regression test for `audit-skill.sh`. Surfaced while promoting `gh-post-code-review`
+  (#103/#114).
+
 ## 0.1.0 - 2026-07-02
 
 ### Added

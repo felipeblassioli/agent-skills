@@ -1,7 +1,7 @@
 {
   "name": "skill-studio",
   "description": "Author, audit, and enhance Claude Code skills and plugins. A best-practice toolkit: create skills from scratch or adapt external sources (skill-create), audit skills for quality, context-efficiency, and portfolio overlap (skill-audit), and improve them with an eval/benchmark loop (skill-enhance). Bundles helper subagents and a Python eval harness.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "Felipe Blassioli",
     "email": "felipeblassioli@gmail.com"
