@@ -15,7 +15,7 @@
     {
       "name": "code-quality",
       "source": "./plugins/code-quality",
-      "description": "Code quality and review for production systems: a strict distributed-systems code reviewer (PRs, diffs, plans) with a disciplined BLOCKER/HIGH/MEDIUM/LOW/QUESTION severity model, plus TypeScript quality patterns (typed clients, Zod boundary validation, structured errors, no-any, structured logging, OpenTelemetry, PII redaction). Official tier (ADR-0008 group 6).",
+      "description": "Code quality and review for production systems: a strict distributed-systems code reviewer (PRs, diffs, plans) with a disciplined BLOCKER/HIGH/MEDIUM/LOW/QUESTION severity model, TypeScript quality patterns (typed clients, Zod validation, structured errors, no-any, logging, OpenTelemetry, PII redaction), and a GitHub PR review poster. Official tier (ADR-0008 group 6).",
       "author": { "name": "Felipe Blassioli", "email": "felipeblassioli@gmail.com" }
     },
     {
