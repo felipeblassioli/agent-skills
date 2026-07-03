@@ -45,8 +45,8 @@ Background material retained as supporting input:
 
 - `cursor/10_ts/rules/ts-test-v5.mdc`
 - `cursor/10_ts/rules/ts-suffix-naming.mdc`
-- `50_Work/Turbi/40_Guidelines/GUIDELINES - Testing with Jest unit integration e2e.md`
-- `50_Work/Turbi/40_Guidelines/GUIDELINES - Mocks arent stubs.md`
+- Private engineering guidelines — "Testing with Jest: unit, integration, e2e"
+- Private engineering guidelines — "Mocks aren't stubs"
 
 ## Related Skills Or Packs
 

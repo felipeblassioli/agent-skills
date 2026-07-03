@@ -8,7 +8,7 @@ From any machine, the pack is installed in a project if that project has a manif
 
 ```bash
 # Replace with your project root
-PROJECT="/Users/felipe.blassioli/dev/tmp/tguard-riskEngineV2"
+PROJECT="/Users/you/dev/tmp/example-service"
 
 # Pack is installed if this prints version and profile
 jq -r '.packs["cursor-companion"] | "\(.version) profile=\(.profile) installedAt=\(.installedAt)"' \
@@ -22,7 +22,7 @@ Expected: e.g. `0.1.1 profile=strict installedAt=2026-03-09T00:10:27Z`
 For a **strict** profile project install, the pack copies agents, rules, hooks, and the MCP example:
 
 ```bash
-PROJECT="/Users/felipe.blassioli/dev/tmp/tguard-riskEngineV2"
+PROJECT="/Users/you/dev/tmp/example-service"
 
 # Agents (at least the pack’s three)
 ls "$PROJECT/.cursor/agents/cursor-pack-auditor.md" \
@@ -47,7 +47,7 @@ If all of these succeed, the pack is installed and complete for that project.
 ### 3. One-liner sanity check
 
 ```bash
-PROJECT="/Users/felipe.blassioli/dev/tmp/tguard-riskEngineV2"
+PROJECT="/Users/you/dev/tmp/example-service"
 jq -e '.packs["cursor-companion"]' "$PROJECT/.cursor/.cursor-pack-manifest.json" >/dev/null && echo "cursor-companion is installed" || echo "cursor-companion is NOT installed"
 ```
 

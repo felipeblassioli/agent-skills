@@ -23,7 +23,7 @@ write_skill() {
   cat >"$dir/SKILL.md" <<EOF
 ---
 name: $name
-description: Use when testing the Bond validator.
+description: Use when testing the skill validator.
 ---
 
 # $name
@@ -140,7 +140,7 @@ cat >"$legacy_frontmatter_skill/SKILL.md" <<'EOF'
 name: legacy-frontmatter-skill
 version: "1.2.3"
 last_reviewed: "2026-04-30"
-description: Use when testing the Bond validator.
+description: Use when testing the skill validator.
 ---
 
 # legacy-frontmatter-skill

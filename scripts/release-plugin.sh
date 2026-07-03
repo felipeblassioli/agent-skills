@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Usage: scripts/release-plugin.sh <plugin-directory> [--dry-run]
 #
-# Creates a GitHub Release for a whole Bond plugin and attaches a distributable
+# Creates a GitHub Release for a whole plugin and attaches a distributable
 # plugin .zip. The release tag is "<name>--v<version>" where:
 #   - <name>    is plugin.json .name
 #   - <version> is plugin.json .version

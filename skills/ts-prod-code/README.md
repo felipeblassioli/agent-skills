@@ -43,9 +43,9 @@ Foundational source material retained in the references:
 
 - `cursor/10_ts/rules/ts-core-v5.mdc`
 - `cursor/10_ts/rules/ts-suffix-naming.mdc`
-- `50_Work/Turbi/40_Guidelines/GUIDELINES - Typescript Modules Organization.md`
-- `50_Work/Turbi/40_Guidelines/GUIDELINES - Error Handling Typescript.md`
-- `50_Work/Turbi/40_Guidelines/GUIDELINES - Structured Logging.md`
+- Private engineering guidelines — "TypeScript modules organization"
+- Private engineering guidelines — "Error handling in TypeScript"
+- Private engineering guidelines — "Structured logging"
 
 ## Related Skills Or Packs
 

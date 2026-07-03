@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Usage: scripts/release-skill.sh <skill-directory> [--dry-run]
 #
-# Creates a GitHub Release for a single Bond skill. The release tag is
+# Creates a GitHub Release for a single skill. The release tag is
 # "<skill-name>/v<version>" where:
 #   - <skill-name> is "<plugin>-<skill>" for a plugin skill
 #     (plugins/<plugin>/skills/<skill>), or the bare folder name for a legacy
 #     top-level skill (skills/<skill>). Qualifying plugin skills keeps tags
-#     collision-free across plugins and continues the existing vtec-* lineage.
+#     collision-free across plugins.
 #   - <version>    is metadata.json .version
 #
 # Steps:
@@ -26,8 +26,8 @@ DRY_RUN="${2:-}"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-# Qualify a plugin skill as "<plugin>-<skill>" (collision-free across plugins,
-# continues the vtec-* lineage); a legacy top-level skill keeps its basename.
+# Qualify a plugin skill as "<plugin>-<skill>" (collision-free across plugins);
+# a legacy top-level skill keeps its basename.
 case "$SKILL_DIR" in
   plugins/*/skills/*)
     SKILL_NAME="$(basename "$(dirname "$(dirname "$SKILL_DIR")")")-$(basename "$SKILL_DIR")"

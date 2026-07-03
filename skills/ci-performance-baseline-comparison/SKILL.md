@@ -135,7 +135,7 @@ xychart-beta
 
 ---
 
-## Real-World Impact (turbi-guard PR #248)
+## Real-World Impact (production monorepo CI)
 
 | Run type | Critical path | vs Baseline |
 |:---|:---|:---|

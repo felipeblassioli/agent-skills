@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Usage: scripts/validate-skill.sh <skill-directory>
-# Validates a Bond skill package against the Claude-first contract and common
+# Validates a skill package against the Claude-first contract and common
 # quality issues. Works for skills under skills/ and under
 # plugins/<plugin>/skills/. Returns JSON with pass/fail results and findings.
 #
