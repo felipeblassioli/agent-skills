@@ -32,7 +32,7 @@ not overlap — see the boundary table in
 |---|---|---|---|
 | **ADR** | `docs/ADR/ADR-NNNN-*.md` | What did we decide and why? | Durable; immutable once accepted |
 | **Spec** | `docs/specs/*.md`, `scripts/<tool>/SPEC.md`, pack-level docs | What is this artifact contractually supposed to do? | Durable; versionable |
-| **ROADMAP** | `packs/<pack>/ROADMAP.md` (per pack — no repo-level one) | What is the next direction for this artifact? | Living |
+| **ROADMAP** | `docs/ROADMAP.md` (marketplace-wide) + `packs/<pack>/ROADMAP.md` (per pack) | What is the next direction for this artifact? | Living |
 | **GitHub issue** | `felipeblassioli/agent-skills` | What is the next concrete implementation slice? | Execution unit |
 
 Plus **`CHANGELOG.md`** (release history) and pack-level **`VERIFICATION.md`**
@@ -80,7 +80,8 @@ root skills are L1–L2.
 | Make a binding architectural decision | new ADR under `docs/ADR/` |
 | Define how a tool, exporter, or workflow behaves | spec under `docs/specs/` or `scripts/<tool>/SPEC.md` |
 | Capture future direction for a specific pack | that pack's `ROADMAP.md` |
-| Capture future direction across the repo | open ADR or open GitHub issue (there is no repo-level ROADMAP) |
+| Capture future direction for the plugin marketplace | [`docs/ROADMAP.md`](../ROADMAP.md) (marketplace-wide) + an ADR for binding decisions |
+| Capture future direction across the whole repo | open ADR or open GitHub issue |
 | Track a concrete implementation slice | GitHub issue on `felipeblassioli/agent-skills` |
 | Record what shipped in a release | `CHANGELOG.md` (root, pack, or skill as appropriate) |
 | Record release evidence for an L3 pack | that pack's `VERIFICATION.md` |
@@ -132,9 +133,10 @@ This is the canonical pattern. Copy it.
 - All four ADRs are still `status: draft`. The `proposed` / `accepted`
   lifecycle in [`docs/ADR/README.md`](../ADR/README.md) is documented but
   unused. Flip them or remove the lifecycle.
-- No repo-level `ROADMAP.md`. Cross-cutting direction lives in ADRs and open
-  issues. If repo-wide planning grows past what ADRs can carry, that's a gap
-  worth filling.
+- The marketplace now has a repo-level [`docs/ROADMAP.md`](../ROADMAP.md)
+  (added 2026-07-03) carrying the nine-group plugin taxonomy and promotion
+  backlog. Cross-cutting direction *outside* the marketplace still lives in ADRs
+  and open issues.
 - No CI enforcement of the maturity rules. The workflow lives in agent
   guidance and reviewer discipline.
 
