@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "felipeblassioli@gmail.com",
-  "date": "2026-07-02",
+  "date": "2026-07-03",
   "abstract": "Read-only audit surface of the skill-studio toolkit. Audits a single Claude skill for quality, context-efficiency, and best-practice compliance — classifying its archetype, scoring the four structural principles (single-responsibility, composability, context-efficiency, maintainability) and instruction craft (right altitude / first-run config / earn-the-context / gotchas) — and reviews a portfolio of skills for overlap and trigger collisions. Carries two complementary bundled scripts: skill_hot_path_audit.py (advisory token-economy / hot-path metrics and duplication buckets, character-based) and audit-skill.sh (mechanical package/wiring signals: name/description limits, metadata/CHANGELOG presence, orphan/dangling references, gotchas-section presence, cross-package cache-copy hazards). Diagnoses and recommends only; routes fixes to skill-enhance and repo-governance:skill-maintainer.",
   "source_contracts": [
     {
