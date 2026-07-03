@@ -12,6 +12,7 @@ group 6 of the nine-group taxonomy
 |---|---|
 | `code-reviewer` | A strict, runtime-neutral distributed-systems code reviewer for PRs, diffs, branches, and implementation plans. Classifies the change, applies workload-archetype + cross-cutting review lenses (HTTP contracts, queue consumers, scheduled jobs, dual-write/outbox, money/units, Kubernetes runtime), and emits findings under a disciplined `BLOCKER/HIGH/MEDIUM/LOW/QUESTION` severity model. Ships an eval suite with committed baselines. |
 | `typescript-quality` | TypeScript code-quality patterns: typed clients with timeouts, Zod boundary validation, structured domain errors, no-`any` on public surfaces, structured JSON logging (pino), OpenTelemetry tracing, and PII redaction. Routes a question to the right rule; details live one hop away. |
+| `gh-post-code-review` | Posts a structured review (markdown with severity buckets + `start:end:path` code refs) to a GitHub PR via `gh` CLI, REST-API fallback for multi-comment/inline reviews. Maps verdict + severity to the review event, anchors inline comments against the head SHA, and confirms before posting. Pairs with `code-reviewer` (author → post). |
 
 ## Install
 

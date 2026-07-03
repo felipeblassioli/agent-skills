@@ -14,7 +14,7 @@ anchors or side-aware comments.
 
 ## When NOT to use
 
-- You haven't written the review yet — see `blassioli-code-reviewer`.
+- You haven't written the review yet — see `code-quality:code-reviewer`.
 - You want to triage existing review comments — see `babysit`,
   `get-pr-comments`.
 - You want to open a PR — see `gh-pr-creator`.
@@ -52,8 +52,8 @@ anchors or side-aware comments.
 
 ## Authoring
 
-Skill follows the
-[`skill-studio-write`](https://github.com/felipeblassioli/agent-skills/tree/main/packs/cursor-skill-studio/skills/skill-studio-write)
-authoring contract (bundled skill inside the `cursor-skill-studio`
-Cursor pack; supersedes the former `writing-cursor-skills` root skill
-per ADR-0005). Edit `SKILL.md` directly; deploy via `bash scripts/skill-sync.sh --skill=gh-post-code-review`.
+Authored and audited with the `skill-studio` plugin (`skill-studio:skill-create`
+/ `skill-audit` / `skill-enhance`). This skill ships in the `code-quality` plugin
+and is distributed through the Claude marketplace
+(`/plugin install code-quality@agent-skills`), not the Cursor registry — edit
+`SKILL.md` directly; there is no `skill-sync` step.

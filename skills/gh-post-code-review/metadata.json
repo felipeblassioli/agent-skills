@@ -1,6 +1,0 @@
-{
-  "version": "0.1.0",
-  "author": "felipeblassioli",
-  "date": "May 2026",
-  "abstract": "Post a structured code review to a GitHub PR using gh CLI by default and the GitHub REST API as a fallback for multi-comment, side-aware, or draft reviews. Maps verdict and severity (BLOCKER/HIGH/MEDIUM/LOW/QUESTION) to the right review event, parses Cursor-style start:end:path code refs into inline anchors, guards against head-SHA drift, and adapts addressing to the PR author."
-}

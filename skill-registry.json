@@ -375,23 +375,6 @@
       ],
       "description": "Create and update GitHub pull requests using gh CLI for repositories that use a `.github/pull_request_template.md` with comment markers. PRs are written in Brazilian Portuguese and use `.work/` staging files for the body."
     },
-    "gh-post-code-review": {
-      "version": "0.1.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor",
-        "agents"
-      ],
-      "tags": [
-        "github",
-        "code-review",
-        "gh-cli",
-        "pull-request",
-        "workflow"
-      ],
-      "description": "Post a structured code review (markdown with BLOCKER/HIGH/MEDIUM/LOW/QUESTION sections and Cursor-style start:end:path code refs) to a GitHub PR. Favors `gh pr review`; falls back to `gh api POST /pulls/{n}/reviews` for multi-comment, side-aware, or draft reviews. Maps verdict to the right review event, guards against head-SHA drift, and adapts addressing to the PR author. Use when the user has a written review and a PR URL/number and wants it submitted."
-    },
     "test-verifier": {
       "version": "1.0.0",
       "author": "felipeblassioli",
