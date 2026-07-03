@@ -49,7 +49,7 @@ and backlog.
 | 3 | Data Fetching & Analysis | `data-analysis` | **gap** | [#110](https://github.com/felipeblassioli/agent-skills/issues/110) | `gcloud-logging` base + net-new GCP metrics/BigQuery |
 | 4 | Business Process & Team Automation | `team-automation` | planned | [#109](https://github.com/felipeblassioli/agent-skills/issues/109) | `linear-specialist` (promote) |
 | 5 | Code Scaffolding & Templates | `scaffolding` | planned | [#108](https://github.com/felipeblassioli/agent-skills/issues/108) | `create-*` alpha + `cli-creator` (promote) |
-| 6 | Code Quality & Review | `code-quality` | **active** | [#103](https://github.com/felipeblassioli/agent-skills/issues/103) | **`code-reviewer`** + `typescript-quality` graduated ✓ (v0.2.0) |
+| 6 | Code Quality & Review | `code-quality` | **active** | [#103](https://github.com/felipeblassioli/agent-skills/issues/103) | `code-reviewer` + `typescript-quality` + `gh-post-code-review` graduated ✓ (v0.3.0) |
 | 7 | CI/CD & Deployment | `cicd` | planned | [#107](https://github.com/felipeblassioli/agent-skills/issues/107) | `babysit`, `gh-fix-ci` (promote) |
 | 8 | Runbooks | `runbooks` | planned | [#104](https://github.com/felipeblassioli/agent-skills/issues/104) | **`blassioli` GCP trio + `resolve-bug`** (graduate) |
 | 9 | Infrastructure Operations | `infra-ops` | **gap** | [#111](https://github.com/felipeblassioli/agent-skills/issues/111) | net-new (orphans, cost, deps) — build last |
@@ -70,10 +70,11 @@ lazily as their anchor graduates, then audit-and-promote the rest of that group'
 - No new plugins yet.
 
 ### Phase 1 — Formalize strengths (SRE + review; most personal-relevant)
-- **`code-quality`** — ✓ `code-reviewer` + `typescript-quality` graduated (plugin v0.2.0,
-  #103); next: audit+promote `gh-post-code-review` and the alpha `quality-playbook` /
-  `sql-code-review` / `postgresql-code-review` / `code-review`. (`owasp-security` held
-  back — imported from a no-license upstream; needs a license/attribution decision.)
+- **`code-quality`** — ✓ `code-reviewer` + `typescript-quality` + `gh-post-code-review`
+  graduated (plugin v0.3.0, #103); next: audit+promote the alpha `quality-playbook` /
+  `sql-code-review` / `postgresql-code-review` / `code-review` and the registry contract
+  checks. (`owasp-security` held back — imported from a no-license upstream; needs a
+  license/attribution decision.)
 - **`runbooks`** — graduate the `blassioli` GCP trio (`error-reporting`,
   `error-trace-rootcause`, `gcp-log-triage`) + the `resolve-bug` command; audit
   `argocd-app-doctor` (currently deferred). This is the article's log-correlator /
