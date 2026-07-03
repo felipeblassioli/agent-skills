@@ -1,0 +1,78 @@
+{
+  "skill_name": "code-reviewer",
+  "notes": "Planted-bug fixtures for the distributed-systems code reviewer. Three discriminating cases (a non-idempotent queue consumer, a breaking API-contract change, a Kubernetes Deployment missing production posture) plus one over-trigger control (PR-description polishing, which must NOT trigger a code review). Run with-skill vs baseline; grade each expectation strictly with quoted evidence from the review output.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "non-idempotent-consumer",
+      "prompt": "Review this Pub/Sub push handler for production safety before merge.",
+      "files": ["fixtures/order-consumer/handler.ts"],
+      "expectations": [
+        "Flags that Pub/Sub is at-least-once, so a redelivered order-paid event re-runs the handler and causes a DUPLICATE charge and duplicate email (the side effects are not idempotent)",
+        "Identifies that the side effects (chargeCard, sendEmail) run with no idempotency key, dedup, or processed-event record",
+        "Notes the ack/commit ordering risk: the card is charged before the order is marked PAID, so a crash between them re-charges on redelivery",
+        "Assigns a BLOCKER or HIGH severity to the duplicate-side-effect risk"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "api-contract-break",
+      "prompt": "Review this change to an existing, already-published REST endpoint.",
+      "files": ["fixtures/api-contract/orders.controller.diff"],
+      "expectations": [
+        "Flags the response field rename userId -> user_id as a breaking API-contract change that will break existing clients",
+        "Flags the 200 -> 204 status change (204 No Content must not return a body) as breaking and self-contradictory",
+        "Assigns BLOCKER to the broken contract",
+        "Recommends an additive / versioned / deprecation path instead of an in-place breaking rename"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "k8s-missing-probes",
+      "prompt": "Review this Kubernetes Deployment before it ships to production.",
+      "files": ["fixtures/k8s/worker-deployment.yaml"],
+      "expectations": [
+        "Flags missing readiness and liveness probes",
+        "Flags missing resource requests/limits (OOMKill / noisy-neighbor risk, no scheduling or HPA signal)",
+        "Flags the :latest image tag as non-reproducible (breaks rollback and pins nothing)",
+        "Flags missing graceful-shutdown posture for a queue worker (no terminationGracePeriodSeconds / preStop / SIGTERM handling), which drops in-flight messages",
+        "Assigns HIGH or BLOCKER to the probe/limits gaps"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "overtrigger-pr-polish",
+      "prompt": "Can you polish the wording of my pull request description and write a nicer commit message? Don't review the code, just make the text read well.",
+      "files": [],
+      "expectations": [
+        "Recognizes this is PR-description / commit-message wording, NOT a code review",
+        "Routes to commit-hygiene or gh-pr-creator instead of performing a distributed-systems review",
+        "Does NOT produce a severity-graded code-review report"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "dual-write-no-outbox",
+      "prompt": "Review this function that runs when an order ships.",
+      "files": ["fixtures/dual-write/publish-order.ts"],
+      "expectations": [
+        "Identifies the dual-write hazard: a DB update followed by a separate queue publish with no transaction/outbox, so a crash or publish failure AFTER the commit loses the event and leaves downstream inconsistent",
+        "Notes this fails only under partial failure (the happy path looks correct) and is not caught by ordinary tests",
+        "Recommends a transactional-outbox / idempotent-replay pattern rather than two independent awaits",
+        "Assigns HIGH or BLOCKER for the silent data/eventing inconsistency"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "money-as-float",
+      "prompt": "Review this refund/total calculation.",
+      "files": ["fixtures/money/refund.ts"],
+      "expectations": [
+        "Flags using JavaScript floating-point numbers for currency (order.total, price*qty sums, pct/100) as a precision/rounding correctness bug",
+        "Notes it passes round-number tests but drifts on real inputs (float accumulation; Math.round does not make float math exact)",
+        "Recommends integer minor units (cents) or a decimal type for money, not floats",
+        "Assigns HIGH or BLOCKER for the money-correctness risk"
+      ]
+    }
+  ]
+}

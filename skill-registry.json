@@ -378,7 +378,9 @@
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [
-        "cursor"
+        "cursor",
+        "claude",
+        "agents"
       ],
       "tags": [
         "github",
@@ -582,28 +584,6 @@
         "workflow"
       ],
       "description": "Keep a PR merge-ready by triaging comments (including Bugbot), resolving clear merge conflicts, and fixing CI in a loop until the branch is mergeable. Invoke explicitly when the user wants a PR babysat."
-    },
-    "blassioli-code-reviewer": {
-      "version": "1.3.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "review",
-        "pull-requests",
-        "kubernetes",
-        "http",
-        "pubsub",
-        "observability",
-        "architecture",
-        "data-integrity",
-        "multi-tenancy",
-        "webhooks",
-        "error-handling"
-      ],
-      "description": "Use when reviewing code changes, PRs, diffs, or implementation plans where HTTP services, scheduled jobs, queue consumers, Kubernetes runtime behavior, webhooks, dual-writes, caches, multi-tenant data, money/units, time-sensitive logic, feature flags, error handling (failure/defect/fatal taxonomy, retry classification, boundary translation), idempotency, retries, observability, or distributed-systems safety matter."
     },
     "backend-contract-reconciliation": {
       "version": "1.0.0",

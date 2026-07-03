@@ -88,7 +88,6 @@ explicitly promoted to the root registry.
 | Skill | Version | Targets | Use when |
 | --- | --- | --- | --- |
 | `babysit` | 1.0.0 | cursor, agents | Keeping a PR merge-ready by triaging comments, resolving clear conflicts, and fixing CI. |
-| `blassioli-code-reviewer` | 1.3.0 | cursor | Reviewing distributed-system, HTTP, queue, scheduled-job, Kubernetes, webhook, or data-integrity changes. |
 | `code-review` | 1.0.0 | cursor | Reviewing code changes for correctness, security, performance, maintainability, and test gaps. |
 | `commit-hygiene` | 1.0.0 | cursor | Preparing self-contained commits and reviewable PRs with production-impact context. |
 | `gh-issue-verifier` | 1.0.0 | cursor | Verifying whether a GitHub issue is implemented with evidence from code, docs, history, and tests. |

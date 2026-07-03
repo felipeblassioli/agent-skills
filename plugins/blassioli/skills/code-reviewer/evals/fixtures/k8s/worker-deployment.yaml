@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-worker
+  labels:
+    app: order-worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: order-worker
+  template:
+    metadata:
+      labels:
+        app: order-worker
+    spec:
+      containers:
+        - name: worker
+          image: registry.example.com/order-worker:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SUBSCRIPTION
+              value: order-paid-sub

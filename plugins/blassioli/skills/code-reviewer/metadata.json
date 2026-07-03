@@ -1,0 +1,7 @@
+{
+  "version": "1.4.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-07-02",
+  "abstract": "Strict, runtime-neutral code-review skill for PRs, diffs, and implementation plans, with focused review lenses for HTTP services, HTTP API contracts, scheduled jobs, queue consumers, Kubernetes runtime behavior, observability, error-handling discipline, and distributed-systems safety. Promoted into the blassioli plugin from the Cursor-era skill registry, with runtime-neutral framing, cache-safe script paths, and an evaluation suite plus committed baseline.",
+  "source_contracts": []
+}
