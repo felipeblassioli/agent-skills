@@ -8,6 +8,11 @@ adr: 0004
 
 # ADR-0004: Cross-runtime agent packaging model
 
+> **Updated by [ADR-0007](ADR-0007-skill-studio-plugin-canonical.md)** for the
+> skill-authoring toolkit specifically: there the Claude **plugin** (`skill-studio`) is
+> canonical and the Cursor pack is frozen — the reverse of this ADR's "packs canonical,
+> plugins are export adapters." This ADR still governs all other packs.
+
 ## Context
 
 This repository already uses Cursor Packs under `packs/<name>/` to distribute

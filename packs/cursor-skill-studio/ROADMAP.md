@@ -1,5 +1,10 @@
 # Roadmap
 
+> **Frozen at 1.2.0 (bugfix-only).** The authoring toolkit is now the Claude-first
+> `skill-studio` plugin (`plugins/skill-studio/`); new features land there. This
+> pack stays installable for Cursor users and receives bugfixes only. See
+> [ADR-0007](../../docs/ADR/ADR-0007-skill-studio-plugin-canonical.md).
+
 ADR-0005 migration is complete as of 1.1.0
 ([decision record](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)).
 The pack now has only forward-looking work; the migration milestones

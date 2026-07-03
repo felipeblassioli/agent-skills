@@ -8,6 +8,10 @@ adr: 0005
 
 # ADR-0005: Consolidate the skill-authoring surface into `cursor-skill-studio`
 
+> **Continued by [ADR-0007](ADR-0007-skill-studio-plugin-canonical.md):** the
+> consolidated authoring lifecycle now ships as the Claude-first `skill-studio` plugin
+> (create / audit / enhance); this Cursor pack is frozen at 1.2.0.
+
 ## Context
 
 This repository currently exposes the skill-authoring lifecycle across nine

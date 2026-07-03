@@ -85,7 +85,7 @@
         "evaluation",
         "subagents"
       ],
-      "description": "Stable (1.0.0) consolidated pack for the full skill lifecycle (write, audit, maintain). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification). All three bundled skills are explicit-only. Replaces nine deprecated root skills per ADR-0005."
+      "description": "FROZEN at 1.2.0 (bugfix-only; superseded for new work by the Claude-first skill-studio plugin — see ADR-0007). Consolidated Cursor pack for the full skill lifecycle (write, audit, maintain). Ships skill-studio-write (greenfield, distillation, pack scaffolding, external intake, Claude-plugin adaptation, eval loop), skill-studio-audit (single-skill compliance audit, improvement recommendations, installed portfolio audit, deep repo-first-party overlap audit), and skill-studio-maintain (root-skill and pack releases, registry alignment, bundled-skill artifact edits, promotion/demotion, maturity classification, install verification). All three bundled skills are explicit-only. Replaces nine deprecated root skills per ADR-0005."
     },
     "engineering-workflows": {
       "version": "0.1.0",

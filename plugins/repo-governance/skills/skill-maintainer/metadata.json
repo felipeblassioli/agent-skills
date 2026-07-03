@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-06-14",
+  "abstract": "Meta-tooling for the release governance of the agent-skills Claude Code plugin marketplace: versioning, validating, releasing, and promoting plugins and skills (plugin.json, marketplace.json, registry alignment, sandbox-to-official promotion). Skill authoring and auditing live in the skill-studio plugin.",
+  "source_contracts": [
+    {
+      "path": "README.md",
+      "reviewed_at": "2026-06-14"
+    },
+    {
+      "path": "docs/marketplace-governance.md",
+      "reviewed_at": "2026-06-14"
+    },
+    {
+      "path": "docs/versioning.md",
+      "reviewed_at": "2026-06-14"
+    },
+    {
+      "path": "docs/releasing.md",
+      "reviewed_at": "2026-06-14"
+    },
+    {
+      "path": "docs/review-checklist.md",
+      "reviewed_at": "2026-06-14"
+    },
+    {
+      "path": "docs/ADR/ADR-0006-adopt-claude-first-plugin-marketplace.md",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "scripts/validate-skill.sh",
+      "reviewed_at": "2026-06-14"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "reviewed_at": "2026-06-14"
+    }
+  ]
+}

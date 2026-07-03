@@ -5,6 +5,11 @@ will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows SemVer.
 
+> **Frozen at 1.2.0.** This pack is in maintenance mode (bugfix-only). New
+> skill-authoring work happens in the `skill-studio` Claude plugin
+> (`plugins/skill-studio/`). See
+> [ADR-0007](../../docs/ADR/ADR-0007-skill-studio-plugin-canonical.md).
+
 ## [1.2.0] - 2026-05-20
 
 ### Added — Gotchas sections in all three studio bundled skills

@@ -1,0 +1,16 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-07-02",
+  "abstract": "Create Claude skills and plugins: greenfield authoring through Socratic discovery, distilling reference material into a skill, scaffolding a Claude plugin (skills/agents/commands/hooks + plugin.json), and evaluating an external skill candidate before importing it. The Claude-first evolution of the frozen cursor-skill-studio pack's authoring surface.",
+  "source_contracts": [
+    {
+      "path": "docs/marketplace-governance.md",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "docs/versioning.md",
+      "reviewed_at": "2026-07-02"
+    }
+  ]
+}

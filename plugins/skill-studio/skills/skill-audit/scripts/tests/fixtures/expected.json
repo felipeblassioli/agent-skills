@@ -1,0 +1,102 @@
+{
+  "caveats": [
+    "All metrics are character counts of source files; the auditor does not call any tokenizer.",
+    "Findings are advisory and do not gate releases.",
+    "Roughly 1 token ~= 4 characters for common English models -- use only to ballpark."
+  ],
+  "generated_by": "skill_hot_path_audit.py",
+  "runtime_observations": null,
+  "schema_version": 1,
+  "skills": [
+    {
+      "duplication_buckets": [
+        {
+          "bucket": "applicability_gate_repeats_description",
+          "evidence": "Applicability bullet 'Performs detailed end-to-end project reporting across multiple repositories.' overlaps with the description."
+        },
+        {
+          "bucket": "description_repeats_body_heading",
+          "evidence": "Heading 'Initial scoping environment detection dependency analysis' also appears in the frontmatter description."
+        }
+      ],
+      "findings": [
+        {
+          "id": "applicability_gate_repeats_description",
+          "rationale": "Applicability bullet 'Performs detailed end-to-end project reporting across multiple repositories.' overlaps with the description.",
+          "severity": "info",
+          "threshold": null,
+          "value": null
+        },
+        {
+          "id": "description_repeats_body_heading",
+          "rationale": "Heading 'Initial scoping environment detection dependency analysis' also appears in the frontmatter description.",
+          "severity": "info",
+          "threshold": null,
+          "value": null
+        },
+        {
+          "id": "long_description",
+          "rationale": "Above description_warn (calibrated against studio routers); consider keyword-tag form.",
+          "severity": "warn",
+          "threshold": 500,
+          "value": 816
+        },
+        {
+          "id": "procedural_description",
+          "rationale": "Router skill (disable-model-invocation: true) still pays description cost; prefer keyword-tag form over 'Use when' prose.",
+          "severity": "info",
+          "threshold": null,
+          "value": null
+        }
+      ],
+      "hot_path_metrics": {
+        "description_chars": 816,
+        "skill_md_body_chars": 592,
+        "skill_md_lines": 20
+      },
+      "identity": {
+        "description": "Performs detailed end-to-end project reporting across multiple repositories, including initial scoping, environment detection, dependency analysis, build configuration, runtime checks, and final summary generation. Use when the user mentions reporting, status, summaries, dashboards, repo health, build health, dependency reports, or quarterly reviews. Do not use when the user only wants a quick check (use clean-skill instead) or when the request is about installation, governance, or release tagging. Invoke explicitly via /bloated-skill so the routing layer attaches the right context window. This skill exists to demonstrate description bloat for the hot-path auditor fixture and intentionally exceeds the description_warn threshold of 500 characters so the snapshot test can verify the warn-tier finding fires.",
+        "disable_model_invocation": true,
+        "name": "bloated-skill",
+        "path": "<ROOT>/bloated-skill"
+      },
+      "package_shape": {
+        "assets_count": 0,
+        "direct_links_count": 0,
+        "references_count": 0,
+        "scripts_count": 0
+      }
+    },
+    {
+      "duplication_buckets": [],
+      "findings": [],
+      "hot_path_metrics": {
+        "description_chars": 33,
+        "skill_md_body_chars": 163,
+        "skill_md_lines": 6
+      },
+      "identity": {
+        "description": "Renders project status summaries.",
+        "disable_model_invocation": false,
+        "name": "clean-skill",
+        "path": "<ROOT>/clean-skill"
+      },
+      "package_shape": {
+        "assets_count": 0,
+        "direct_links_count": 1,
+        "references_count": 1,
+        "scripts_count": 0
+      }
+    }
+  ],
+  "target_kind": "skills_dir",
+  "thresholds": {
+    "description_error": 1024,
+    "description_heading_phrase_min_words": 5,
+    "description_info": 300,
+    "description_warn": 500,
+    "router_lines_error": 500,
+    "router_lines_warn": 350,
+    "shared_phrase_min_words": 8
+  }
+}
