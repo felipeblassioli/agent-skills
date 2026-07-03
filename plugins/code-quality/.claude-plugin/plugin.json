@@ -1,7 +1,7 @@
 {
   "name": "code-quality",
-  "description": "Code quality and review for production systems. Bundles a strict distributed-systems code reviewer (PRs, diffs, and implementation plans) that flags idempotency, delivery, API-contract, migration, and Kubernetes runtime risks with a disciplined BLOCKER/HIGH/MEDIUM/LOW/QUESTION severity model. The official-tier home for the marketplace's code-review skills (ADR-0008 group 6).",
-  "version": "0.1.0",
+  "description": "Code quality and review for production systems. Bundles a strict distributed-systems code reviewer (PRs, diffs, and implementation plans) with a disciplined BLOCKER/HIGH/MEDIUM/LOW/QUESTION severity model, and TypeScript quality patterns (typed clients with timeouts, Zod boundary validation, structured domain errors, no-any on public surfaces, structured logging, OpenTelemetry, PII redaction). The official-tier home for the marketplace's code-review and code-quality skills (ADR-0008 group 6).",
+  "version": "0.2.0",
   "author": {
     "name": "Felipe Blassioli",
     "email": "felipeblassioli@gmail.com"

@@ -1,0 +1,6 @@
+{
+  "version": "1.1.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-07-03",
+  "abstract": "TypeScript code quality patterns — typed clients with timeouts, Zod boundary validation, structured domain errors, no-any on public surfaces, structured JSON logging (pino), OpenTelemetry tracing, and PII redaction. Graduated from the Cursor-era registry into the official-tier code-quality plugin, with the legacy compatibility frontmatter removed, a Gotchas section, and an eval suite."
+}

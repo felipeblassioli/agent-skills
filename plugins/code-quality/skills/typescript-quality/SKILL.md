@@ -5,8 +5,6 @@ description:
   validation, structured domain errors, no any on public APIs, structured JSON
   logging with pino, OpenTelemetry tracing, and PII redaction. Use when adding
   external API calls, validating inputs, handling errors, or setting up logging.
-compatibility:
-  files: ["tsconfig.json"]
 ---
 
 # TypeScript Quality
@@ -64,3 +62,13 @@ above. Each file is self-contained with incorrect/correct examples.
 
 **Important:** Do NOT apply changes derived from these rules without explicit
 user confirmation. Present proposed changes as diffs and wait for approval.
+
+## Gotchas
+
+Calibration these rules get wrong if applied mechanically:
+
+- **These are MEDIUM quality patterns, not correctness blockers.** Don't escalate a missing timeout or a stray `any` to a merge-blocker unless it sits on a hot or user-facing path. Match the severity to the blast radius.
+- **Validate at the boundary, not everywhere.** Apply Zod to *untrusted* input (HTTP / queue / CLI / env). Re-validating already-typed internal data adds cost and false confidence.
+- **`any` hides behind `as any`, untyped `JSON.parse`, and `object`/`Function`.** `no-any` on public surfaces means the escape hatches too — grep for those, not just the literal `any`.
+- **PII redaction must reach nested and error objects.** pino `redact` paths routinely miss deep fields like `err.config.headers.authorization`; a token inside a logged error object leaks even when top-level redaction is configured.
+- **OTel initialized ≠ OTel working.** A span that doesn't propagate trace context across the external call yields disconnected traces. Check context propagation, not just that the SDK started.

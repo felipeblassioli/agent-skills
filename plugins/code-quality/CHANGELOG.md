@@ -2,6 +2,15 @@
 
 All notable changes to this plugin will be documented in this file.
 
+## 0.2.0 - 2026-07-03
+
+### Added
+
+- **Graduated `typescript-quality`** from the Cursor-era registry into this plugin as
+  `code-quality:typescript-quality` (1.0.0 → 1.1.0). Passed the `skill-studio:skill-audit`
+  gate; hardened during promotion (removed the legacy `compatibility:` frontmatter, added
+  a Gotchas section and an eval suite). ROADMAP Phase 1, #103.
+
 ## 0.1.0 - 2026-07-03
 
 ### Added
