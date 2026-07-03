@@ -1,0 +1,174 @@
+# =============================================================================
+# Release Plugin
+# =============================================================================
+#
+# Purpose
+# -------
+# When a commit lands on `main` that bumps the `version` field of any
+# `plugins/<name>/.claude-plugin/plugin.json`, this workflow publishes a
+# corresponding GitHub Release tagged `<name>--v<version>` with a distributable
+# plugin .zip attached. The actual work is delegated to
+# `scripts/release-plugin.sh`, which validates the manifest, checks
+# plugin.json <-> marketplace.json agreement, builds the .zip, and creates the
+# release pinned to the current `HEAD`. The script is idempotent: re-runs
+# against an already-published tag are a no-op.
+#
+# This is the PLUGIN counterpart of `release-skill.yaml` (which releases
+# individual skills tagged `<skill-name>/v<version>`). The two tag namespaces
+# do not collide ("--v" vs "/v").
+#
+# Note on the .zip: Claude Code cannot persistently install a plugin from a
+# .zip. The artifact is for ephemeral `claude --plugin-url <asset>.zip` /
+# `--plugin-dir` loads and offline use; the persistent install channel stays
+# the git marketplace. See docs/releasing.md.
+#
+# Trigger
+# -------
+# Runs only on pushes to `main` that touch at least one
+# `plugins/*/.claude-plugin/plugin.json`. A version-bump check below avoids
+# publishing for manifest edits that do not change the released version (e.g.
+# fixing the `description`).
+#
+# Security model (identical posture to release-skill.yaml)
+# --------------------------------------------------------
+# - Untrusted input is the set of diff paths; they cross the step boundary
+#   through `$GITHUB_OUTPUT` (heredoc) and are read back as env vars, never
+#   interpolated into shell via `${{ ... }}` (blocks script injection).
+# - `permissions:` is minimal (`contents: write`, only on the release job).
+# - `persist-credentials: false`; we use `gh` with an explicit `GH_TOKEN`.
+# - `actions/checkout` pinned by commit SHA.
+# - `concurrency:` serializes runs on `main`.
+# - `timeout-minutes:` caps a wedged step.
+# =============================================================================
+
+name: Release Plugin
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      # GitHub path globs match a single path segment per `*`, so this matches
+      # exactly `plugins/<plugin>/.claude-plugin/plugin.json`. Keep this in sync
+      # with the `git diff` pathspec in the detect step.
+      - "plugins/*/.claude-plugin/plugin.json"
+
+permissions: {}
+
+concurrency:
+  group: release-plugin-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-changed-plugins:
+    name: Release changed plugins
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      # Required by `gh release create` inside scripts/release-plugin.sh.
+      contents: write
+
+    steps:
+      # -----------------------------------------------------------------------
+      # 1. Checkout
+      # -----------------------------------------------------------------------
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # -----------------------------------------------------------------------
+      # 2. Install the Claude Code CLI
+      # -----------------------------------------------------------------------
+      # `release-plugin.sh` needs `claude plugin validate --strict` (the only
+      # gate that validates manifests) and `claude plugin tag --dry-run` (the
+      # plugin.json <-> marketplace.json agreement check). Both are local,
+      # offline manifest operations and need no authentication.
+      - name: Install Claude Code CLI
+        shell: bash
+        # Pinned to the v2 line so a future breaking CLI change cannot silently
+        # fail releases; bump deliberately. `claude plugin validate`/`tag` are
+        # offline manifest operations and need no authentication.
+        run: |
+          npm install -g @anthropic-ai/claude-code@2
+          claude --version
+
+      # -----------------------------------------------------------------------
+      # 3. Detect plugins with bumped plugin.json version
+      # -----------------------------------------------------------------------
+      - name: Detect plugins with bumped plugin.json version
+        id: detect
+        shell: bash
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "$BEFORE_SHA" || "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]]; then
+            base="HEAD~1"
+          else
+            base="$BEFORE_SHA"
+          fi
+
+          mapfile -d '' changed < <(
+            git -c core.quotePath=false diff -z --name-only \
+              "$base" "$AFTER_SHA" -- 'plugins/*/.claude-plugin/plugin.json' || true
+          )
+
+          bumped=()
+          for path in "${changed[@]}"; do
+            [[ -z "$path" ]] && continue
+
+            new_version="$(jq -r '.version' "$path")"
+            old_version="$(git show "$base:$path" 2>/dev/null \
+              | jq -r '.version' 2>/dev/null || true)"
+
+            if [[ -n "$new_version" && "$new_version" != "null" \
+                  && "$new_version" != "$old_version" ]]; then
+              # plugins/<name>/.claude-plugin/plugin.json -> plugins/<name>
+              bumped+=("$(dirname "$(dirname "$path")")")
+            fi
+          done
+
+          echo "Plugins with bumped versions:"
+          if (( ${#bumped[@]} == 0 )); then
+            echo "  (none)"
+          else
+            printf '  - %s\n' "${bumped[@]}"
+          fi
+
+          delim="EOF_$(openssl rand -hex 16)"
+          {
+            echo "plugins<<$delim"
+            printf '%s\n' "${bumped[@]+"${bumped[@]}"}"
+            echo "$delim"
+          } >>"$GITHUB_OUTPUT"
+
+      # -----------------------------------------------------------------------
+      # 4. Release each bumped plugin
+      # -----------------------------------------------------------------------
+      - name: Release each bumped plugin
+        if: steps.detect.outputs.plugins != ''
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUMPED_PLUGINS: ${{ steps.detect.outputs.plugins }}
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r plugin_dir; do
+            [[ -z "$plugin_dir" ]] && continue
+
+            # Defense in depth: re-validate the shape before handing the value
+            # to a script that runs `gh`.
+            if [[ ! "$plugin_dir" =~ ^plugins/[A-Za-z0-9._-]+$ ]]; then
+              echo "::error::refusing to release suspicious plugin path: $plugin_dir"
+              exit 1
+            fi
+
+            echo "::group::Releasing $plugin_dir"
+            bash scripts/release-plugin.sh "$plugin_dir"
+            echo "::endgroup::"
+          done <<<"$BUMPED_PLUGINS"

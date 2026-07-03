@@ -1,0 +1,40 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-07-02",
+  "abstract": "The enhance surface of the skill-studio toolkit: recommend the 1-3 highest-leverage improvements to an existing Claude skill or plugin (effort/risk scored), and run the eval/benchmark loop (with-skill vs baseline, grade, blind A/B compare, aggregate, review) that proves a change actually helped. Claude-first evolution of the cursor-skill-studio improvement + eval-loop machinery.",
+  "source_contracts": [
+    {
+      "path": "packs/cursor-skill-studio/skills/skill-studio-audit/references/skill-improvement.md",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "packs/cursor-skill-studio/skills/skill-studio-audit/references/pack-improvement.md",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "packs/cursor-skill-studio/skills/skill-studio-audit/assets/templates/improvement-recommendation.md",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "packs/cursor-skill-studio/skills/skill-studio-write/references/eval-loop.md",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "packs/cursor-skill-studio/skills/skill-studio-write/scripts/bootstrap_skill_comparison.py",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "packs/cursor-skill-studio/skills/skill-studio-write/scripts/aggregate_benchmark.py",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "packs/cursor-skill-studio/skills/skill-studio-write/eval-viewer/generate_review.py",
+      "reviewed_at": "2026-07-02"
+    },
+    {
+      "path": "packs/cursor-skill-studio/skills/skill-studio-write/eval-viewer/viewer.html",
+      "reviewed_at": "2026-07-02"
+    }
+  ]
+}

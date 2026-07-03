@@ -2,7 +2,32 @@
 
 All notable changes to this skill will be documented in this file.
 
-## [1.3.0] - 2026-05-06
+## 1.4.0 - 2026-07-02
+
+### Changed
+
+- **Promoted into the `blassioli` Claude plugin** as `blassioli:code-reviewer`
+  (renamed from `blassioli-code-reviewer`; removed from the Cursor-era
+  `skill-registry.json`). See `docs/ADR/ADR-0006` and `ADR-0007` for the marketplace model.
+- **Runtime-neutral framing.** Removed Cursor-specific language ("operating inside
+  Cursor", "Cursor-agent output") so the skill reads the same across Claude Code,
+  Cursor, and other agents.
+- **Cache-safe script paths.** Bundled `scripts/*` are now invoked via
+  `${CLAUDE_SKILL_DIR}` so they resolve after the plugin is copied to the install cache.
+- **Refreshed routing.** Anti-triggers now point at the `skill-studio` plugin
+  (`skill-create` / `skill-audit` / `skill-enhance`) instead of the frozen
+  `cursor-skill-studio` pack.
+
+### Added
+
+- **Gotchas section** in `SKILL.md` — the reviewer's hard-won operational calibration
+  (scripts are hints not proof, assume at-least-once, a deletion is a change, contracts/
+  delivery are invisible to CI, route PR-description polish away).
+- **Evaluation suite** (`evals/evals.json`) with planted-bug fixtures, plus committed
+  baseline snapshots (`evals/baselines/2026-07-02-iter1.md` and `-iter2.md`) — the first
+  evidence backing this skill's behavior.
+
+## 1.3.0 - 2026-05-06
 
 ### Changed
 
@@ -16,7 +41,7 @@ All notable changes to this skill will be documented in this file.
 
 - `bash scripts/skill-sync.sh --skill=blassioli-code-reviewer --dry-run`
 
-## [1.2.0] - 2026-05-06
+## 1.2.0 - 2026-05-06
 
 ### Added
 
@@ -37,7 +62,7 @@ All notable changes to this skill will be documented in this file.
 - `node --check skills/blassioli-code-reviewer/scripts/detect-k8s-runtime-risks.mjs`
 - `node --check skills/blassioli-code-reviewer/scripts/detect-queue-consumers.mjs`
 
-## [1.1.0] - 2026-05-06
+## 1.1.0 - 2026-05-06
 
 ### Added
 
@@ -61,7 +86,7 @@ All notable changes to this skill will be documented in this file.
 - `node --check skills/blassioli-code-reviewer/scripts/detect-k8s-runtime-risks.mjs`
 - `node --check skills/blassioli-code-reviewer/scripts/detect-queue-consumers.mjs`
 
-## [1.0.0] - 2026-05-05
+## 1.0.0 - 2026-05-05
 
 ### Added
 

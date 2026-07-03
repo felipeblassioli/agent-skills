@@ -86,6 +86,6 @@ The pack stays reusable across repos. Only the overlay changes per repository.
 
 That means:
 
-- no Turbi-specific assumptions leak into the pack
+- no organization-specific assumptions leak into the pack
 - different repos can keep different tier names and prerequisites
 - future pack upgrades remain compatible with existing overlays

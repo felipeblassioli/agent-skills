@@ -6,6 +6,12 @@ description: Stable consolidated Cursor pack for the full skill lifecycle (write
 
 # Cursor Skill Studio
 
+> **⚠️ FROZEN at 1.2.0 (bugfix-only).** The skill-authoring toolkit has moved to
+> the Claude-first **[`skill-studio` plugin](../../plugins/skill-studio/)**
+> (create / audit / enhance). This Cursor pack stays installable for Cursor users
+> but receives bugfixes only — new work lands in the plugin. See
+> [ADR-0007](../../docs/ADR/ADR-0007-skill-studio-plugin-canonical.md).
+
 > **1.1.0 — ADR-0005 cleanup complete.** PR 6 of
 > [ADR-0005](../../docs/ADR/ADR-0005-skill-authoring-surface-consolidation.md)
 > deletes the nine deprecated root-skill stub directories

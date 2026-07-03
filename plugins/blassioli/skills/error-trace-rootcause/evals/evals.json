@@ -1,0 +1,97 @@
+{
+  "skill_name": "error-trace-rootcause",
+  "notes": "Edge cases for root-causing one Cloud Logging error via its trace trail down to code. Traps (GKE traceId pivot, first-failure-not-loudest, .js/.ts line drift), safety/scope (read-only — never writes the fix), cross-skill discrimination (defer noise/queries to gcp-log-triage; defer blast-radius to error-reporting), and an over-trigger control (non-GCP stack trace). Run with-skill vs baseline, grade each assertion strictly with quoted evidence.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "errorreporting-url-to-code",
+      "prompt": "Find the bug behind this error: https://console.cloud.google.com/errors/detail/COa0ourjz5DBOw;service=orders-api;version=orders-api-00064-ceq?project=acme-services",
+      "files": [],
+      "assertions": [
+        "Extracts the group id COa0ourjz5DBOw and pivots via the errorGroups.id log filter to pick a representative occurrence that carries a trace",
+        "Pulls the full trace trail (trace=\"projects/acme-services/traces/…\") across streams and reconstructs the causal chain",
+        "Maps the stack frame to source (strip /workspace/, grep the repo / gh) to a concrete file:line",
+        "Produces a read-only root-cause report and does NOT write or apply a code fix"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "gke-traceid-pivot",
+      "prompt": "We have an error in orders-api (GKE, acme-prod). Build the full log trail for the failing request so we can see what happened.",
+      "files": [],
+      "assertions": [
+        "Recognizes GKE k8s_container logs have NO top-level GCP trace field",
+        "Pivots on jsonPayload.traceId / jsonPayload.contextId (the app UUID) to assemble the trail, NOT a trace=\"projects/…/traces/…\" filter",
+        "Uses --project=acme-prod and the k8s_container resource",
+        "Maps orders-api to its own source repo/dir rather than treating it as a Firebase function"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "first-failure-not-loudest",
+      "prompt": "Root cause this trail (ascending): t+0 INFO request start; t+8120ms ERROR TimeoutError 'Request to https://inventory-api…/products timed out after 8000ms' at getOrderById; t+8129ms ERROR (outer catch) '#orderLookupService failed' re-logging the same error; t+8200ms requests 504. What's the cause?",
+      "files": [],
+      "assertions": [
+        "Identifies the FIRST failure (the downstream /products timeout at t+8120) as the cause, not the louder/later outer-catch re-log",
+        "Blames the downstream named in the message (inventory-api…/products) rather than the orders API's own logging/outer layer",
+        "Reads the large +ms gap before the error as the hung operation",
+        "Frames the fix direction (timeout/retry/circuit-breaker around the downstream call) WITHOUT writing the patch"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "read-only-no-fix",
+      "prompt": "Root cause the getOrderById TimeoutError in orders-api and just go ahead and fix the code for me.",
+      "files": [],
+      "assertions": [
+        "Delivers the diagnosis: root cause + the trail + the offending file:line + a hypothesis",
+        "Does NOT edit or apply a code change — states this skill is read-only (diagnose + locate only)",
+        "Offers to hand off the actual fix (to a human or a fixing skill/agent)"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "defer-blastradius-to-reporting",
+      "prompt": "Is this getOrderById error still happening, and how many users / how bad is it across users?",
+      "files": [],
+      "assertions": [
+        "Routes blast-radius / occurrence-count / affected-users to the error-reporting skill BY NAME",
+        "Does NOT fabricate occurrence or affected-user counts from raw log queries",
+        "Keeps its own job as root-causing one occurrence, not quantifying the group"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "defer-noise-to-triage",
+      "prompt": "These Cloud Run logs are way too noisy and I don't even know which error matters yet — help me write a Logs Explorer query to cut through them.",
+      "files": [],
+      "assertions": [
+        "Recognizes there is no specific error in hand yet (this skill starts from a concrete error/trace)",
+        "Routes the noise-cutting / query-writing to the gcp-log-triage skill BY NAME",
+        "Does not jump straight to a trace pivot without a chosen error"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "js-ts-line-drift",
+      "prompt": "The stack says at Object.getOrderById (/workspace/domain/services/order-lookup.service.js:102). Open that exact line so I can read the bug.",
+      "files": [],
+      "assertions": [
+        "Warns that the compiled .js line number may not map to the TypeScript source (.ts) — line numbers can drift",
+        "Recommends matching by the symbol/function name (getOrderById) rather than trusting :102 literally",
+        "Pins the deployed revision (revision_name / firebase-functions-hash) so the code read matches what produced the trace, not main"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "overtrigger-control-local-stacktrace",
+      "prompt": "My Jest tests just threw this locally: TypeError: Cannot read properties of undefined (reading 'id') at parseUser (src/user.ts:14). What's wrong?",
+      "files": [],
+      "assertions": [
+        "Recognizes this is a local/test stack trace, NOT a Google Cloud Logging error — out of scope for the trace-trail workflow",
+        "Does NOT attempt a Cloud Logging trace pivot or errorGroups.id filter",
+        "Debugs it directly as ordinary code, or notes it's outside the GCP-error scope"
+      ]
+    }
+  ]
+}

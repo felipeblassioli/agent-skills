@@ -1,0 +1,11 @@
+{
+  "name": "blassioli",
+  "description": "USE AT YOUR OWN RISK — Felipe Blassioli's personal sandbox plugin. Experimental skills: GCP observability (Cloud Error Reporting triage by blast radius, Cloud Logging noise triage, and error → trace → offending-code root-cause) and a distributed-systems code reviewer (PRs, diffs, and plans for HTTP contracts, queue consumers, scheduled jobs, and Kubernetes runtime safety). Published per the sandbox model: try them, give feedback, and they may graduate to an official plugin once they earn traction. No stability or correctness guarantees.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Felipe Blassioli",
+    "email": "felipeblassioli@gmail.com"
+  },
+  "homepage": "https://github.com/felipeblassioli/agent-skills",
+  "repository": "https://github.com/felipeblassioli/agent-skills"
+}

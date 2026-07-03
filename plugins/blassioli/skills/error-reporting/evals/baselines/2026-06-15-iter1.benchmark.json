@@ -1,0 +1,96 @@
+{
+  "skill": "error-reporting",
+  "date": "2026-06-15",
+  "iteration": 1,
+  "model": "claude-opus-4-8",
+  "method": "Each case run with the skill active vs a no-skill baseline; strict per-assertion grading with quoted evidence (agentskills.io/skill-creation/evaluating-skills).",
+  "summary": {
+    "with_pass": 27,
+    "with_total": 28,
+    "with_rate": 96.4,
+    "base_pass": 13,
+    "base_total": 28,
+    "base_rate": 46.4,
+    "delta_pts": 50
+  },
+  "cases": [
+    {
+      "id": 1,
+      "name": "errors-url-rank",
+      "with_pass": 3,
+      "with_total": 4,
+      "base_pass": 3,
+      "base_total": 4,
+      "headline": "With-skill actually ranks the live error groups and prioritizes by blast radius; baseline only explains the method but correctly documents the REST API + token mechanism — net tie at 3/4 each, differing on which single assertion each misses."
+    },
+    {
+      "id": 2,
+      "name": "gcloud-has-no-groups-command",
+      "with_pass": 4,
+      "with_total": 4,
+      "base_pass": 2,
+      "base_total": 4,
+      "headline": "With-skill answer nails all 4 assertions; baseline misses the `gcloud beta error-reporting events` specificity and the corporate-CA --cacert requirement (2/4), a +2 delta driven by environment-specific knowledge."
+    },
+    {
+      "id": 3,
+      "name": "no-trace-handoff",
+      "with_pass": 4,
+      "with_total": 4,
+      "base_pass": 1,
+      "base_total": 4,
+      "headline": "With-skill nails all 4 (categorical no-trace, errorGroups.id join key, named handoff); baseline only avoids the false-API claim but hedges the no-trace point and never names the join key or the rootcause skill."
+    },
+    {
+      "id": 4,
+      "name": "blast-radius-prioritization",
+      "with_pass": 4,
+      "with_total": 4,
+      "base_pass": 4,
+      "base_total": 4,
+      "headline": "Both answers pass all 4 assertions (4/4 each); no delta on this prompt — both correctly pick B over A's raw 50k, cite the 2h regression + 6-service blast radius, handle the null affectedUsers caveat, and use the explicit /24h window."
+    },
+    {
+      "id": 5,
+      "name": "safe-fields-no-pii",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 1,
+      "base_total": 3,
+      "headline": "With-skill refuses the raw dump and returns only a safe-field projection (3/3); baseline flags PII but still hands over the full unredacted raw-event path, failing the projection and not-surfaced assertions (1/3)."
+    },
+    {
+      "id": 6,
+      "name": "read-only-no-status-mutation",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 0,
+      "base_total": 3,
+      "headline": "With-skill enforces read-only refusal on all 3 assertions; baseline fails all 3 by treating acknowledge/mute as in-scope and supplying ready-to-run mutation commands."
+    },
+    {
+      "id": 7,
+      "name": "defer-query-to-triage",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 1,
+      "base_total": 3,
+      "headline": "With-skill defers to gcp-log-triage by name and recognizes the out-of-scope boundary (3/3); baseline just answers the query and passes only the no-API assertion (1/3)."
+    },
+    {
+      "id": 8,
+      "name": "overtrigger-control-sentry",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 1,
+      "base_total": 3,
+      "headline": "With-skill answer recognizes Sentry as out-of-scope and redirects (3/3); baseline silently answers the Sentry request without acknowledging the GCP-only boundary (1/3)."
+    }
+  ],
+  "known_flaws": [
+    {
+      "case": "errors-url-rank",
+      "missed_assertion": "Reaches the data via the Error Reporting REST API (clouderrorreporting.googleapis.com) authenticated with a gcloud access token — NOT a (nonexistent) gcloud groups command"
+    }
+  ]
+}

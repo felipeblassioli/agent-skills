@@ -6,3 +6,5 @@ _references/
 .work
 __pycache__/
 *.pyc
+# Plugin release artifacts are built to a temp dir; never commit stray zips.
+*.zip

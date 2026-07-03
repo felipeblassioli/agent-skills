@@ -1,0 +1,100 @@
+{
+  "skill": "gcp-log-triage",
+  "date": "2026-06-15",
+  "iteration": 1,
+  "model": "claude-opus-4-8",
+  "method": "Each case run with the skill active vs a no-skill baseline; strict per-assertion grading with quoted evidence (agentskills.io/skill-creation/evaluating-skills).",
+  "summary": {
+    "with_pass": 26,
+    "with_total": 28,
+    "with_rate": 92.9,
+    "base_pass": 16,
+    "base_total": 28,
+    "base_rate": 57.1,
+    "delta_pts": 35.7
+  },
+  "cases": [
+    {
+      "id": 1,
+      "name": "noisy-export-collapse-to-signal",
+      "with_pass": 4,
+      "with_total": 4,
+      "base_pass": 3,
+      "base_total": 4,
+      "headline": "With-skill passes all 4; baseline matches on 3 but misses the dedup-by-trace tooling/funnel approach (no triage-logs.sh or repeatable trace-collapse query)."
+    },
+    {
+      "id": 2,
+      "name": "gke-archetype-targeting",
+      "with_pass": 3,
+      "with_total": 4,
+      "base_pass": 3,
+      "base_total": 4,
+      "headline": "Both answers nail resource type, logName/project, and severity floor (3/4); neither covers the GKE trace-correlation note, so no with-vs-baseline delta on this prompt."
+    },
+    {
+      "id": 3,
+      "name": "secret-leak-apikey",
+      "with_pass": 4,
+      "with_total": 4,
+      "base_pass": 3,
+      "base_total": 4,
+      "headline": "With-skill passes all 4; baseline misses only the --format projection assertion, instead masking in the logger and querying without a safe-field projection."
+    },
+    {
+      "id": 4,
+      "name": "exclusion-filter-safety",
+      "with_pass": 4,
+      "with_total": 4,
+      "base_pass": 2,
+      "base_total": 4,
+      "headline": "With-skill answer leads with non-retroactivity/unrecoverability warning and pushes emitter-fix/sampling before a blanket drop (4/4); baseline gives a correct _Default command with caveats but never warns entries are unrecoverable and treats the full exclusion as the default move with sampling only as an afterthought (2/4)."
+    },
+    {
+      "id": 5,
+      "name": "defer-rootcause-to-sibling",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 0,
+      "base_total": 3,
+      "headline": "With-skill cleanly hands deep root-cause-to-code off to error-trace-rootcause by name (3/3); baseline names no sibling skill and absorbs the code-mapping job itself (0/3)."
+    },
+    {
+      "id": 6,
+      "name": "defer-ranking-to-sibling",
+      "with_pass": 2,
+      "with_total": 3,
+      "base_pass": 1,
+      "base_total": 3,
+      "headline": "With-skill hands the ranking off to Error Reporting by name and treats raw logs only as a sanity check, while baseline builds a full raw-log aggregation of both occurrence and affected-user counts — though both technically still derive a group ranking from raw logs."
+    },
+    {
+      "id": 7,
+      "name": "cloudrun-logname-encoding",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 3,
+      "base_total": 3,
+      "headline": "Both answers fully satisfy all 3 assertions (cloud_run_revision + service_name, %2Fstderr logName, severity>=ERROR); no delta on the graded criteria, though the with-skill answer adds a security note about avoiding the authorization-bearer header blob."
+    },
+    {
+      "id": 8,
+      "name": "overtrigger-control-instrumentation",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 1,
+      "base_total": 3,
+      "headline": "With-skill correctly recognizes overtrigger and hands off to app-side logging guidance (3/3); baseline answers the out-of-scope authoring question in full, failing both scope assertions (1/3)."
+    }
+  ],
+  "known_flaws": [
+    {
+      "case": "gke-archetype-targeting",
+      "missed_assertion": "Notes that GKE k8s_container has no top-level GCP trace, so request correlation uses jsonPayload.traceId/contextId (not trace=)"
+    },
+    {
+      "case": "defer-ranking-to-sibling",
+      "missed_assertion": "Does not attempt to compute group rankings or affected-user counts from raw log queries"
+    }
+  ]
+}

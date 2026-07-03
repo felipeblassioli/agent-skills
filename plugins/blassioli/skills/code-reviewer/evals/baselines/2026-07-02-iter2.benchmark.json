@@ -1,0 +1,23 @@
+{
+  "skill": "code-reviewer",
+  "date": "2026-07-02",
+  "iteration": 2,
+  "model": "claude-opus-4-8 (inherited)",
+  "method": "adds two subtle fixtures (dual-write-no-outbox, money-as-float) to test detection delta; with-skill vs baseline, same model; author-graded; single run per config",
+  "configs": {
+    "with_skill": { "expectations_passed": 8, "expectations_total": 8, "pass_rate": 1.0 },
+    "baseline":   { "expectations_passed": 6, "expectations_total": 8, "pass_rate": 0.75 }
+  },
+  "delta_pass_rate": 0.25,
+  "combined_iter1_iter2": {
+    "discriminating_cases": [1, 2, 3, 5, 6],
+    "with_skill": { "expectations_passed": 21, "expectations_total": 21, "pass_rate": 1.0 },
+    "baseline":   { "expectations_passed": 17, "expectations_total": 21, "pass_rate": 0.81 }
+  },
+  "per_case": [
+    { "id": 5, "name": "dual-write-no-outbox", "with_skill": "4/4", "baseline": "3/4", "baseline_miss": "caught the outbox/partial-failure bug; no BLOCKER/HIGH label" },
+    { "id": 6, "name": "money-as-float", "with_skill": "4/4", "baseline": "3/4", "baseline_miss": "caught float accumulation + 1.005 rounding; no BLOCKER/HIGH label" }
+  ],
+  "finding": "Detection parity even on subtle bugs. On a frontier model the skill's measurable value is severity-vocabulary discipline, structured output, and the over-trigger boundary — not detection. Detection uplift is expected mainly on weaker models and very large diffs (untested here).",
+  "caveats": ["single run per config", "author-graded", "detection-delta hypothesis disproven on this model"]
+}

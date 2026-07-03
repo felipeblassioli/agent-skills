@@ -1,0 +1,30 @@
+{
+  "skill": "code-reviewer",
+  "date": "2026-07-02",
+  "iteration": 1,
+  "model": "claude-opus-4-8 (inherited)",
+  "method": "with-skill vs baseline (plain senior-engineer prompt), same underlying model; author-graded against evals.json expectations with quoted evidence; single run per config",
+  "configs": {
+    "with_skill": {
+      "expectations_passed": 13,
+      "expectations_total": 13,
+      "pass_rate": 1.0,
+      "control_passed": true
+    },
+    "baseline": {
+      "expectations_passed": 11,
+      "expectations_total": 13,
+      "pass_rate": 0.846,
+      "control_run": false
+    }
+  },
+  "delta_pass_rate": 0.154,
+  "per_case": [
+    { "id": 1, "name": "non-idempotent-consumer", "with_skill": "4/4", "baseline": "3/4", "baseline_miss": "no BLOCKER/HIGH severity label on the duplicate-charge risk" },
+    { "id": 2, "name": "api-contract-break", "with_skill": "4/4", "baseline": "3/4", "baseline_miss": "no BLOCKER severity label on the broken contract" },
+    { "id": 3, "name": "k8s-missing-probes", "with_skill": "5/5", "baseline": "5/5", "baseline_miss": null },
+    { "id": 4, "name": "overtrigger-pr-polish", "with_skill": "pass (declined + routed)", "baseline": "n/a (control)", "baseline_miss": null }
+  ],
+  "finding": "Against a strong underlying model, detection parity on textbook cases; the skill's measurable delta is severity-vocabulary discipline, structured output, and the over-trigger boundary.",
+  "caveats": ["single run per config (no variance)", "author-graded, not independent-grader", "fixtures are textbook-level; detection delta likely understated"]
+}

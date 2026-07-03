@@ -35,16 +35,17 @@ This repository has grown beyond loose skill files. Recent work added:
 - authoring doctrine for small hot paths, progressive disclosure, and
   skill-versus-pack boundaries
 
-The Bond private skill governance model adds a useful discipline: treat each
+A private-platform skill governance model adds a useful discipline: treat each
 skill as a versioned contract, not loose documentation. It requires synchronized
 versions, changelogs, source-contract review, README usage prompts, registry
 maintenance, and validation. That model is valuable, but it is more strict than
-this repository should apply uniformly. Bond is a private platform source of
-truth with source contracts for VTEC and Turbi behavior. This repository is a
-personal multi-surface registry with portable skills, imported skills,
-pack-bundled skills, runtime packs, subagents, rules, hooks, and MCP examples.
+this repository should apply uniformly. Such a model suits a private platform
+source of truth with source contracts for a specific deployment platform and
+internal service behavior. This repository is a personal multi-surface registry
+with portable skills, imported skills, pack-bundled skills, runtime packs,
+subagents, rules, hooks, and MCP examples.
 
-The missing decision is how much Bond-style governance to adopt without
+The missing decision is how much of that governance to adopt without
 bloating skill hot paths or confusing root skills with pack-bundled skills.
 
 ## Decision
@@ -317,12 +318,12 @@ For those skills, source contracts should be recorded in:
 - `SKILL.md`, only when the source contract materially affects agent routing or
   the skill's safe use
 
-This borrows Bond's source-contract discipline without making every skill hot
+This borrows that source-contract discipline without making every skill hot
 path carry private-platform governance fields.
 
 ## Rationale
 
-This model preserves the strongest part of Bond governance: skills are
+This model preserves the strongest part of that governance model: skills are
 maintained contracts, not loose notes. It also respects the shape of this
 repository and Cursor's skill standard.
 
@@ -352,8 +353,8 @@ repository-wide migration.
   pack-level release ownership.
 - Future maintainers have obvious homes for agent guidance, human prompts,
   release history, source contracts, references, assets, and scripts.
-- Source-contract skills can adopt Bond-style freshness evidence where it adds
-  value.
+- Source-contract skills can adopt source-contract freshness evidence where it
+  adds value.
 - ADR-0001's registry-driven release model remains intact.
 - Skill and pack validators can grow from explicit policy rather than implicit
   taste.
@@ -371,7 +372,7 @@ repository-wide migration.
 
 - Not every skill needs a README immediately.
 - Not every skill needs source contracts.
-- `SKILL.md` frontmatter remains intentionally lighter than Bond's private
+- `SKILL.md` frontmatter remains intentionally lighter than that private
   governance model.
 - Validation scripts will likely need follow-up changes to enforce the parts of
   this ADR that are deterministic.
@@ -380,7 +381,7 @@ repository-wide migration.
 
 | Option | Pros | Cons | Why rejected |
 |--------|------|------|--------------|
-| Adopt Bond governance exactly | Strong consistency, explicit source freshness, strict validation | Adds `version`, `last_reviewed`, and source-contract fields to every hot path; overfits a private platform repo; treats all skills as equally source-contract-heavy | Too heavy for a personal multi-surface skill and pack registry |
+| Adopt the private-platform governance exactly | Strong consistency, explicit source freshness, strict validation | Adds `version`, `last_reviewed`, and source-contract fields to every hot path; overfits a private platform repo; treats all skills as equally source-contract-heavy | Too heavy for a personal multi-surface skill and pack registry |
 | Keep only Cursor's minimum skill shape | Maximum portability, low friction, simple authoring | No durable maintenance contract; changelog and README usage become optional folklore; source drift is easy to miss | Too weak for a repository that already has registries, releases, packs, and imported skills |
 | Treat pack-bundled skills as normal root skills | One versioning model for every skill directory | Creates duplicate release ownership; increases collision risk in `~/.cursor/skills`; undermines `kind: "skill"` as a pack delivery channel | Confuses delivery mechanism with release authority |
 | Require README and CHANGELOG for every skill immediately | Uniform maintainer experience | Creates busywork for tiny or experimental skills; encourages boilerplate and stale docs | Better as an expectation for maintained registry skills, not a universal hard gate |
@@ -463,12 +464,8 @@ This ADR should be considered implemented when:
 - `scripts/skill-version.sh`
 - `scripts/cursor-pack-version.sh`
 - `scripts/cursor-pack-verify.sh`
-- Bond governance reference:
-  `bond/.cursor/rules/bond-skill-governance.mdc`
-- Bond maintainer skill reference:
-  `bond/skills/bond-skill-maintainer/SKILL.md`
-- Bond versioning reference:
-  `bond/docs/versioning.md`
+- Private-platform skill governance model (internal reference; not part of this
+  public repository)
 
 ## Changelog
 

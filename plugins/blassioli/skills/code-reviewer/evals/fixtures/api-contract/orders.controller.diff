@@ -1,0 +1,19 @@
+--- a/src/api/orders.controller.ts
++++ b/src/api/orders.controller.ts
+@@ GET /v1/orders/:id  (public, documented since v1)
+ export async function getOrder(req: Request, res: Response) {
+   const order = await orders.findById(req.params.id);
+   if (!order) return res.status(404).json({ error: "not_found" });
+
+-  return res.status(200).json({
+-    id: order.id,
+-    userId: order.userId,
+-    total: order.total,
+-  });
++  // tidy up the response shape
++  return res.status(204).json({
++    id: order.id,
++    user_id: order.userId,
++    total: order.total,
++  });
+ }
