@@ -1,0 +1,216 @@
+# =============================================================================
+# Release Skill
+# =============================================================================
+#
+# Purpose
+# -------
+# When a commit lands on `main` that bumps the `version` field of a plugin
+# skill's `metadata.json` (`plugins/<plugin>/skills/<name>/`), this workflow
+# publishes a corresponding GitHub Release tagged `<plugin>-<skill>/v<version>`.
+# The actual release work is
+# delegated to `scripts/release-skill.sh`, which validates the package,
+# extracts the matching CHANGELOG section, and creates the release pinned to
+# the current `HEAD`. The script is idempotent: re-runs against an
+# already-published tag are a no-op.
+#
+# NOTE (coexistence): this workflow intentionally covers ONLY plugin skills.
+# The repo's legacy top-level `skills/<name>/` remain on the Cursor-era
+# `skill-registry.json` model and are released by their own tooling
+# (`release-units.yml`), not this one. See
+# docs/ADR/ADR-0006-adopt-claude-first-plugin-marketplace.md.
+#
+# Trigger
+# -------
+# Runs only on pushes to `main` that touch at least one plugin skill
+# `metadata.json` (`plugins/*/skills/*/metadata.json`). The path filter
+# avoids spinning the runner up for unrelated changes; the version-bump
+# check below avoids publishing for metadata edits that do not change the
+# released version (e.g. fixing a typo in `abstract`).
+#
+# Pipeline
+# --------
+# 1. Checkout `main` with enough history to diff the push range.
+# 2. `detect`: for every metadata.json modified by this push, compare
+#    `.version` between the previous and current commit, and emit the list
+#    of skill directories whose version actually changed.
+# 3. `release`: for each detected skill, invoke `scripts/release-skill.sh`,
+#    which validates, extracts changelog notes, and creates the release.
+#
+# Security model
+# --------------
+# - Untrusted input is the set of file paths in the diff. Path values are
+#   never interpolated into a shell script via `${{ ... }}`; they cross the
+#   step boundary through `$GITHUB_OUTPUT` (newline-delimited, heredoc) and
+#   are read back as environment variables. This blocks the classic
+#   GitHub Actions script-injection vector.
+# - `permissions:` is set to the minimum required (`contents: write`, only
+#   for the release job, to let `gh release create` push tags/releases).
+# - `persist-credentials: false` on checkout prevents the workflow token
+#   from leaking into the local git config, where any subsequent step
+#   could pick it up.
+# - `actions/checkout` is pinned by commit SHA to defend against a
+#   compromised tag in the action repository.
+# - `concurrency:` serializes runs against `main` so two near-simultaneous
+#   pushes cannot race the same release.
+# - `timeout-minutes:` caps a wedged `gh`/`jq` call.
+# =============================================================================
+
+name: Release Skill
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      # Plugin skills only: `plugins/<plugin>/skills/<skill>`. Each `*` matches
+      # one path segment. Keep this in sync with the `git diff` pathspec and the
+      # path-shape guard in the steps below.
+      - "plugins/*/skills/*/metadata.json"
+
+# Default to no permissions for any token used by this workflow; the release
+# job opts back into `contents: write` explicitly.
+permissions: {}
+
+# Serialize runs on `main` so we never publish the same skill version twice
+# from two parallel runs. We do NOT cancel in progress: a release run that
+# already passed validation should be allowed to finish.
+concurrency:
+  group: release-skill-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-changed-skills:
+    name: Release changed skills
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      # Required by `gh release create` inside scripts/release-skill.sh.
+      contents: write
+
+    steps:
+      # -----------------------------------------------------------------------
+      # 1. Checkout
+      # -----------------------------------------------------------------------
+      # `fetch-depth: 0` gives us the full history so we can diff against
+      # `github.event.before` even when the push contains a non-fast-forward
+      # merge commit (HEAD~1 would only follow the first parent and miss
+      # bumps that came in on the merged branch).
+      #
+      # `persist-credentials: false` prevents the GITHUB_TOKEN from being
+      # written to `.git/config`. We use `gh` with an explicit `GH_TOKEN`
+      # env var instead, so we never need the credential helper.
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # -----------------------------------------------------------------------
+      # 2. Detect skills with bumped metadata.json version
+      # -----------------------------------------------------------------------
+      # Diff range:
+      #   - `github.event.before` is the SHA `main` pointed at before this
+      #     push. For the very first push to a new branch GitHub reports
+      #     this as all-zeroes; we fall back to `HEAD~1` in that case.
+      # Path safety:
+      #   - `git diff -z` emits NUL-delimited paths so filenames with
+      #     newlines or shell metacharacters cannot break parsing.
+      #   - `core.quotePath=false` keeps non-ASCII paths intact.
+      # Output:
+      #   - We write each skill directory on its own line into a heredoc
+      #     output named `skills`. The downstream step reads it as an env
+      #     var and never expands it through `${{ ... }}` in shell context,
+      #     which would otherwise be a script-injection sink.
+      - name: Detect skills with bumped metadata.json version
+        id: detect
+        shell: bash
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
+        run: |
+          set -euo pipefail
+
+          # Resolve the base of the diff. The "all-zeroes" sentinel means
+          # this ref did not exist on the remote before the push.
+          if [[ -z "$BEFORE_SHA" || "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]]; then
+            base="HEAD~1"
+          else
+            base="$BEFORE_SHA"
+          fi
+
+          # Collect changed metadata.json paths, NUL-delimited.
+          mapfile -d '' changed < <(
+            git -c core.quotePath=false diff -z --name-only \
+              "$base" "$AFTER_SHA" \
+              -- 'plugins/*/skills/*/metadata.json' || true
+          )
+
+          bumped=()
+          for path in "${changed[@]}"; do
+            [[ -z "$path" ]] && continue
+
+            new_version="$(jq -r '.version' "$path")"
+
+            # The previous revision may not contain this file (newly added
+            # skill). Treat a missing old version as "definitely bumped".
+            old_version="$(git show "$base:$path" 2>/dev/null \
+              | jq -r '.version' 2>/dev/null || true)"
+
+            if [[ -n "$new_version" && "$new_version" != "null" \
+                  && "$new_version" != "$old_version" ]]; then
+              bumped+=("$(dirname "$path")")
+            fi
+          done
+
+          echo "Skills with bumped versions:"
+          if (( ${#bumped[@]} == 0 )); then
+            echo "  (none)"
+          else
+            printf '  - %s\n' "${bumped[@]}"
+          fi
+
+          # Emit a multi-line output using a randomized heredoc delimiter,
+          # as recommended by GitHub for untrusted multi-line values.
+          delim="EOF_$(openssl rand -hex 16)"
+          {
+            echo "skills<<$delim"
+            printf '%s\n' "${bumped[@]+"${bumped[@]}"}"
+            echo "$delim"
+          } >>"$GITHUB_OUTPUT"
+
+      # -----------------------------------------------------------------------
+      # 3. Release each bumped skill
+      # -----------------------------------------------------------------------
+      # The list of skills is passed via `env:` (BUMPED_SKILLS) instead of
+      # `${{ ... }}` interpolation in the script body. This is the critical
+      # security boundary: a skill directory containing shell metacharacters
+      # cannot escape into the runner's shell.
+      #
+      # `set -e` plus `bash scripts/release-skill.sh` means the first failing
+      # release aborts the run. The script itself is idempotent against
+      # already-published tags, so re-running this workflow after a partial
+      # failure is safe.
+      - name: Release each bumped skill
+        if: steps.detect.outputs.skills != ''
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUMPED_SKILLS: ${{ steps.detect.outputs.skills }}
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r skill_dir; do
+            [[ -z "$skill_dir" ]] && continue
+
+            # Defense in depth: even though paths originate from the `git diff`
+            # pathspec, re-validate the shape before handing the value to a
+            # script that will run `gh`. Plugin skills only.
+            if [[ ! "$skill_dir" =~ ^plugins/[A-Za-z0-9._-]+/skills/[A-Za-z0-9._-]+$ ]]; then
+              echo "::error::refusing to release suspicious skill path: $skill_dir"
+              exit 1
+            fi
+
+            echo "::group::Releasing $skill_dir"
+            bash scripts/release-skill.sh "$skill_dir"
+            echo "::endgroup::"
+          done <<<"$BUMPED_SKILLS"

@@ -6,6 +6,26 @@ repository. For the deep version see
 and
 [`docs/specs/artifact-maintenance-workflow.md`](../specs/artifact-maintenance-workflow.md).
 
+## Two Distribution Models (Coexistence)
+
+This repo ships agent skills through **two coexisting models** — know which one your
+change belongs to:
+
+- **Cursor-era registry** (ADR-0001..0005): `skill-registry.json` /
+  `cursor-pack-registry.json` cataloguing `skills/<name>/` and `packs/<name>/`,
+  deployed by `skill-sync.sh` / `cursor-pack-sync.sh`.
+- **Claude-first plugin marketplace** (ADR-0006): `.claude-plugin/marketplace.json`
+  cataloguing `plugins/<plugin>/`, installed natively via
+  `/plugin marketplace add felipeblassioli/agent-skills` +
+  `/plugin install <plugin>@agent-skills`. Governed by
+  [`docs/marketplace-governance.md`](../marketplace-governance.md) and released by the
+  plugins-only `release-skill.yaml` / `release-plugin.yaml` workflows.
+
+**Rule of thumb:** a new Claude-installable plugin → the marketplace (`plugins/*`,
+ADR-0006); anything already under `skills/` or `packs/` → the registry. The two do
+not overlap — see the boundary table in
+[`ADR-0006`](../ADR/ADR-0006-adopt-claude-first-plugin-marketplace.md).
+
 ## The Four Layers
 
 | Layer | Where | Answers | Stability |
@@ -124,6 +144,9 @@ This is the canonical pattern. Copy it.
 - [`docs/ADR/ADR-0002-governed-skill-maintenance-model.md`](../ADR/ADR-0002-governed-skill-maintenance-model.md)
 - [`docs/ADR/ADR-0003-artifact-maturity-model.md`](../ADR/ADR-0003-artifact-maturity-model.md)
 - [`docs/ADR/ADR-0004-cross-runtime-agent-packaging-model.md`](../ADR/ADR-0004-cross-runtime-agent-packaging-model.md)
+- [`docs/ADR/ADR-0006-adopt-claude-first-plugin-marketplace.md`](../ADR/ADR-0006-adopt-claude-first-plugin-marketplace.md)
+- [`docs/ADR/ADR-0007-skill-studio-plugin-canonical.md`](../ADR/ADR-0007-skill-studio-plugin-canonical.md)
+- [`docs/marketplace-governance.md`](../marketplace-governance.md) — Claude-first plugin marketplace
 - [`docs/specs/artifact-maintenance-workflow.md`](../specs/artifact-maintenance-workflow.md)
 - [`docs/specs/cursor-pack-specification.md`](../specs/cursor-pack-specification.md)
 - [`docs/specs/agentic-skill-pack-authoring.md`](../specs/agentic-skill-pack-authoring.md)

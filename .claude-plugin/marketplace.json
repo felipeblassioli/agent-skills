@@ -1,0 +1,28 @@
+{
+  "name": "agent-skills",
+  "description": "Felipe Blassioli's personal marketplace of Claude Code plugins — GCP/SRE observability tooling and skill-authoring governance. Public and personal; no warranty.",
+  "owner": {
+    "name": "Felipe Blassioli",
+    "email": "felipeblassioli@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "blassioli",
+      "source": "./plugins/blassioli",
+      "description": "USE AT YOUR OWN RISK — Felipe Blassioli's personal sandbox plugin: GCP observability skills (Cloud Error Reporting triage, Cloud Logging noise triage, error → trace → code root-cause) plus a distributed-systems code reviewer. Experimental; sandbox tier; may graduate to an official plugin as it earns traction.",
+      "author": { "name": "Felipe Blassioli", "email": "felipeblassioli@gmail.com" }
+    },
+    {
+      "name": "repo-governance",
+      "source": "./plugins/repo-governance",
+      "description": "Release governance for this marketplace: versioning, validating, promoting, and releasing plugins and skills (marketplace.json / plugin.json / registry alignment). For maintainers. Skill authoring and auditing live in the skill-studio plugin.",
+      "author": { "name": "Felipe Blassioli", "email": "felipeblassioli@gmail.com" }
+    },
+    {
+      "name": "skill-studio",
+      "source": "./plugins/skill-studio",
+      "description": "Author, audit, and enhance Claude skills and plugins: create from scratch or adapt external sources (skill-create), audit for quality, context-efficiency, and portfolio overlap (skill-audit), and improve via an eval/benchmark loop (skill-enhance). Bundles helper subagents and a Python eval harness.",
+      "author": { "name": "Felipe Blassioli", "email": "felipeblassioli@gmail.com" }
+    }
+  ]
+}

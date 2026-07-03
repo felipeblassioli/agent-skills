@@ -1,0 +1,20 @@
+{
+  "version": "0.3.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-06-16",
+  "abstract": "Read-only root-cause skill that turns a Google Cloud Logging error into a code-level diagnosis by correlating it into one request's trace trail. Accepts a Logs Explorer console URL, an Error Reporting group filter (errorGroups.id), a raw UI query, a bare trace, or a pasted log entry; picks a representative occurrence; pivots to trace=\"projects/P/traces/HEX\" to pull every entry sharing that trace across the stdout/stderr/requests streams and trace-propagated downstream services; reconstructs the ordered causal chain (first-failure rule, +ms gaps, error.cause, Promise.all fan-out, retry/timeout mismatch); and maps the first non-node_modules /workspace stack frame to source — local workspace first (the service's repo/dir or path/symbol grep), else a GitHub org you pass via gh (no clone). Handles heterogeneous service->repo mapping (Cloud Run repos vs Firebase Functions monorepos), pins the deployed revision, and warns about .js-vs-.ts line drift. Stops at a structured root-cause report and hands off; it does not write fixes. Pairs with gcp-log-triage. Bundles scripts/logs-url-to-filter.sh (console-URL double-decode + errorGroups.id normalization + window extraction) and scripts/trace-trail.sh (representative selection, trace-trail assembly, ordered rendering that never prints header/track blobs, with a dry-run/gcloud-absent fallback). The errorGroups.id field name, the trace= filter, and the gcloud flags were verified against the official Google Cloud documentation.",
+  "source_contracts": [
+    {
+      "path": "https://docs.cloud.google.com/logging/docs/analyze/find-logs-error-groups",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/logging/docs/view/logging-query-language",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/sdk/gcloud/reference/logging/read",
+      "reviewed_at": "2026-06-15"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "skill": "error-trace-rootcause",
+  "date": "2026-06-15",
+  "iteration": 1,
+  "model": "claude-opus-4-8",
+  "method": "Each case run with the skill active vs a no-skill baseline; strict per-assertion grading with quoted evidence (agentskills.io/skill-creation/evaluating-skills).",
+  "summary": {
+    "with_pass": 25,
+    "with_total": 27,
+    "with_rate": 92.6,
+    "base_pass": 10,
+    "base_total": 27,
+    "base_rate": 37,
+    "delta_pts": 55.6
+  },
+  "cases": [
+    {
+      "id": 1,
+      "name": "errorreporting-url-to-code",
+      "with_pass": 4,
+      "with_total": 4,
+      "base_pass": 0,
+      "base_total": 4,
+      "headline": "With-skill answer satisfies all 4 assertions (group pivot, full trace trail, concrete file:line, read-only report); baseline satisfies 0 — it only proposes a methodology and asks the user for the stack trace, never obtaining the trace or mapping to source."
+    },
+    {
+      "id": 2,
+      "name": "gke-traceid-pivot",
+      "with_pass": 3,
+      "with_total": 4,
+      "base_pass": 1,
+      "base_total": 4,
+      "headline": "With-skill answer nails the GKE traceId/contextId pivot (3/4); baseline defaults to the wrong GCP trace= pivot (1/4); both miss the explicit orders-api source mapping."
+    },
+    {
+      "id": 3,
+      "name": "first-failure-not-loudest",
+      "with_pass": 4,
+      "with_total": 4,
+      "base_pass": 3,
+      "base_total": 4,
+      "headline": "With-skill passes all 4; baseline misses only the +ms-gap-as-hung-operation read, scoring 3/4 — a +1 delta."
+    },
+    {
+      "id": 4,
+      "name": "read-only-no-fix",
+      "with_pass": 2,
+      "with_total": 3,
+      "base_pass": 0,
+      "base_total": 3,
+      "headline": "With-skill answer enforces read-only scope and offers fix hand-off (2/3); baseline neither (0/3); both fail to actually deliver a concrete diagnosis since both gate on missing evidence."
+    },
+    {
+      "id": 5,
+      "name": "defer-blastradius-to-reporting",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 1,
+      "base_total": 3,
+      "headline": "With-skill cleanly defers all blast-radius/affected-user counting to Error Reporting and keeps itself to single-occurrence root cause (3/3); baseline names Error Reporting but then fabricates distinct-user counts via raw log aggregation and takes on quantifying the group itself (1/3)."
+    },
+    {
+      "id": 6,
+      "name": "defer-noise-to-triage",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 1,
+      "base_total": 3,
+      "headline": "With-skill correctly recognizes no error is chosen yet and routes to gcp-log-triage by name; baseline dives into writing queries itself and never defers or names the triage skill."
+    },
+    {
+      "id": 7,
+      "name": "js-ts-line-drift",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 2,
+      "base_total": 3,
+      "headline": "With-skill passes all 3; baseline matches on line-drift and symbol-matching but misses pinning the deployed revision (revision_name/SHA vs main), focusing only on sourcemaps."
+    },
+    {
+      "id": 8,
+      "name": "overtrigger-control-local-stacktrace",
+      "with_pass": 3,
+      "with_total": 3,
+      "base_pass": 2,
+      "base_total": 3,
+      "headline": "With-skill explicitly names the local-vs-Cloud-Logging scope distinction and declines the trace workflow (3/3); baseline debugs correctly but never acknowledges the GCP/trace-trail scope, missing the recognition assertion (2/3)."
+    }
+  ],
+  "known_flaws": [
+    {
+      "case": "gke-traceid-pivot",
+      "missed_assertion": "Maps orders-api to its own source repo/dir rather than treating it as a Firebase function"
+    },
+    {
+      "case": "read-only-no-fix",
+      "missed_assertion": "Delivers the diagnosis: root cause + the trail + the offending file:line + a hypothesis"
+    }
+  ]
+}

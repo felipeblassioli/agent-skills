@@ -1,0 +1,28 @@
+{
+  "version": "0.3.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-06-16",
+  "abstract": "Triage-first skill for using Google Cloud Logging effectively against noisy output. Teaches the noise model (one request fans out across the Cloud Run stdout/stderr/requests streams, app loggers re-emit errors, entries repeat large header/context blobs, and the GCP `trace` joins streams while the app `traceId` does not) and a top-down triage funnel: locate by resource+time, pick one stream, floor severity, narrow to the symptom, and project only signal fields. Covers both the Logs Explorer query language and `gcloud logging read` (same filter language; operators and flags verified against the official docs). Secondary coverage of reducing noise at the source: emitter fixes (stop logging the Authorization Bearer token and full headers, collapse duplicate emits, drop empty context blobs), severity hygiene, exclusion filters on the _Default sink, and routing to dedicated buckets. Bundles scripts/triage-logs.sh, a jq-backed extractor that collapses an export to one row per trace and never prints the header/context blobs, so it is safe to run on exports containing secrets. Field paths use an example structured-log jsonPayload shape (adapt to your logger) but the technique is generic GCP.",
+  "source_contracts": [
+    {
+      "path": "https://docs.cloud.google.com/logging/docs/view/logging-query-language",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/sdk/gcloud/reference/logging/read",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/sdk/gcloud/reference/logging/sinks/update",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/logging/docs/exclusions",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/logging/docs/log-scope/create-and-manage",
+      "reviewed_at": "2026-06-15"
+    }
+  ]
+}

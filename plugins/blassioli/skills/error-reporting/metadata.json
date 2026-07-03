@@ -1,0 +1,24 @@
+{
+  "version": "0.3.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-06-16",
+  "abstract": "Read-only skill for triaging Google Cloud Error Reporting from the CLI. Because gcloud has no command to list or inspect error groups (only `gcloud beta error-reporting events` report/delete), the skill calls the Error Reporting REST API (clouderrorreporting.googleapis.com) with a gcloud-minted access token, automatically passing the gcloud-configured custom CA bundle when running behind a corporate proxy. It ranks a service's error groups by blast radius (groupStats.list: count, affectedUsersCount, firstSeen/lastSeen, numAffectedServices, representative stack), reads a single group's detail, lists recent occurrences and the revision they fire on (events.list), and parses /errors and /errors/detail console URLs into project/groupId/service/version. The skill is the entry point of the GCP debugging trio: Error Reporting has no Cloud Logging trace id, so the group id (group.groupId == the errorGroups.id log field) is handed to the error-trace-rootcause skill, which pivots through logs to a trace, the request trail, and the code; gcp-log-triage de-noises around it. Output projects only safe fields (never httpRequest/remoteIp/user). Bundles scripts/errors-url-to-query.sh and scripts/error-groups.sh (list/detail/events, --json, --dry-run, gcloud-absent fallback). The REST methods, gcloud's events-only surface, and the groupStats/events behavior were verified against the official docs and a live read-only call (example project acme-services, service orders-api) on the date below.",
+  "source_contracts": [
+    {
+      "path": "https://docs.cloud.google.com/error-reporting/reference/rest/v1beta1/projects.groupStats/list",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/error-reporting/reference/rest/v1beta1/projects.events/list",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/error-reporting/reference/rest/v1beta1/projects.groups",
+      "reviewed_at": "2026-06-15"
+    },
+    {
+      "path": "https://docs.cloud.google.com/logging/docs/analyze/find-logs-error-groups",
+      "reviewed_at": "2026-06-15"
+    }
+  ]
+}

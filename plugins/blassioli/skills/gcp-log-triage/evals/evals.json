@@ -1,0 +1,98 @@
+{
+  "skill_name": "gcp-log-triage",
+  "notes": "Edge cases for triaging noisy Google Cloud Logging output. Mix of traps (secrets, archetype targeting, exclusion safety, logName encoding), cross-skill discrimination (defer root-cause-to-code to error-trace-rootcause; defer blast-radius ranking to error-reporting), and over-trigger controls (app-side instrumentation is out of scope). Run with-skill vs baseline, grade each assertion strictly with quoted evidence.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "noisy-export-collapse-to-signal",
+      "prompt": "I exported these Cloud Run logs from Logs Explorer (one request, project acme-services). They're a wall of noise — what's actually failing? [4 entries, all trace=projects/acme-services/traces/29f9796c…: (a) stderr ERROR jsonPayload.error {name:TimeoutError, message:'Request to https://shop-web.example.com/booking timed out after 8000ms', stack: at makeRequest (/app/providers/http.client.v2.js:174)} with jsonPayload.statusCode:504, plus a 700-line keys.httpRequest.headers blob incl authorization: Bearer eyJ…; (b) a near-identical stderr ERROR; (c) stdout INFO 'LoggerMiddleware: GET …'; (d) requests ERROR httpRequest.status 504 latency 30s]",
+      "files": [],
+      "assertions": [
+        "Collapses the 4 entries to ONE signal per trace (recognizes the stdout/stderr/requests fan-out + duplicate emit), not 4 separate problems",
+        "Names the real failure: TimeoutError / 504 with the offending downstream shop-web…/booking and the call site http.client.v2.js:174",
+        "Does NOT reproduce or echo the authorization Bearer token or the full headers blob; treats it as noise/secret",
+        "Points at the dedup-by-trace approach (the triage funnel or the triage-logs.sh script), not manual line-by-line reading"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "gke-archetype-targeting",
+      "prompt": "Write me a gcloud logging read query to pull errors for our inventory-api service running on GKE in acme-prod over the last hour.",
+      "files": [],
+      "assertions": [
+        "Targets resource.type=\"k8s_container\" with a namespace/container label (e.g. resource.labels.namespace_name=\"inventory-api\"), NOT cloud_run_revision",
+        "Uses the plain GKE logName ending in /logs/stderr (NOT run.googleapis.com%2Fstderr) or omits logName, and uses --project=acme-prod",
+        "Notes that GKE k8s_container has no top-level GCP trace, so request correlation uses jsonPayload.traceId/contextId (not trace=)",
+        "Floors severity with severity>=\"ERROR\" (or equivalent) to cut INFO noise"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "secret-leak-apikey",
+      "prompt": "Here's an inventory-api log line, help me triage what's in it: jsonPayload.keys.httpRequest.headers has X-Api-Key: E1119000-C1A5-4086-8127-924943D3C051, X-Real-Ip: 172.69.17.161, and a body with customerEmail/documentNumber. message is LoggerMiddleware.request.",
+      "files": [],
+      "assertions": [
+        "Does NOT echo the X-Api-Key value (or treats it as a credential that must be redacted)",
+        "Flags that logging the X-Api-Key / client IP / request body is a secret+PII leak at the source",
+        "Recommends projecting only signal fields (e.g. --format projection) rather than dumping headers/body",
+        "Recognizes this is an INFO request log (LoggerMiddleware.request), not an error"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "exclusion-filter-safety",
+      "prompt": "Our INFO request logs from orders-api are flooding Cloud Logging and costing us money. Add an exclusion filter to drop them.",
+      "files": [],
+      "assertions": [
+        "Warns that log exclusions are NOT retroactive and excluded entries are unrecoverable (and not stored/billed)",
+        "Recommends fixing the emitter / severity hygiene first, or sampling (sample(insertId, …)) rather than dropping 100%, before a blanket exclusion",
+        "If it gives the command, it targets the _Default sink (gcloud logging sinks update _Default --add-exclusion=name=…,filter=…) scoped to INFO/that service, never severity>=ERROR",
+        "Does not treat the exclusion as a no-risk first move"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "defer-rootcause-to-sibling",
+      "prompt": "I've already found the specific TimeoutError in orders-api — now trace it through the request and find the exact line of code that's the bug.",
+      "files": [],
+      "assertions": [
+        "Routes deep root-cause-to-code (trace trail → offending file:line) to the error-trace-rootcause skill BY NAME",
+        "Does not claim to itself map the trace to the source repo / produce the code-level root cause",
+        "Stays in its lane (surfacing/triaging the error in logs) or hands off cleanly"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "defer-ranking-to-sibling",
+      "prompt": "Which errors are worst for orders-api right now — rank them by how many times they've occurred and how many users they hit.",
+      "files": [],
+      "assertions": [
+        "Routes error-group ranking / blast-radius to the error-reporting skill BY NAME",
+        "Does not attempt to compute group rankings or affected-user counts from raw log queries",
+        "Recognizes this is Error Reporting's job, not raw-log triage"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "cloudrun-logname-encoding",
+      "prompt": "Give me the Logs Explorer query for just the stderr stream of the Cloud Run service orders-api in acme-services, errors only.",
+      "files": [],
+      "assertions": [
+        "Uses resource.type=\"cloud_run_revision\" with resource.labels.service_name=\"orders-api\"",
+        "Writes logName with the percent-encoded stream: run.googleapis.com%2Fstderr (the %2F, not a literal /)",
+        "Adds severity>=\"ERROR\" (or =ERROR) to scope to errors"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "overtrigger-control-instrumentation",
+      "prompt": "How should our Node.js service emit structured logs and set up OpenTelemetry tracing so they show up nicely in Cloud Logging?",
+      "files": [],
+      "assertions": [
+        "Recognizes this is app-side logging/instrumentation authoring — OUT OF SCOPE for log triage",
+        "Points to app-side logging/instrumentation guidance or otherwise declines to apply the triage funnel",
+        "Does NOT produce a Logs Explorer triage query as if this were a triage request"
+      ]
+    }
+  ]
+}
