@@ -174,20 +174,6 @@
       ],
       "description": "Nx TypeScript monorepo architecture guide"
     },
-    "typescript-quality": {
-      "version": "1.0.0",
-      "author": "felipeblassioli",
-      "scope": "global",
-      "targets": [
-        "cursor"
-      ],
-      "tags": [
-        "typescript",
-        "quality",
-        "patterns"
-      ],
-      "description": "TypeScript quality patterns and best practices"
-    },
     "typescript-testing-organization": {
       "version": "1.0.0",
       "author": "felipeblassioli",
