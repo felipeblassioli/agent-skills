@@ -1,0 +1,71 @@
+{
+  "skill_name": "gh-post-code-review",
+  "notes": "Decision-logic fixtures for posting a review to a GitHub PR: verdict/severity -> review event mapping, inline anchoring rules, the self-review fallback, and out-of-diff handling. Five discriminating cases plus one over-trigger control (no review authored yet -> must route to the reviewer, not post). Grade with quoted evidence; a comparative benchmark snapshot is a follow-up skill-enhance iteration.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "blocker-requests-changes",
+      "prompt": "Post this review to PR https://github.com/acme/app/pull/42:\n\n## Verdict\nNot merge-ready.\n\n## BLOCKER\n- B1 Duplicate charge on redelivery. ```10:14:src/consumer.ts```",
+      "files": [],
+      "expectations": [
+        "Selects review event REQUEST_CHANGES because a BLOCKER is present",
+        "Parses the code ref 10:14:src/consumer.ts into an inline anchor on src/consumer.ts",
+        "Stages the payload and asks for explicit confirmation before posting"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "only-medium-is-comment",
+      "prompt": "Post this to acme/app#7:\n\n## Verdict\nLooks fine overall.\n\n## MEDIUM\n- M1 Add a test for the empty-list case.\n## LOW\n- L1 Rename `tmp` to something descriptive.",
+      "files": [],
+      "expectations": [
+        "Selects review event COMMENT (no BLOCKER/HIGH present)",
+        "Does NOT select REQUEST_CHANGES or APPROVE",
+        "Renders no-code-ref findings into the summary body rather than dropping them"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "merge-ready-approve",
+      "prompt": "Post to acme/app#9:\n\n## Verdict\nMERGE-READY.\n\n## QUESTION\n- Q1 Any reason to keep the old flag? (non-blocking)",
+      "files": [],
+      "expectations": [
+        "Selects review event APPROVE (verdict MERGE-READY, no BLOCKER/HIGH)",
+        "Keeps the QUESTION as a non-blocking comment, not a change request"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "self-review-fallback",
+      "prompt": "Post this review to my own PR acme/app#12 (I am the PR author):\n\n## BLOCKER\n- B1 SQL injection in the search endpoint. ```20:22:src/search.ts```",
+      "files": [],
+      "expectations": [
+        "Recognizes GitHub forbids APPROVE/REQUEST_CHANGES on your own PR",
+        "Falls back to a COMMENT event (or a plain PR comment) instead of failing",
+        "Still surfaces the BLOCKER content; does not soften it"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "out-of-diff-path-skipped",
+      "prompt": "Post to acme/app#15. One finding anchors to `config/prod.yaml` which is NOT in this PR's changed files:\n\n## HIGH\n- H1 Secret committed. ```3:3:config/prod.yaml```",
+      "files": [],
+      "expectations": [
+        "Detects that config/prod.yaml is not in the PR diff (via pulls/N/files)",
+        "Moves the finding to skipped_findings / folds it into the summary body instead of anchoring inline",
+        "Does not let one out-of-diff comment 422 the entire review"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "control-no-review-authored",
+      "prompt": "Review PR https://github.com/acme/app/pull/20 for me and tell me if it's safe to merge.",
+      "files": [],
+      "expectations": [
+        "Recognizes no written review was provided — this skill posts, it does not author",
+        "Declines per the applicability gate and routes to code-quality:code-reviewer",
+        "Does NOT fabricate a review or post anything to the PR"
+      ]
+    }
+  ]
+}

@@ -2,6 +2,17 @@
 
 All notable changes to this plugin will be documented in this file.
 
+## 0.3.0 - 2026-07-03
+
+### Added
+
+- **Graduated `gh-post-code-review`** from the Cursor-era registry into this plugin as
+  `code-quality:gh-post-code-review` (0.1.0 → 0.2.0). Passed the `skill-studio:skill-audit`
+  gate; hardened during promotion (removed legacy `compatibility:` frontmatter,
+  **fixed two cache-unsafe bare script paths** to `${CLAUDE_SKILL_DIR}`, trimmed the
+  description, fixed a stale `blassioli-code-reviewer` cross-ref, added a Gotchas section
+  and an eval suite). ROADMAP Phase 1, #103.
+
 ## 0.2.0 - 2026-07-03
 
 ### Added

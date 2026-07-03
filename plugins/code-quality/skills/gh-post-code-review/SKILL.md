@@ -1,10 +1,6 @@
 ---
 name: gh-post-code-review
-description: Post a structured code review to a GitHub PR using `gh` CLI (default) and the GitHub REST API (fallback for multi-comment / inline-anchored reviews). Maps verdict + severity sections (BLOCKER/HIGH/MEDIUM/LOW/QUESTION) to the right review event and inline anchors, parses ` ```start:end:path ` code refs, and adapts addressing/tone to the PR author. Use when the user has a written code review and wants it posted to a specific PR URL or number. Do NOT use to author the review itself, to triage existing comments, or to open/merge PRs.
-compatibility:
-  - gh CLI installed and authenticated (`gh auth status`)
-  - jq, python3 available on PATH
-  - write access to the target repository (scope `repo`, `pull_request:write`)
+description: Post a structured code review to a GitHub PR via `gh` CLI (REST API fallback for multi-comment / inline-anchored reviews). Maps BLOCKER/HIGH/MEDIUM/LOW/QUESTION sections to the right review event and inline anchors, parses ` ```start:end:path ` code refs, and adapts tone to the PR author. Use when you have a written code review and want it posted to a specific PR URL or number. Do NOT use to author the review itself, triage existing comments, or open/merge PRs.
 ---
 
 # Post Code Review to GitHub PR
@@ -12,6 +8,12 @@ compatibility:
 Turn a structured review (markdown) into a properly-anchored GitHub PR review.
 Default to `gh pr review`. Fall back to `gh api POST /reviews` when the review
 has multiple inline comments, side-aware anchors, or needs a draft state.
+
+## Prerequisites
+
+- `gh` CLI installed and authenticated (`gh auth status`).
+- `jq` and `python3` available on PATH.
+- Write access to the target repository (token scope `repo` / `pull_request:write`).
 
 ## Applicability Gate
 
@@ -23,7 +25,7 @@ Use when ALL of the following are true:
 
 Do NOT use when:
 
-- The review does not yet exist — that is `blassioli-code-reviewer`.
+- The review does not yet exist — that is `code-quality:code-reviewer`.
 - The user wants to triage / reply to existing comments — see `babysit`,
   `get-pr-comments`.
 - The user wants to open the PR or push a branch — see `gh-pr-creator`,
@@ -81,10 +83,10 @@ this SHA at post time (see step 8).
 
 ### 2. Parse the review
 
-Pipe the review markdown through `scripts/parse-refs.py`:
+Pipe the review markdown through the bundled parser:
 
 ```bash
-python3 scripts/parse-refs.py < review.md > .work/findings-<pr>-<ts>.json
+python3 "${CLAUDE_SKILL_DIR}/scripts/parse-refs.py" < review.md > .work/findings-<pr>-<ts>.json
 ```
 
 The parser emits one entry per finding with: `id` (e.g. `B1`, `H2`), `severity`,
@@ -163,7 +165,7 @@ Short version:
 - **Use `gh pr review`** only when there are zero anchored comments AND the
   event is `APPROVE` or `COMMENT` with a single body. (`gh pr review` cannot
   attach multiple inline comments in one shot.)
-- **Use `scripts/post-review.sh`** otherwise. It wraps:
+- **Use `${CLAUDE_SKILL_DIR}/scripts/post-review.sh`** otherwise. It wraps:
 
   ```bash
   gh api -X POST "/repos/$OWNER/$REPO/pulls/$NUMBER/reviews" \
@@ -228,6 +230,17 @@ explanatory prose around the JSON.
 | Payload skeleton | [assets/templates/review-payload.json](assets/templates/review-payload.json) |
 | Parse review markdown to findings JSON | [scripts/parse-refs.py](scripts/parse-refs.py) |
 | Post the review with SHA-drift guard | [scripts/post-review.sh](scripts/post-review.sh) |
+
+## Gotchas
+
+Failure modes GitHub's API punishes if you assume the obvious:
+
+- **You cannot `APPROVE` / `REQUEST_CHANGES` your own PR.** GitHub rejects self-review with those events. When the authenticated viewer is the PR author (common when dogfooding on your own repos), fall back to a `COMMENT` event or a plain PR comment — don't let the post silently fail.
+- **`gh pr review` can't attach multiple inline comments.** For more than one inline anchor you MUST use the REST `POST /reviews` path (the bundled `post-review.sh`). Silently dropping to `gh pr review` loses every inline finding but the first.
+- **Anchor by `line` + `side` against `commit_id`, never `position`.** `position` is a diff offset that breaks on rebase; `line`/`side` pinned to `HEAD_SHA` is stable.
+- **One out-of-diff path 422s the whole review.** GitHub rejects the entire review if any inline comment targets a file not in the PR diff — verify each path against `pulls/N/files` and fold the rest into the summary body (`skipped_findings`).
+- **Re-fetch `HEAD_SHA` immediately before posting.** New commits can land between authoring and posting; the wrapper aborts on SHA drift unless `--allow-sha-drift` — don't override that blindly, it means your anchors are stale.
+- **The idempotency marker is load-bearing.** Re-running without checking for the existing `gh-post-code-review:sha=...:hash=...` marker stacks duplicate reviews on the PR.
 
 ## What this skill is NOT
 
