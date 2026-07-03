@@ -11,6 +11,7 @@ group 6 of the nine-group taxonomy
 | Skill | What it does |
 |---|---|
 | `code-reviewer` | A strict, runtime-neutral distributed-systems code reviewer for PRs, diffs, branches, and implementation plans. Classifies the change, applies workload-archetype + cross-cutting review lenses (HTTP contracts, queue consumers, scheduled jobs, dual-write/outbox, money/units, Kubernetes runtime), and emits findings under a disciplined `BLOCKER/HIGH/MEDIUM/LOW/QUESTION` severity model. Ships an eval suite with committed baselines. |
+| `typescript-quality` | TypeScript code-quality patterns: typed clients with timeouts, Zod boundary validation, structured domain errors, no-`any` on public surfaces, structured JSON logging (pino), OpenTelemetry tracing, and PII redaction. Routes a question to the right rule; details live one hop away. |
 
 ## Install
 
@@ -29,9 +30,9 @@ independently.
 
 ## Roadmap
 
-Further code-quality candidates (`owasp-security`, `gh-post-code-review`,
-`typescript-quality`, `sql`/`postgresql` review, `quality-playbook`) are audited
-and promoted incrementally under
+Further code-quality candidates (`gh-post-code-review`, `sql`/`postgresql` review,
+`quality-playbook`) are audited and promoted incrementally under
 [#103](https://github.com/felipeblassioli/agent-skills/issues/103) — one gated
-promotion per follow-up PR. Governance and release flow through the
-`repo-governance` plugin.
+promotion per follow-up PR. (`owasp-security` is externally sourced from a no-license
+upstream and is held back from promotion until its license/attribution is resolved.)
+Governance and release flow through the `repo-governance` plugin.

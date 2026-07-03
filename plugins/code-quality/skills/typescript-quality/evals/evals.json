@@ -1,0 +1,74 @@
+{
+  "skill_name": "typescript-quality",
+  "notes": "Routing/classification fixtures for the TypeScript quality dispatcher. Each case embeds a small snippet inline in the prompt and checks that the skill routes to the correct rule under references/rules/ and recommends the right pattern. Five discriminating cases plus one non-TypeScript control that must NOT trigger. Run with-skill vs baseline; grade each expectation strictly with quoted evidence. A comparative benchmark snapshot is a follow-up skill-enhance iteration.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "no-any-public-api",
+      "prompt": "Is this public function signature acceptable? `export function handle(payload: any): any { return payload.data }`",
+      "files": [],
+      "expectations": [
+        "Flags `any` on a public surface (parameter and return) as a violation",
+        "Routes to references/rules/boundaries-no-any.md",
+        "Recommends explicit types (or `unknown` + narrowing) instead of `any`",
+        "Notes the escape hatches (`as any`, untyped `JSON.parse`) count as `any` too"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "input-validation-boundary",
+      "prompt": "Review this Express handler: `app.post('/users', (req, res) => { const email = req.body.email; createUser(email) })`",
+      "files": [],
+      "expectations": [
+        "Flags that untrusted `req.body` is used without boundary validation",
+        "Routes to references/rules/boundaries-input-validation.md",
+        "Recommends validating the input at the boundary with Zod (parse/safeParse)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "typed-client-timeout",
+      "prompt": "Any issue here? `const r = await fetch('https://api.vendor.com/x'); return r.json()`",
+      "files": [],
+      "expectations": [
+        "Flags the external call has no timeout / abort control",
+        "Routes to references/rules/boundaries-typed-clients.md",
+        "Recommends a typed client with an explicit timeout (AbortSignal.timeout or similar)"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "structured-domain-errors",
+      "prompt": "Review the error handling: `if (!user) throw new Error('user not found ' + id)`",
+      "files": [],
+      "expectations": [
+        "Flags the ad-hoc string Error instead of a structured domain error with a stable code",
+        "Routes to references/rules/boundaries-structured-errors.md",
+        "Recommends a DomainError subclass with a stable code (points at assets/templates/domain-error.ts)"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "pii-in-logs",
+      "prompt": "Is this logging line safe? `console.log('login', { email: user.email, token: session.token })`",
+      "files": [],
+      "expectations": [
+        "Flags PII/secret leakage (email, token) into logs",
+        "Routes to references/rules/observability-pii-redaction.md (and structured-logging)",
+        "Recommends structured logging with pino + redaction rather than console.log",
+        "Notes redaction must cover nested and error-object fields, not only the top level"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "control-plain-javascript",
+      "prompt": "Review this plain JavaScript file (no TypeScript, no tsconfig): `module.exports = function add(a, b) { return a + b }`",
+      "files": [],
+      "expectations": [
+        "Recognizes the project is plain JavaScript, not TypeScript",
+        "Declines per the 'When NOT to Apply' gate instead of forcing TypeScript-specific rules",
+        "Does NOT emit typed-client / Zod / no-any findings for this snippet"
+      ]
+    }
+  ]
+}
