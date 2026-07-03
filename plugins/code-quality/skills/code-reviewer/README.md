@@ -1,6 +1,6 @@
 # code-reviewer
 
-`blassioli:code-reviewer` — a strict, runtime-neutral code-review skill for
+`code-quality:code-reviewer` — a strict, runtime-neutral code-review skill for
 production-sensitive changes, with explicit review paths for HTTP services, HTTP API
 contracts, scheduled work, queue consumers, Kubernetes runtime behavior, observability,
 error-handling discipline, and distributed-systems safety.
@@ -29,7 +29,7 @@ error-handling discipline, and distributed-systems safety.
 
 ```bash
 /plugin marketplace add felipeblassioli/agent-skills
-/plugin install blassioli@agent-skills
+/plugin install code-quality@agent-skills
 ```
 
 ## Related

@@ -2,6 +2,22 @@
 
 All notable changes to this skill will be documented in this file.
 
+## 1.5.0 - 2026-07-03
+
+### Changed
+
+- **Graduated into the `code-quality` plugin** as `code-quality:code-reviewer`
+  (moved from the `blassioli` sandbox). Passed the `skill-studio:skill-audit`
+  promotion gate. See `docs/ADR/ADR-0008` and `docs/ROADMAP.md` (Phase 1, #103).
+
+### Added
+
+- **Gotcha: "Don't infer absence from a partial diff."** Folds in the j2md PR #20
+  dogfood lesson — a finding that something is *missing* must be verified against
+  the repo before flagging; unconfirmed absence is a `QUESTION`, not a `BLOCKER`.
+  Also notes that a mock/fixture hand-feeding data the real request never asks for
+  is not proof a test covers the path.
+
 ## 1.4.0 - 2026-07-02
 
 ### Changed

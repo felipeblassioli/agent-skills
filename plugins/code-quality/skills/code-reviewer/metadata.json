@@ -1,0 +1,7 @@
+{
+  "version": "1.5.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-07-03",
+  "abstract": "Strict, runtime-neutral code-review skill for PRs, diffs, and implementation plans, with focused review lenses for HTTP services, HTTP API contracts, scheduled jobs, queue consumers, Kubernetes runtime behavior, observability, error-handling discipline, and distributed-systems safety. Graduated from the blassioli sandbox into the official-tier code-quality plugin, with runtime-neutral framing, cache-safe script paths, an evaluation suite plus committed baselines, and severity discipline that treats unconfirmed absence as a QUESTION rather than a BLOCKER.",
+  "source_contracts": []
+}
