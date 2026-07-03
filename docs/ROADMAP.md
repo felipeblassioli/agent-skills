@@ -49,7 +49,7 @@ and backlog.
 | 3 | Data Fetching & Analysis | `data-analysis` | **gap** | [#110](https://github.com/felipeblassioli/agent-skills/issues/110) | `gcloud-logging` base + net-new GCP metrics/BigQuery |
 | 4 | Business Process & Team Automation | `team-automation` | planned | [#109](https://github.com/felipeblassioli/agent-skills/issues/109) | `linear-specialist` (promote) |
 | 5 | Code Scaffolding & Templates | `scaffolding` | planned | [#108](https://github.com/felipeblassioli/agent-skills/issues/108) | `create-*` alpha + `cli-creator` (promote) |
-| 6 | Code Quality & Review | `code-quality` | planned | [#103](https://github.com/felipeblassioli/agent-skills/issues/103) | **`blassioli:code-reviewer`** (graduate) |
+| 6 | Code Quality & Review | `code-quality` | **active** | [#103](https://github.com/felipeblassioli/agent-skills/issues/103) | **`code-reviewer`** graduated ✓ (v0.1.0) |
 | 7 | CI/CD & Deployment | `cicd` | planned | [#107](https://github.com/felipeblassioli/agent-skills/issues/107) | `babysit`, `gh-fix-ci` (promote) |
 | 8 | Runbooks | `runbooks` | planned | [#104](https://github.com/felipeblassioli/agent-skills/issues/104) | **`blassioli` GCP trio + `resolve-bug`** (graduate) |
 | 9 | Infrastructure Operations | `infra-ops` | **gap** | [#111](https://github.com/felipeblassioli/agent-skills/issues/111) | net-new (orphans, cost, deps) — build last |
@@ -70,7 +70,7 @@ lazily as their anchor graduates, then audit-and-promote the rest of that group'
 - No new plugins yet.
 
 ### Phase 1 — Formalize strengths (SRE + review; most personal-relevant)
-- **`code-quality`** — graduate `blassioli:code-reviewer` (already evaled); then
+- **`code-quality`** — ✓ `code-reviewer` graduated (plugin v0.1.0, #103); next:
   audit+promote `owasp-security`, `gh-post-code-review`, `typescript-quality`, and the
   alpha `quality-playbook` / `sql-code-review` / `postgresql-code-review` / `code-review`.
 - **`runbooks`** — graduate the `blassioli` GCP trio (`error-reporting`,
