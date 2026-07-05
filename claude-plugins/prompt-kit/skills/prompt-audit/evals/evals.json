@@ -1,0 +1,94 @@
+{
+  "skill_name": "prompt-audit",
+  "notes": "Adversarial prompt linter. Grade both what it catches AND what it correctly leaves alone — a linter that flags everything is worthless. Cases 1–4 and 7 are true positives (a specific rule must fire at its severity); cases 5 and 6 are calibration controls (a rule must NOT fire — safety prohibitions are not R4 steering-negatives; a clean outcome-oriented prompt must not be gutted). Case 8 exercises the requires_tier dependency (no model named → call model-recommender first). Every fired finding must cite the rule_id + severity from prompt-audit-rules.md and be accompanied by a rewritten prompt. Rule ids/severities are those in prompt-audit-rules.md as of 2026-07-05.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "deliberation-railroaded-R1",
+      "prompt": "Audit this prompt (target: opus). Prompt: 'Design our caching layer. Step 1: add a Redis client. Step 2: wrap every DB call. Step 3: set TTL 60s. Step 4: return the cached value.'",
+      "files": [],
+      "assertions": [
+        "Fires R1-archetype-mismatch at severity block: a deliberation task scripted as step-by-step edits, throttling the judgment you want",
+        "Rewrite converts it to goal + acceptance criteria + constraints with the HOW left open",
+        "Does not praise before reporting the finding"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "execution-open-ended-R1",
+      "prompt": "Audit this prompt (target: sonnet). Prompt: 'Improve the auth module.'",
+      "files": [],
+      "assertions": [
+        "Fires R1-archetype-mismatch at severity block: an execution task left open-ended — no scope, acceptance, or verification",
+        "Also flags R5-unstated-expectations (implicit scope/output) as warn",
+        "Rewrite adds tight scope + explicit acceptance + a verification command"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "fable-reasoning-echo-R3",
+      "prompt": "Audit this prompt (target: fable). Prompt: 'Solve the problem and show your full chain of thought — transcribe all your reasoning step by step in the response before the answer.'",
+      "files": [],
+      "assertions": [
+        "Fires R3-reasoning-echo-trap at severity block (target is Fable)",
+        "Explains the risk: can trigger the reasoning_extraction refusal and silently fall back to Opus 4.8",
+        "Rewrite removes the show-your-reasoning instruction and suggests reading adaptive thinking blocks / a progress channel instead"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "negatives-to-positives-R4",
+      "prompt": "Audit this prompt. Prompt: 'Write the release notes. Don't be verbose. Don't use markdown. Avoid jargon.'",
+      "files": [],
+      "assertions": [
+        "Fires R4-negatives-to-positives at severity warn on the 'don't/avoid' steering instructions",
+        "Rewrite states the positive behavior (e.g. 'write 3–5 flowing prose sentences in plain language')",
+        "Does not escalate a warn to block"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "prohibitions-not-flagged-control",
+      "prompt": "Audit this prompt (target: sonnet). Prompt: 'Implement the fix in a worktree and open a PR. Never force-push, never merge, and never deploy — a human does that. Done when `make test` exits 0.'",
+      "files": [],
+      "assertions": [
+        "Does NOT fire R4 on 'never force-push/merge/deploy' — these are safety prohibitions, not steering negatives",
+        "Recognizes the prompt as well-formed execution (scope + verification present)",
+        "Emits few or no findings and does not rewrite it wholesale"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "clean-prompt-not-gutted-control",
+      "prompt": "Audit this prompt (target: sonnet). Prompt: 'In parsers/, add null-guards to every parse* function that lacks one (goal). Done when: no parse* dereferences input without a guard, and `npm test` passes. Don't change the public signatures. Here is one example of the guard style: <example>if (!raw) return null;</example>'",
+      "files": [],
+      "assertions": [
+        "Recognizes it as a well-scoped execution prompt (explicit scope, acceptance, verification, and an example)",
+        "Emits at most 1–2 minor findings; does not gut or wholesale-rewrite it",
+        "If it flags 'Don't change the public signatures' it is at most a nit (borderline prohibition), not a block"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "review-literal-filtering-R10",
+      "prompt": "Audit this prompt (target: opus). Prompt: 'Review this PR. Only report high-severity bugs and don't nitpick.'",
+      "files": [],
+      "assertions": [
+        "Fires R10-review-literal-filtering at severity warn",
+        "Explains that a literal-following model obeys 'only high-severity' at the finding stage, dropping measured recall",
+        "Rewrite asks for full coverage with confidence + severity, moving filtering to a downstream step"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "requires-tier-dependency-no-model",
+      "prompt": "Audit this prompt (no target model given): 'Refactor the billing service to be faster.'",
+      "files": [],
+      "assertions": [
+        "Because no model is named, calls model-recommender to resolve the task's archetype → tier before evaluating requires_tier rules",
+        "Then audits against that tier's profile (execution vs deliberation posture)",
+        "Fires R1/R5 (open-ended, no scope/acceptance) and rewrites with scope + verification"
+      ]
+    }
+  ]
+}

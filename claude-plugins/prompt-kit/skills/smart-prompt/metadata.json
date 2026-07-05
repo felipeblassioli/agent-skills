@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "author": "Felipe Blassioli",
+  "date": "2026-07-05",
+  "abstract": "Shapes a loose intent into a well-formed prompt for a Claude Code session (an agent that gathers context, uses tools, asks questions). Matches the intent to a validated archetype from the bundled references/prompt-archetypes.md, fills the universal slots (objective, context to gather, anchors, clarify-first, acceptance criteria, verification, output contract, stop conditions), routes the tier via model-recommender, and self-checks with prompt-audit so the emitted prompt passes its own linter. Holds no routing data or model strings of its own. Learns from use: after each shaping it offers to capture the case to an external, never-committed ledger (~/.claude/smart-prompt-ledger.md); recurring, generalizable, sanitized cases are promoted (human-gated) into the public catalog plus a regression eval. Authors prompts (generative) where prompt-audit critiques them (adversarial) — the two compose.",
+  "references": [
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  ]
+}

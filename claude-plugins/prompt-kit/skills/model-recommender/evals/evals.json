@@ -1,0 +1,76 @@
+{
+  "skill_name": "model-recommender",
+  "notes": "Routing verdicts must be resolved against the installed ~/.claude/model-profiles.md, never from memory. Each case asserts the durable verdict (archetype + tier + effort) AND the resolved model string from tier_to_model. Two controls guard the failure modes that matter most: over-escalation (a hard-but-tractable task must stay on the deliberation tier, not jump to escalation/Fable) and graceful staleness (emit tier + effort and flag, never guess a string). Model strings in assertions are the values in tier_to_model as of 2026-07-05 — regrade against the file if it changed. Run with-skill vs baseline; grade each assertion with quoted evidence.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "build-a-plugin-deliberation-xhigh",
+      "prompt": "How should I build the loop-compiler plugin from scratch? Which model and effort?",
+      "files": [],
+      "assertions": [
+        "Classifies the task as deliberation (ambiguous, high-leverage, get-it-right-once — architecture / breaking down work)",
+        "Emits the durable verdict first: deliberation tier, effort xhigh (coding/agentic deliberation), with a one-line reason",
+        "Resolves the model to claude-opus-4-8 via tier_to_model[deliberation]",
+        "Does NOT escalate to the escalation tier / claude-fable-5 (within the deliberation tier's ceiling)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "locate-code-recon-low",
+      "prompt": "Find where the retry/backoff logic lives in this service.",
+      "files": [],
+      "assertions": [
+        "Classifies as recon (locate/read)",
+        "Emits recon tier, effort low",
+        "Resolves the model to claude-haiku-4-5-20251001 via tier_to_model[recon]",
+        "Does not route a pure lookup to a judgment tier"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "scoped-implementation-execution-high",
+      "prompt": "Implement TICKET-451 exactly as specified — add cursor pagination to GET /users with unit tests. The spec and acceptance criteria are in the ticket.",
+      "files": [],
+      "assertions": [
+        "Classifies as execution (already-scoped, on-rails, a specified unit)",
+        "Emits execution tier, effort high",
+        "Resolves the model to claude-sonnet-5 via tier_to_model[execution]",
+        "Does not route settled, spec'd work to the deliberation tier"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "phased-task-per-phase",
+      "prompt": "Plan, implement, and review a new billing module. What model per phase?",
+      "files": [],
+      "assertions": [
+        "Recommends per phase, one line each, rather than a single averaged verdict",
+        "Plan phase → deliberation / claude-opus-4-8",
+        "Implement phase → execution / claude-sonnet-5",
+        "Review phase → deliberation / claude-opus-4-8"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "no-over-escalation-control",
+      "prompt": "Design a caching layer for these DB calls — the invalidation is tricky. Which model?",
+      "files": [],
+      "assertions": [
+        "Classifies as deliberation (a hard design call, but within the deliberation tier's ceiling)",
+        "Resolves to claude-opus-4-8 at high or xhigh — NOT the escalation tier / claude-fable-5",
+        "Treats escalation as reserved (long-horizon / beyond the deliberation ceiling), not the default for 'hard'"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "graceful-staleness-control",
+      "prompt": "Which model for reviewing this PR? (assume ~/.claude/model-profiles.md's deliberation profile is 90 days past its last_verified and the source is unreachable)",
+      "files": [],
+      "assertions": [
+        "Still emits the durable verdict: deliberation tier, effort high (review is deliberation)",
+        "Flags the profile / model table as stale rather than presenting a model string as verified",
+        "Does NOT invent or guess a model string when it cannot resolve/refresh"
+      ]
+    }
+  ]
+}

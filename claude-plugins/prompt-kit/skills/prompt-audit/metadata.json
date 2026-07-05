@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "author": "Felipe Blassioli",
+  "date": "2026-07-05",
+  "abstract": "Adversarial prompt linter. Loads a versioned rule set (R1–R11, severities block/warn/nit) from the bundled prompt-audit-rules.md and audits a draft prompt against both the task's archetype and the target model's posture (resolved via model-recommender + ~/.claude/model-profiles.md for requires_tier rules). Finds what will underperform — archetype mismatch, wrong prescription level for the tier, the Fable reasoning-echo refusal trap, negatives that should be positive directives, unstated 'above and beyond' expectations, rejected params, literal review-filtering — and returns tagged findings (rule_id + severity) plus a --fix-style rewritten prompt. Calibrated to leave good prompts intact (a linter that flags everything is worthless): safety prohibitions are not treated as steering negatives, and a couple of findings on a strong prompt is expected, not a rewrite-everything signal.",
+  "references": [
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  ]
+}
