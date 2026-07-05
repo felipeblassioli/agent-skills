@@ -1,0 +1,10 @@
+{
+  "version": "0.1.0",
+  "author": "Felipe Blassioli",
+  "date": "2026-07-05",
+  "abstract": "Routes a task to a Claude model + effort. Classifies the task into an archetype (deliberation / execution / recon / escalation) via the routing_rubric in ~/.claude/model-profiles.md, emits the durable tier + effort verdict first, then resolves today's model string from that file's tier_to_model (the only place a concrete model id lives). Recommends per phase for multi-phase work (plan on deliberation, implement on execution, review on deliberation). Holds no inline routing — the shared file is the single source read at runtime, so nothing rots on a model release. Emits tier + effort even when the model table is stale or unreadable, and flags the staleness rather than guessing a string. The same file is also read by the loop-compiler plugin.",
+  "references": [
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+    "https://platform.claude.com/docs/en/about-claude/models/overview"
+  ]
+}
