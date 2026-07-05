@@ -1,0 +1,16 @@
+{
+  "description": "prompt-kit SessionStart guard — warns if the shared routing source ~/.claude/model-profiles.md is missing (silent when present).",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/check-model-profiles.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
