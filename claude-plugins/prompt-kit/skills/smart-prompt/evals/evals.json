@@ -1,0 +1,74 @@
+{
+  "skill_name": "smart-prompt",
+  "notes": "Prompt author (generative), not a critic. Grade the SHAPE of the emitted prompt (does it fill the archetype's slots for an agentic session) AND the discipline: it must shape, never run the task; it must name a routing archetype, never a model string; and it must compose (call model-recommender for the tier, prompt-audit as the final gate). Cases 1-3 are archetype matches; case 4 is a no-fit control (must not force a wrong archetype); case 5 is a don't-run-the-task control; case 6 exercises the growth-loop capture dependency. Archetype ids are those in references/prompt-archetypes.md as of 2026-07-05.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "flagship-context-anchored-planning",
+      "prompt": "/smart-prompt read refs/README.md and study gsd-core and obra/superpowers cloned in this refs directory to know how they gather context to anchor an implementation (plan -> implementation plan)",
+      "files": [],
+      "assertions": [
+        "Matches archetype context-anchored-planning; routes deliberation tier (gather phase recon/low, plan phase deliberation/high) via model-recommender",
+        "Emitted prompt is read-only-first, requires citing anchors (file:line) from both projects, and has an explicit plan-not-code output contract",
+        "Adds a clarify-first gate for the ambiguity the loose intent left implicit",
+        "Does NOT itself read the repos and produce the plan — it emits a prompt to do so",
+        "Ends with the capture offer; names no concrete model string"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "cartography-recon-readonly",
+      "prompt": "/smart-prompt help me understand how auth flows through this service",
+      "files": [],
+      "assertions": [
+        "Matches codebase-cartography; routes recon tier, effort low",
+        "Emitted prompt is read-only with a structured-map output contract (entry points, flow, key files) and a stop-at-the-map stop condition",
+        "Does not add an implementation or refactor step"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "scoped-implementation-with-verification",
+      "prompt": "/smart-prompt add null-guards to the parse* functions in parsers/ that lack one; it's done when npm test passes",
+      "files": [],
+      "assertions": [
+        "Matches scoped-implementation; routes execution tier",
+        "Emitted prompt has tight scope (parsers/, parse* only), an acceptance condition, and the verification command `npm test` exits 0",
+        "Keeps altitude at outcomes (guard the functions) rather than scripting each edit"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "no-archetype-fit-control",
+      "prompt": "/smart-prompt draft a friendly release announcement for the 2.0 launch and post it to the changelog",
+      "files": [],
+      "assertions": [
+        "No catalog archetype fits cleanly; shapes from the universal slots directly rather than forcing a wrong archetype",
+        "Marks it a candidate shape (candidate:<name>) for the ledger, not a validated archetype",
+        "Still produces a well-formed prompt (objective, output contract, acceptance) and offers capture"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "shape-not-run-control",
+      "prompt": "/smart-prompt just fix the flaky test in test/checkout.spec.ts",
+      "files": [],
+      "assertions": [
+        "Recognizes this as an intent to shape, not a command to execute; does NOT edit the test or run the suite itself",
+        "Emits an investigation-diagnosis-shaped prompt (reproduce the flake, isolate the cause, confirm, then fix) rather than a blind fix",
+        "The emitted prompt carries a verification and a clarify-first for the unknown (what 'flaky' means here)"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "growth-loop-capture-dependency",
+      "prompt": "That shaped prompt worked great, the plan was exactly right - save it.",
+      "files": [],
+      "assertions": [
+        "Loads references/growth-loop.md and appends a sanitized entry to ~/.claude/smart-prompt-ledger.md (creating it if missing)",
+        "Sanitizes first: strips any secrets/internal hostnames and minimizes personal data before writing",
+        "Does NOT write into the plugin (public repo) and does NOT auto-promote to the catalog — promotion is human-gated"
+      ]
+    }
+  ]
+}

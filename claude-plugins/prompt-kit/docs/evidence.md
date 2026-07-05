@@ -1,5 +1,40 @@
 # Evidence
 
+## 2026-07-05 — added third skill: smart-prompt (prompt authoring)
+
+Added `smart-prompt`, completing the triad (author / route / critique). Design
+decisions and the boundary that keeps it from overlapping `prompt-audit`:
+
+- **Author vs critic.** `smart-prompt` is *generative* — it turns a loose intent
+  (maybe not even a prompt) into a full agentic prompt by matching a validated
+  archetype and filling universal slots. `prompt-audit` is *adversarial* — it
+  critiques an existing prompt and fixes violations conservatively. The rule:
+  audit critiques what exists; smart-prompt authors what's missing. They compose
+  (smart-prompt runs prompt-audit as its final self-gate) rather than duplicate.
+- **Durable/volatile, applied.** Method (the universal slots, how to match an
+  archetype, the composition wiring) is embedded in SKILL.md; the archetype
+  *catalog* is externalized to `references/prompt-archetypes.md` (parsed at
+  runtime, `provenance: validated|candidate`). Archetypes name a
+  `model-recommender` routing archetype + effort — **never a model string**
+  (grep confirms zero `claude-*` strings in the skill).
+- **Learn-from-use loop, shaped by the public/private boundary.** This repo is
+  public, so raw captured cases (which can hold internal work) must not be
+  committed. Capture writes to an external, never-committed ledger
+  (`~/.claude/smart-prompt-ledger.md`, sanitized first); promotion into the
+  bundled catalog is human-gated and generalizes the case + adds an `evals/`
+  regression. See `references/growth-loop.md`.
+- **Entry point.** Invocable as `/smart-prompt <intent>` via the skill mechanism
+  and by natural-language trigger — no `commands/` dir (commands are deprecated).
+
+**Validation:** catalog YAML parses under ruby psych (5 archetypes, all skeletons
+are strings, routing archetypes valid); `metadata.json`/`evals.json` valid JSON;
+mechanical `audit-skill.sh` → `spec_violations: []`, `metadata_valid: true`,
+`changelog: true`, `evals.suite: true` (6 cases), `baseline_snapshot: true`,
+description 629 chars; `claude plugin validate --strict` → ✔ passed; org-identifier
+scan clean. Evidence is bootstrap-grade: one real trace (the flagship
+`context-anchored-planning` case) executed; the other 5 cases and one real
+capture→promotion round are the iteration-1 follow-up (recorded in the baseline).
+
 ## 2026-07-05 — skill-auditor pass + remediations (#1, #2)
 
 Ran `bond-governance:skill-auditor` on both skills. Both **PASS** (spec-clean,

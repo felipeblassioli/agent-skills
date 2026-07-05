@@ -1,13 +1,13 @@
 # prompt-kit
 
-A personal Claude Code plugin that codifies two things I otherwise do by hand in
-chat: **model routing** and **prompt quality**. Both skills read from one shared,
-self-refreshing reference so they never drift from each other — or from my
-`loop-compiler` plugin.
+A personal Claude Code plugin that codifies the prompt work I otherwise do by
+hand in chat: **model routing**, **prompt quality**, and **prompt authoring**.
+The skills read from one shared, self-refreshing reference so they never drift
+from each other — or from my `loop-compiler` plugin.
 
 ## Skills
 
-Both are namespaced under the plugin once enabled:
+All are namespaced under the plugin once enabled:
 
 - **`prompt-kit:model-recommender`** — give it a task; it returns the durable
   verdict first (archetype → tier + effort + one-line reason), then resolves
@@ -18,12 +18,26 @@ Both are namespaced under the plugin once enabled:
   unstated "above and beyond", negative instructions, missing success criteria
   or "why", structure that wants XML tags or examples) and returns tagged
   findings plus a rewritten, linter-fixed prompt.
+- **`prompt-kit:smart-prompt`** — give it a *loose intent* (e.g. `/smart-prompt
+  read refs/README.md and study X and Y to anchor an implementation`); it matches
+  a validated archetype and shapes the intent into a full agentic prompt
+  (objective, context to gather, anchors, clarify-first, acceptance, verification,
+  output contract), routing the tier via `model-recommender` and self-checking
+  with `prompt-audit`. It **authors** structure (generative) where `prompt-audit`
+  **critiques** an existing prompt (adversarial); the two compose. It learns from
+  use — after each shaping it offers to capture the case to an external,
+  never-committed ledger, and recurring generalizable cases are promoted (with
+  your approval) into its bundled catalog.
+
+The three form a triad: `smart-prompt` shapes the prompt, `model-recommender`
+picks the model, `prompt-audit` gates the result.
 
 ## The shared source of truth lives in `~/.claude`, not in this plugin
 
-Both skills — and `loop-compiler` — read **`~/.claude/model-profiles.md`** at
-runtime. It is deliberately **outside** the plugin so multiple tools share one
-copy. It contains:
+`model-recommender` and `prompt-audit` — and `loop-compiler` — read
+**`~/.claude/model-profiles.md`** at runtime (`smart-prompt` inherits it
+transitively, since it routes through `model-recommender`). It is deliberately
+**outside** the plugin so multiple tools share one copy. It contains:
 
 - **§1 Routing rubric** (durable): archetype → tier + effort. Names *tiers*,
   never model strings.
@@ -65,9 +79,10 @@ it into a personal marketplace. Because `.claude-plugin/plugin.json` sets a
 
 **Verify it loaded:** start a session and check the skills trigger —
 ask "which model should I use to design a rate limiter?" (should fire
-`model-recommender`) and "audit this prompt: …" (should fire `prompt-audit`).
-Skill edits to `SKILL.md` take effect immediately in-session; other changes
-(hooks, new files) need `/reload-plugins` or a restart.
+`model-recommender`), "audit this prompt: …" (should fire `prompt-audit`), and
+`/smart-prompt <a loose intent>` (should fire `smart-prompt`). Skill edits to
+`SKILL.md` take effect immediately in-session; other changes (hooks, new files)
+need `/reload-plugins` or a restart.
 
 A **SessionStart guard** (`hooks/check-model-profiles.sh`) fails loudly at the
 session boundary if `~/.claude/model-profiles.md` is missing, so a fresh install
@@ -96,9 +111,16 @@ prompt-kit/
 │   │   ├── SKILL.md                    # routing procedure (parses the shared file at runtime)
 │   │   ├── metadata.json · CHANGELOG.md
 │   │   └── evals/                      # evals.json + baselines/
-│   └── prompt-audit/
-│       ├── SKILL.md                    # adversarial audit procedure + output contract
-│       ├── prompt-audit-rules.md       # the rule set (R1–R11) loaded at runtime
+│   ├── prompt-audit/
+│   │   ├── SKILL.md                    # adversarial audit procedure + output contract
+│   │   ├── prompt-audit-rules.md       # the rule set (R1–R11) loaded at runtime
+│   │   ├── metadata.json · CHANGELOG.md
+│   │   └── evals/                      # evals.json + baselines/
+│   └── smart-prompt/
+│       ├── SKILL.md                    # shaping method + universal slots + composition
+│       ├── references/
+│       │   ├── prompt-archetypes.md    # the validated archetype catalog (loaded at runtime)
+│       │   └── growth-loop.md          # ledger format + human-gated promotion
 │       ├── metadata.json · CHANGELOG.md
 │       └── evals/                      # evals.json + baselines/
 ├── docs/
