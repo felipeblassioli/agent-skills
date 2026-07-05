@@ -4,6 +4,11 @@ Use this checklist when creating or revising anything under `skills/`.
 For the maintenance contract behind this checklist, see
 `docs/ADR/ADR-0002-governed-skill-maintenance-model.md`.
 
+> A `PostToolUse` hook (`.claude/settings.json` → `scripts/hooks/validate-skill-on-edit.sh`)
+> runs `scripts/validate-skill.sh` automatically whenever you edit a skill's
+> `SKILL.md` or `metadata.json`, surfacing errors/warnings inline. It is
+> fail-open (never blocks the edit); the release CI enforces the same checks.
+
 ## Fit
 
 - [ ] I can explain in one sentence why this should be a skill and not a pack.
