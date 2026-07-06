@@ -1,0 +1,28 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli@gmail.com",
+  "date": "2026-07-06",
+  "abstract": "User-invoked promotion preflight gate for the agent-skills marketplace. Chains the deterministic skill-audit signals (audit-skill.sh), marketplace/registry alignment (marketplace-consistency.sh), and version + CHANGELOG presence into a go/no-go verdict that blocks promotion on any unresolved finding and cites the failing gate. Audit-first; read-only; harness-agnostic driver reusable in CI.",
+  "source_contracts": [
+    {
+      "path": "plugins/skill-studio/skills/skill-audit/scripts/audit-skill.sh",
+      "reviewed_at": "2026-07-06"
+    },
+    {
+      "path": "scripts/validate-skill.sh",
+      "reviewed_at": "2026-07-06"
+    },
+    {
+      "path": "docs/marketplace-governance.md",
+      "reviewed_at": "2026-07-06"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "reviewed_at": "2026-07-06"
+    },
+    {
+      "path": "plugins/repo-governance/skills/skill-maintainer/references/marketplace-maintenance.md",
+      "reviewed_at": "2026-07-06"
+    }
+  ]
+}

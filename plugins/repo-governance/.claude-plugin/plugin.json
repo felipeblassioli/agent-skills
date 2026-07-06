@@ -1,7 +1,7 @@
 {
   "name": "repo-governance",
   "description": "Release governance for the agent-skills marketplace: versioning, validating, releasing, and promoting plugins and skills (marketplace.json / plugin.json / registry alignment). For maintainers, not app developers. Skill authoring and auditing live in the skill-studio plugin.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Felipe Blassioli",
     "email": "felipeblassioli@gmail.com"
