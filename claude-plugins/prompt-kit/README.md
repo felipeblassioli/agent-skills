@@ -28,15 +28,29 @@ All are namespaced under the plugin once enabled:
   use — after each shaping it offers to capture the case to an external,
   never-committed ledger, and recurring generalizable cases are promoted (with
   your approval) into its bundled catalog.
+- **`prompt-kit:tailor-to-fable`** — give it a prompt *or* a rough idea when you
+  have already decided to run the escalation-tier model (Fable 5 today) on a hard,
+  ambiguous, long-horizon problem (e.g. `/tailor-to-fable <an over-prescribed
+  prompt>`); it commits to that target and runs one directed transform —
+  un-prescribe (state the problem, drop the step-script), strip scaffolding
+  inherited from literal-following models, set boundaries + progress-auditing for
+  long autonomous runs, avoid the reasoning-extraction refusal that silently falls
+  back to Opus, enable subagent orchestration, and emit the run config
+  (effort/thinking/fallback) instead of wording effort into the prompt. It reads
+  the escalation model and its posture from `model-profiles.md` (hardcodes
+  nothing) and gates through `prompt-audit`.
 
-The three form a triad: `smart-prompt` shapes the prompt, `model-recommender`
-picks the model, `prompt-audit` gates the result.
+The four compose: `model-recommender` picks the model, `smart-prompt` shapes an
+any-tier prompt, `prompt-audit` gates the result — and when the answer is "the
+smartest model on a hard problem," `tailor-to-fable` tunes the prompt to that
+target's posture.
 
 ## The shared source of truth lives in `~/.claude`, not in this plugin
 
 `model-recommender` and `prompt-audit` — and `loop-compiler` — read
 **`~/.claude/model-profiles.md`** at runtime (`smart-prompt` inherits it
-transitively, since it routes through `model-recommender`). It is deliberately
+transitively via `model-recommender`; `tailor-to-fable` reads it directly to
+resolve the escalation tier and that model's posture). It is deliberately
 **outside** the plugin so multiple tools share one copy. It contains:
 
 - **§1 Routing rubric** (durable): archetype → tier + effort. Names *tiers*,
@@ -60,7 +74,18 @@ rots on the next model release; only §2/§3 of the shared file do, and they
 refresh on their own.
 
 If `~/.claude/model-profiles.md` does not exist, create it before first use (the
-skills read it at runtime). A reference copy is maintained alongside my dotfiles.
+skills read it at runtime). This repo ships a template —
+[`model-profiles.example.md`](model-profiles.example.md) — to copy and adapt:
+
+```bash
+cp claude-plugins/prompt-kit/model-profiles.example.md ~/.claude/model-profiles.md
+# then set meta.reviewer and refresh §2/§3 per meta.staleness_rule
+```
+
+The example's model strings and per-model profiles are a **snapshot** captured on
+their `last_verified` dates; they go stale on the next model release and
+self-refresh in the live file via the staleness rule. Do not treat the committed
+dates as current.
 
 ## Local install
 
@@ -79,8 +104,9 @@ it into a personal marketplace. Because `.claude-plugin/plugin.json` sets a
 
 **Verify it loaded:** start a session and check the skills trigger —
 ask "which model should I use to design a rate limiter?" (should fire
-`model-recommender`), "audit this prompt: …" (should fire `prompt-audit`), and
-`/smart-prompt <a loose intent>` (should fire `smart-prompt`). Skill edits to
+`model-recommender`), "audit this prompt: …" (should fire `prompt-audit`),
+`/smart-prompt <a loose intent>` (should fire `smart-prompt`), and
+`/tailor-to-fable <a prompt>` (should fire `tailor-to-fable`). Skill edits to
 `SKILL.md` take effect immediately in-session; other changes (hooks, new files)
 need `/reload-plugins` or a restart.
 
@@ -116,11 +142,17 @@ prompt-kit/
 │   │   ├── prompt-audit-rules.md       # the rule set (R1–R11) loaded at runtime
 │   │   ├── metadata.json · CHANGELOG.md
 │   │   └── evals/                      # evals.json + baselines/
-│   └── smart-prompt/
-│       ├── SKILL.md                    # shaping method + universal slots + composition
+│   ├── smart-prompt/
+│   │   ├── SKILL.md                    # shaping method + universal slots + composition
+│   │   ├── references/
+│   │   │   ├── prompt-archetypes.md    # the validated archetype catalog (loaded at runtime)
+│   │   │   └── growth-loop.md          # ledger format + human-gated promotion
+│   │   ├── metadata.json · CHANGELOG.md
+│   │   └── evals/                      # evals.json + baselines/
+│   └── tailor-to-fable/
+│       ├── SKILL.md                    # escalation-tier transform + composition
 │       ├── references/
-│       │   ├── prompt-archetypes.md    # the validated archetype catalog (loaded at runtime)
-│       │   └── growth-loop.md          # ledger format + human-gated promotion
+│       │   └── fable-playbook.md       # the transform moves + canonical snippet pointers
 │       ├── metadata.json · CHANGELOG.md
 │       └── evals/                      # evals.json + baselines/
 ├── docs/
