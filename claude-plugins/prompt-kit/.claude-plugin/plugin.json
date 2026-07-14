@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prompt-kit",
   "displayName": "prompt-kit",
-  "version": "0.1.0",
-  "description": "Model routing (model-recommender) and adversarial prompt review (prompt-audit), driven by a shared, self-refreshing ~/.claude/model-profiles.md so routing never drifts between them or from loop-compiler.",
+  "version": "0.2.0",
+  "description": "Model routing (model-recommender), prompt authoring (smart-prompt), adversarial prompt review (prompt-audit), and escalation-tier tailoring (tailor-to-fable), driven by a shared, self-refreshing ~/.claude/model-profiles.md so routing never drifts between them or from loop-compiler.",
   "author": {
     "name": "Felipe Blassioli",
     "url": "https://github.com/felipeblassioli"
