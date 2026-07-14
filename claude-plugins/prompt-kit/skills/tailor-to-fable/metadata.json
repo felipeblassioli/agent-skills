@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "author": "Felipe Blassioli",
+  "date": "2026-07-14",
+  "abstract": "Rewrites a prompt (or a rough idea) to maximize the escalation-tier model — Fable 5 today — on a hard, ambiguous, long-horizon problem. Unlike model-recommender (which decides the tier) and smart-prompt (which routes a loose intent to whatever tier fits), this skill commits to the escalation target and applies one directed transform: frame the problem and withhold the solution, strip scaffolding inherited from literal-following models, set explicit boundaries for long autonomous runs, avoid the reasoning-extraction refusal that silently falls back to Opus, enable subagent orchestration, add a memory surface, and set the run config (effort/thinking/fallback) instead of wording effort into the prompt. Resolves the target and every posture fact from ~/.claude/model-profiles.md at runtime (tier_to_model.escalation + that model's profile) so it never hardcodes a model string or a per-model tip; the transform moves are the durable technique, the facts are volatile. Gates the result through prompt-audit (its R2/R3/R8/R9/R10 encode the same Fable checks) so what it emits passes the linter, especially the reasoning-echo block. Detailed moves and canonical snippet pointers live in references/fable-playbook.md (link to Anthropic's snippets, never inline them).",
+  "references": [
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5"
+  ]
+}

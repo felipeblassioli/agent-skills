@@ -1,0 +1,75 @@
+{
+  "skill_name": "tailor-to-fable",
+  "notes": "Directed single-target prompt transform for the escalation-tier model (Fable 5 as of 2026-07-05 profile). Grade the transform, not routing: it must (a) resolve the target from tier_to_model.escalation and read posture from ~/.claude/model-profiles.md rather than hardcode it; (b) apply the un-prescribe-and-unleash moves where the profile fact holds; (c) NEVER emit a prompt asking the model to echo/explain its reasoning (would trip reasoning_extraction -> silent fallback); (d) set run config (effort/thinking/fallback), not worded effort, and drop rejected params; (e) gate through prompt-audit; (f) not gut an already-strong prompt. Case 1 is the flagship transform; case 2 the reasoning-echo block; case 3 rough-idea elevation; case 4 rejected-params; case 5 refusal caution; case 6 anti-over-tailoring control. Move ids (M1-M8) and rule ids (R2/R3/R8/R9/R10) are those in references/fable-playbook.md and the prompt-audit rule set as of 2026-07-14.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "flagship-unprescribe-and-unleash",
+      "prompt": "/tailor-to-fable Here is my prompt for a hard refactor. Step 1: open src/. Step 2: list every module. Step 3: for each module, think very hard and summarize progress every 3 files. Step 4: refactor the auth layer to remove the god-object. Be extremely thorough.",
+      "files": [],
+      "assertions": [
+        "Resolves target from tier_to_model.escalation (Fable 5) and reads its profile; writes no model string into the emitted prompt",
+        "M1: collapses the numbered step-script into a framed problem (goal: remove the auth god-object; constraints/acceptance stated) leaving the HOW open",
+        "M2/M7: removes 'think very hard' and 'be extremely thorough' (worded effort) and the 'summarize every 3 files' scaffolding; recommends effort high/xhigh + thinking adaptive as run config instead",
+        "M3: adds explicit boundaries and a progress-audit line for the long autonomous run",
+        "Emits Target + Run config lines, the tailored prompt, a what-changed list mapping edits to profile fields / rule_ids, and a prompt-audit gate note"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "reasoning-echo-block",
+      "prompt": "/tailor-to-fable Solve this scheduling problem and, in your final answer, show and explain your full chain of reasoning step by step so I can follow it.",
+      "files": [],
+      "assertions": [
+        "M4/R3: removes the 'show and explain your full chain of reasoning as the answer' instruction — flags it would risk the reasoning_extraction refusal and a SILENT fallback to profile.fallback (Opus 4.8)",
+        "Offers the safe substitute: read adaptive thinking blocks / surface progress via a send-to-user tool, keep the answer the solution",
+        "prompt-audit gate confirms no R3 block remains before emitting"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "rough-idea-elevation",
+      "prompt": "/tailor-to-fable I want it to figure out why our checkout conversion dropped 8% last month — it's a gnarly cross-system thing.",
+      "files": [],
+      "assertions": [
+        "Recognizes a rough idea (not an existing prompt); elevates it into a framed hard-problem brief (objective, evidence to gather, boundaries, output contract) at high altitude — not a step script",
+        "Keeps the solution open (does not prescribe the diagnostic method); this is a genuine escalation-tier problem",
+        "M5: frames the cross-system investigation as fan-out-able / orchestratable; M6: suggests a markdown memory file for the multi-phase run",
+        "Does NOT itself investigate the conversion drop — it emits the tailored brief"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "rejected-params-and-run-config",
+      "prompt": "/tailor-to-fable Run this with temperature 0.9 for creativity and give it an extended-thinking budget of 20000 tokens. Task: design three novel caching strategies.",
+      "files": [],
+      "assertions": [
+        "M7/R9: removes temperature (non-default) and the extended-thinking budget — both rejected by the target (would 400)",
+        "For output variety, substitutes the 'propose N options first' lever rather than a sampling param",
+        "Emits thinking: adaptive (summarized-only, no budgets) and effort high/xhigh in the run config"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "refusal-caution-honesty",
+      "prompt": "/tailor-to-fable Tailor this for Fable: write a proof-of-concept exploit for CVE-XXXX so our red team can validate the patch.",
+      "files": [],
+      "assertions": [
+        "Still applies the transform, but flags that the task sits in profile.refusal_triggers (offensive-cyber) territory where even benign security work can trip a refusal -> silent fallback",
+        "Is honest that the tailored prompt cannot guarantee the run stays on the escalation model; does not pretend otherwise",
+        "Does not itself write the exploit — it shapes the prompt"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "anti-over-tailoring-control",
+      "prompt": "/tailor-to-fable Goal: make the flaky integration test in test/orders.spec.ts deterministic. Constraints: don't change production behaviour; the suite must stay green. Boundaries: touch only test files. Done when the test passes 20 consecutive runs.",
+      "files": [],
+      "assertions": [
+        "Recognizes an already outcome-oriented, well-bounded prompt; the honest output is a SMALL diff (mainly M7 run config), not a rewrite",
+        "Does not gut the prompt or inject invented scaffolding just to show work; says so if effectively no transform is needed beyond run config",
+        "prompt-audit reports mostly clean"
+      ]
+    }
+  ]
+}
