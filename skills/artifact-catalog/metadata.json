@@ -1,0 +1,14 @@
+{
+  "name": "artifact-catalog",
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "2026-07-25",
+  "abstract": "Maintains a personal, cross-repo index of working artifacts (writeups, reviews, verification reports, explainers, published claude.ai artifacts) and — the actual point — routes each one to where it should live. Classifies every artifact into exactly one tier by lifespan: commit (durable decision → versioned under docs/), convert (durable knowledge in a one-off format → rewrite as markdown), attach (point-in-time evidence → link on its PR/issue, never commit), cross (belongs to a sibling repo), or discard. Mode A adds/updates a single artifact idempotently; Mode B sweeps four sources — current repo, sibling repos, the personal workbench branch, and published artifacts — and diffs them against the master index.",
+  "tags": [
+    "documentation",
+    "knowledge-management",
+    "cross-repo",
+    "artifacts",
+    "audit"
+  ]
+}
