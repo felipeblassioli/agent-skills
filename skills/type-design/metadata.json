@@ -1,0 +1,15 @@
+{
+  "name": "type-design",
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "2026-07-25",
+  "abstract": "Design and audit TypeScript types as a modeling discipline — making illegal states unrepresentable and encoding domain truth — rather than as a mechanical lint pass. Applies proportional rigor (no type gymnastics, wire/transport concerns kept out of domain types) and returns either a designed type with its rejected alternatives or principle-grounded audit findings. Bundles references/house-defaults.md (team TS conventions, skippable outside that context) and references/worked-examples.md, plus an evals/ suite.",
+  "tags": [
+    "typescript",
+    "type-design",
+    "domain-modeling",
+    "discriminated-unions",
+    "branded-types",
+    "code-review"
+  ]
+}
