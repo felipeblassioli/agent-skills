@@ -601,6 +601,23 @@
         "code-review"
       ],
       "description": "Design and audit TypeScript types as a modeling discipline — make illegal states unrepresentable, encode domain truth, and return a designed type with rejected alternatives or principle-grounded audit findings. Not a lint pass."
+    },
+    "artifact-catalog": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "documentation",
+        "knowledge-management",
+        "cross-repo",
+        "artifacts",
+        "audit"
+      ],
+      "description": "Keep a personal cross-repo artifact index current and route each artifact to where it belongs — commit, convert, attach, cross, or discard — by lifespan rather than format. Mode A files one artifact idempotently; Mode B sweeps repos, the personal workbench branch, and published artifacts, then diffs against the master."
     }
   },
   "targetPaths": {
