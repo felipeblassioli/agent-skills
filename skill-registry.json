@@ -585,6 +585,23 @@
         "attributes"
       ],
       "description": "OpenTelemetry Semantic Conventions expert. Use when selecting, applying, or reviewing telemetry attributes. Triggers on tasks involving attribute selection, semantic convention compliance, attribute migration, or custom attribute decisions. Covers the attribute registry, naming patterns, attribute placement, and versioning. For span names, span kinds, and span status codes, see the otel-instrumentation skill."
+    },
+    "worktree-disk-gc": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "git",
+        "worktree",
+        "disk",
+        "cleanup",
+        "node-modules"
+      ],
+      "description": "Reclaim disk space from git worktree pools by deleting reproducible node_modules trees from worktrees that show no sign of active work, gated on clean tree, fully-pushed commits, no open files, idleness, and a sibling lockfile."
     }
   },
   "targetPaths": {
