@@ -1,0 +1,26 @@
+{
+  "skill_name": "type-design",
+  "evals": [
+    {
+      "id": 0,
+      "name": "audit-workgroupids-golden",
+      "prompt": "Is this type well-designed? In our triage service the DB column is `workGroupId INT NULL`. The HTTP endpoint accepts `?workGroupId=none,3` where `none` means the unassigned bucket (rows where the column IS NULL) and it can be mixed with real ids. A teammate typed the internal repository filter as:\n\n```ts\ntype ListFilters = {\n  workGroupIds?: Array<number | 'none'>;\n  categoryId?: number | 'none';\n  decisionId?: number | 'none';\n  // ...other filters\n};\n```\n\nand the gateway does `value.includes('none')` and `value.filter(e => e !== 'none')` to build the SQL (`IN (...)`, `IS NULL`, or `IN (...) OR IS NULL`). The sibling scalar filters `categoryId`/`decisionId` already use `number | 'none'`. Should I change `workGroupIds`, and if so to what? Keep the recommendation proportional — it's one field in a small PR.",
+      "expected_output": "Identifies that 'none' is a wire/transport sentinel (HTTP can't carry null) leaking into the persistence type; that the gateway has to reverse-engineer two orthogonal facts (id set + a boolean 'include unassigned') back out of one array; that illegal states (['none','none'], order-as-noise, dup) are representable. Recommends { ids: number[]; includeUnassigned: boolean } with the 'none'->boolean translation moved to the boundary/zod transform. Notes proportionality: change only this field, NOT the sibling scalars (separate/bigger change), and acknowledges the consistency trade-off explicitly.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "design-kyc-outcome",
+      "prompt": "How should I model the outcome of a KYC document check in TypeScript? It can be: still processing; approved (with the verified full name and a numeric confidence score 0-1); rejected (with one or more reason codes from a fixed set); or needs-manual-review (with a free-text analyst note). Right now I have one interface with everything optional and `status: string`. I want to model it properly so callers can't read a field that isn't there for the current state.",
+      "expected_output": "Proposes a discriminated union keyed on a literal `status` with per-variant data (approved carries name + confidence; rejected carries a NonEmptyArray of reason codes from a literal union; needs-manual-review carries the note; processing carries nothing). Reason codes as a literal union, not string. Confidence possibly a branded/refined 0-1 number. Mentions parsing/validating at the boundary and z.infer if input is external. Shows why the union beats the optional-soup interface (illegal field access becomes a compile error; exhaustive switch). Ideally lists a rejected alternative.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "restraint-brand-result-proportional",
+      "prompt": "Review the type-design plan for a small internal helper module (~200 lines, not a public API). We pass around several string IDs — userId, bookingId, plate, transactionId — and a teammate wants to (a) brand every single one of them and (b) wrap every function's return value in a Result<T,E> union. Is that the right call for a module this size, or is it overkill? What would you actually do?",
+      "expected_output": "Applies proportional-rigor judgment, not a blanket yes/no. Brand the IDs that actually get confused/swapped or cross module boundaries (userId vs transactionId), skip branding for the rest — don't brand-everything. Use Result<T,E> for genuinely recoverable/expected failures and throw for programmer errors ('should never happen'); don't wrap every return. Emphasizes readability/maintenance cost vs the real bug prevented for an internal 200-line module. Avoids cargo-culting the house rules; may say 'name the trade-off'. Does NOT just rubber-stamp maximal type-safety.",
+      "files": []
+    }
+  ]
+}
