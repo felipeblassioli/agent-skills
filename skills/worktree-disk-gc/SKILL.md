@@ -69,7 +69,9 @@ prefer explaining the gate over bypassing it.
 | `prunable` | directory is missing | — |
 | `dirty-tracked` | uncommitted changes to tracked files | — |
 | `dirty-untracked` | untracked files present | `--allow-untracked` |
+| `status-unknown` | tracked/untracked status could not be inspected safely | — |
 | `unpushed(N)` | N commits on no remote | `--allow-unpushed` |
+| `reachability-unknown` | remote reachability could not be inspected safely | — |
 | `in-use` | a process has it open or cwd'd there | `--no-inuse-check` |
 | `recent(Nh)` | git activity inside `--min-idle-days` (default 1) | `--min-idle-days 0` |
 | `no-lockfile` | no sibling lockfile, so `npm ci` cannot reproduce it | `--allow-missing-lockfile` |
@@ -107,7 +109,8 @@ Give the user, in this order:
 - It never follows symlinks and refuses to delete any path whose basename is
   not exactly `node_modules`; it re-checks every invariant immediately before
   each `rm -rf`.
-- A full run costs a `du` per candidate tree plus one `lsof` dump — tens of
+- A dry run costs a `du` per candidate tree plus one `lsof` dump. Apply mode
+  refreshes the `lsof` snapshot immediately before each deletion; tens of
   seconds on a large pool is normal.
 
 Tests: `bash scripts/tests/test-worktree-nm-gc.sh` (self-contained; builds a

@@ -29,11 +29,14 @@ Bash 3.2 compatible so it runs on macOS system bash.
    worktree list, so a worktree nested inside another (a pool under
    `.worktrees/`) is gated on its own turn rather than by its host.
 4. Every deletion re-asserts basename, directory-ness, non-symlink, and
-   not-in-use immediately before `rm -rf`.
+   not-in-use immediately before `rm -rf`, using a freshly collected `lsof`
+   snapshot rather than the scan-time snapshot.
+5. Failed `git status` or commit-reachability inspection is an unsafe result,
+   never evidence that a worktree is clean and pushed.
 
 ## `tests/test-worktree-nm-gc.sh`
 
-Self-contained: builds a bare remote, a clone, and seven worktrees under
+Self-contained: builds a bare remote, a clone, and test worktrees under
 `mktemp -d`. Touches nothing outside its temp dir.
 
 ```bash

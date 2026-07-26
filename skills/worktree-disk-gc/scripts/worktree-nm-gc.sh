@@ -111,18 +111,32 @@ now=$(date +%s)
 idle_cutoff=$(( min_idle_days * 86400 ))
 
 # ---------------------------------------------------------------------------
-# one lsof dump, prefix-matched per worktree (lsof +D on a 1GB tree is far slower)
+# scan-time lsof dump, prefix-matched per worktree (lsof +D is far slower)
+# Apply mode refreshes this snapshot immediately before each deletion.
 # ---------------------------------------------------------------------------
 open_paths="$tmp/open-paths"
-: > "$open_paths"
 inuse_available="false"
-if [ "$inuse_check" = "true" ]; then
-  if command -v lsof >/dev/null 2>&1; then
-    if lsof -w -F n 2>/dev/null | sed -n 's|^n\(/.*\)$|\1|p' | sort -u > "$open_paths"; then
-      inuse_available="true"
-    fi
-    [ -s "$open_paths" ] || inuse_available="false"
+
+refresh_open_paths() {
+  # Write through a temporary file so a failed refresh never leaves a partial
+  # snapshot that could be mistaken for a successful safety check.
+  refreshed="$tmp/open-paths.new"
+  : > "$refreshed"
+  if command -v lsof >/dev/null 2>&1 \
+    && lsof -w -F n 2>/dev/null | sed -n 's|^n\(/.*\)$|\1|p' | sort -u > "$refreshed" \
+    && [ -s "$refreshed" ]; then
+    mv "$refreshed" "$open_paths"
+    inuse_available="true"
+    return 0
   fi
+  rm -f "$refreshed"
+  inuse_available="false"
+  return 1
+}
+
+: > "$open_paths"
+if [ "$inuse_check" = "true" ]; then
+  refresh_open_paths || true
 fi
 
 path_in_use() {
@@ -228,19 +242,29 @@ flush_worktree() {
     fi
 
     # dirty: tracked vs untracked are different signals
-    if [ -n "$(git -C "$wt_path" status --porcelain --untracked-files=no 2>/dev/null)" ]; then
-      add_reason "dirty-tracked"
+    tracked_status_ok="false"
+    if tracked_status=$(git -C "$wt_path" status --porcelain --untracked-files=no 2>/dev/null); then
+      tracked_status_ok="true"
+      [ -n "$tracked_status" ] && add_reason "dirty-tracked"
+    else
+      add_reason "status-unknown"
     fi
-    if [ "$allow_untracked" != "true" ]; then
-      untracked=$(git -C "$wt_path" status --porcelain --untracked-files=normal 2>/dev/null \
-        | awk '/^\?\?/ && $0 !~ /node_modules/' | head -1)
-      [ -n "$untracked" ] && add_reason "dirty-untracked"
+    if [ "$allow_untracked" != "true" ] && [ "$tracked_status_ok" = "true" ]; then
+      if full_status=$(git -C "$wt_path" status --porcelain --untracked-files=normal 2>/dev/null); then
+        untracked=$(printf '%s\n' "$full_status" | awk '/^\?\?/ && $0 !~ /node_modules/ { print; exit }')
+        [ -n "$untracked" ] && add_reason "dirty-untracked"
+      else
+        add_reason "status-unknown"
+      fi
     fi
 
     # pushed: every commit reachable from HEAD also lives on some remote ref
     if [ "$allow_unpushed" != "true" ]; then
-      ahead=$(git -C "$wt_path" rev-list --count HEAD --not --remotes 2>/dev/null || echo 0)
-      [ "${ahead:-0}" -gt 0 ] 2>/dev/null && add_reason "unpushed($ahead)"
+      if ahead=$(git -C "$wt_path" rev-list --count HEAD --not --remotes 2>/dev/null); then
+        [ "${ahead:-0}" -gt 0 ] 2>/dev/null && add_reason "unpushed($ahead)"
+      else
+        add_reason "reachability-unknown"
+      fi
     fi
 
     # recency: index + per-worktree reflog cover every git operation done here.
@@ -341,8 +365,13 @@ if [ "$apply" = "true" ] && [ -s "$targets" ]; then
       /*/*) : ;;
       *) printf 'refuse: suspicious path: %s\n' "$nm" >&2; failed_count=$((failed_count+1)); continue ;;
     esac
-    if [ "$inuse_check" = "true" ] && path_in_use "$nm"; then
-      printf 'refuse: became in-use: %s\n' "$nm" >&2; failed_count=$((failed_count+1)); continue
+    if [ "$inuse_check" = "true" ]; then
+      if ! refresh_open_paths; then
+        printf 'refuse: cannot refresh in-use check: %s\n' "$nm" >&2; failed_count=$((failed_count+1)); continue
+      fi
+      if path_in_use "$nm"; then
+        printf 'refuse: became in-use: %s\n' "$nm" >&2; failed_count=$((failed_count+1)); continue
+      fi
     fi
     kb=$(du -sk "$nm" 2>/dev/null | awk '{print $1}'); [ -n "$kb" ] || kb=0
     if rm -rf -- "$nm"; then
