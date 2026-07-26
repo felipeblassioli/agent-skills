@@ -30,6 +30,9 @@ metadata, and deployment targets.
 bash scripts/skill-import.sh <project-path> <skill-name> --tags=tag1,tag2
 ```
 
+To safely inspect and import downloaded Claude/Agent Skill ZIP archives, use the
+maintained Go-based [Claude Skill Porter](scripts/claude-skill-porter/README.md).
+
 ### 2) Validate registry and deploy plan
 
 ```bash
