@@ -618,6 +618,23 @@
         "audit"
       ],
       "description": "Keep a personal cross-repo artifact index current and route each artifact to where it belongs — commit, convert, attach, cross, or discard — by lifespan rather than format. Mode A files one artifact idempotently; Mode B sweeps repos, the personal workbench branch, and published artifacts, then diffs against the master."
+    },
+    "worktree-disk-gc": {
+      "version": "1.0.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "git",
+        "worktree",
+        "disk",
+        "cleanup",
+        "node-modules"
+      ],
+      "description": "Reclaim disk space from git worktree pools by deleting reproducible node_modules trees from worktrees that show no sign of active work, gated on clean tree, fully-pushed commits, no open files, idleness, and a sibling lockfile."
     }
   },
   "targetPaths": {

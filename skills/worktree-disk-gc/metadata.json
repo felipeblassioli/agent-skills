@@ -1,0 +1,6 @@
+{
+  "version": "1.0.0",
+  "author": "felipeblassioli",
+  "date": "July 2026",
+  "abstract": "Reclaim disk space from git worktree pools by deleting reproducible node_modules trees from worktrees with no sign of active work. Ships a dry-run-by-default script gated on clean tree, fully-pushed commits, no open files, idleness, and a sibling lockfile, with longest-prefix ownership so nested worktrees are never mis-attributed. Diagnoses where the bytes actually are before proposing deletion, and surfaces adjacent findings such as unpushed commits and prunable worktrees."
+}
