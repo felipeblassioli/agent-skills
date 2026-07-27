@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-const Version = "0.1.0"
+const Version = "0.2.0"
 
 type Classification string
 
@@ -22,6 +22,7 @@ type PortInfo struct {
 	ImportedAt     time.Time      `json:"importedAt"`
 	Warnings       []string       `json:"warnings"`
 	ToolVersion    string         `json:"toolVersion"`
+	ContentDigest  string         `json:"contentDigest"`
 }
 
 type Result struct {

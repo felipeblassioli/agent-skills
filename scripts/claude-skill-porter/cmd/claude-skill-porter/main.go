@@ -47,7 +47,7 @@ func usage() {
 
 Usage: claude-skill-porter <scan|import|link|doctor> [flags]
   scan ARCHIVE [--json]
-  import ARCHIVE --canonical DIR [--dry-run] [--json]
+  import ARCHIVE --canonical DIR [--update] [--dry-run] [--json]
   link --canonical DIR --project-root DIR --skill SLUG [--dry-run] [--json]
   doctor --canonical DIR --project-root DIR [--json]
 `)
@@ -119,6 +119,7 @@ func scan(args []string) error {
 func importCmd(args []string) error {
 	f, dry, js := common("import")
 	canonical := f.String("canonical", "", "canonical skills directory")
+	update := f.Bool("update", false, "replace unchanged porter-managed skills")
 	archiveName, e := archiveArgs(f, args)
 	if e != nil {
 		return e
@@ -152,11 +153,15 @@ func importCmd(args []string) error {
 		if e != nil {
 			return e
 		}
-		dst, e := install.Skill(src, filepath.ToSlash(sourceRoot), *canonical, slug, archivePath, class, *dry)
+		dst, updated, e := install.Skill(src, filepath.ToSlash(sourceRoot), *canonical, slug, archivePath, class, install.Options{DryRun: *dry, Update: *update})
 		if e != nil {
 			return e
 		}
-		r.Actions = append(r.Actions, "install: "+dst)
+		action := "install: "
+		if updated {
+			action = "update: "
+		}
+		r.Actions = append(r.Actions, action+dst)
 	}
 	return report.Render(os.Stdout, r, *js)
 }

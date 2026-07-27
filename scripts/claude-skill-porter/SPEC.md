@@ -10,8 +10,8 @@ directory, and links those skills into Cursor and Claude project discovery.
 
 - `scan ARCHIVE [--json]` safely extracts to a temporary directory, classifies
   the package, and reports every directory containing `SKILL.md`.
-- `import ARCHIVE --canonical DIR [--dry-run] [--json]` performs the same scan,
-  then copies every detected skill into the canonical directory.
+- `import ARCHIVE --canonical DIR [--update] [--dry-run] [--json]` performs the
+  same scan, then copies every detected skill into the canonical directory.
 - `link --canonical DIR --project-root DIR --skill SLUG [--dry-run] [--json]`
   creates or updates links below both `.cursor/skills` and `.claude/skills`.
 - `doctor --canonical DIR --project-root DIR [--json]` diagnoses the canonical
@@ -64,7 +64,25 @@ and collision checks but make no filesystem changes.
 
 Successful imports write `<canonical>/<slug>/PORT_INFO.json` with typed fields:
 `sourceArchive`, `sourceRoot`, `normalizedSlug`, `classification`, `importedAt`
-(UTC RFC 3339 JSON timestamp), `warnings`, and `toolVersion`.
+(UTC RFC 3339 JSON timestamp), `warnings`, `toolVersion`, and `contentDigest`.
+The digest is SHA-256 over normalized payload paths and contents, excluding
+`PORT_INFO.json` itself.
+
+### Safe updates
+
+Collision failure remains the default. `--update` permits replacement only when
+the existing entry is a real directory with valid `PORT_INFO.json`, its slug,
+source root, and classification match the incoming skill, and its current
+payload digest equals the recorded digest. This proves that the porter created
+the entry and that its payload has not subsequently changed. Missing or legacy
+digests, local edits, symlinks, mismatched identity, malformed metadata, and
+unmanaged entries MUST be refused. A changed source archive path alone does not
+invalidate identity, because repeated downloads commonly have different paths.
+
+An accepted update MUST be staged beside the destination. The old directory is
+renamed to a temporary backup, the staged directory is atomically renamed into
+place, and the old directory is restored if activation fails. Dry-run performs
+all ownership, identity, and digest checks without staging or mutation.
 
 ## Link and diagnostic safety
 
@@ -82,6 +100,6 @@ managed link directory. Missing project link directories are allowed.
 
 The tool is intentionally non-interactive, ZIP-only, and does not validate skill
 frontmatter, infer registry metadata, import instruction-only packages, run
-content, overwrite collisions, or manage user-global discovery links. Changing
-these safety, CLI, report, classification, or persistence rules requires an
-updated specification and unit tests.
+content, force-update locally modified/unmanaged entries, or manage user-global
+discovery links. Changing these safety, CLI, report, classification, or
+persistence rules requires an updated specification and unit tests.

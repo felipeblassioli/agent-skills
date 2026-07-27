@@ -85,14 +85,60 @@ func TestCollisionAndDryRun(t *testing.T) {
 	write(t, filepath.Join(src, "SKILL.md"), "x")
 	dst := t.TempDir()
 	os.Mkdir(filepath.Join(dst, "x"), 0755)
-	if _, e := install.Skill(src, ".", dst, "x", "a.zip", model.Direct, false); e == nil {
+	if _, _, e := install.Skill(src, ".", dst, "x", "a.zip", model.Direct, install.Options{}); e == nil {
 		t.Fatal("collision accepted")
 	}
-	if _, e := install.Skill(src, ".", dst, "dry", "a.zip", model.Direct, true); e != nil {
+	if _, _, e := install.Skill(src, ".", dst, "dry", "a.zip", model.Direct, install.Options{DryRun: true}); e != nil {
 		t.Fatal(e)
 	}
 	if _, e := os.Stat(filepath.Join(dst, "dry")); !os.IsNotExist(e) {
 		t.Fatal("dry run mutated")
+	}
+}
+
+func TestSafeManagedUpdate(t *testing.T) {
+	src := t.TempDir()
+	write(t, filepath.Join(src, "SKILL.md"), "old")
+	dst := t.TempDir()
+	if _, _, err := install.Skill(src, ".", dst, "skill", "old.zip", model.Direct, install.Options{}); err != nil {
+		t.Fatal(err)
+	}
+	write(t, filepath.Join(src, "SKILL.md"), "new")
+	path, updated, err := install.Skill(src, ".", dst, "skill", "new.zip", model.Direct, install.Options{Update: true})
+	if err != nil || !updated {
+		t.Fatalf("path=%s updated=%v err=%v", path, updated, err)
+	}
+	b, err := os.ReadFile(filepath.Join(path, "SKILL.md"))
+	if err != nil || string(b) != "new" {
+		t.Fatalf("content=%q err=%v", b, err)
+	}
+}
+
+func TestManagedUpdateRejectsLocalChangesAndLegacyMetadata(t *testing.T) {
+	src := t.TempDir()
+	write(t, filepath.Join(src, "SKILL.md"), "old")
+	dst := t.TempDir()
+	installed, _, err := install.Skill(src, ".", dst, "skill", "old.zip", model.Direct, install.Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	write(t, filepath.Join(installed, "SKILL.md"), "local edit")
+	write(t, filepath.Join(src, "SKILL.md"), "upstream edit")
+	if _, _, err := install.Skill(src, ".", dst, "skill", "new.zip", model.Direct, install.Options{Update: true}); err == nil || !strings.Contains(err.Error(), "local changes") {
+		t.Fatalf("expected local-change rejection, got %v", err)
+	}
+
+	legacy := filepath.Join(dst, "legacy")
+	write(t, filepath.Join(legacy, "SKILL.md"), "old")
+	write(t, filepath.Join(legacy, "PORT_INFO.json"), `{"sourceRoot":".","normalizedSlug":"legacy","classification":"direct-skill"}`)
+	if _, _, err := install.Skill(src, ".", dst, "legacy", "new.zip", model.Direct, install.Options{Update: true}); err == nil || !strings.Contains(err.Error(), "no content digest") {
+		t.Fatalf("expected legacy rejection, got %v", err)
+	}
+
+	unmanaged := filepath.Join(dst, "unmanaged")
+	write(t, filepath.Join(unmanaged, "SKILL.md"), "unmanaged")
+	if _, _, err := install.Skill(src, ".", dst, "unmanaged", "new.zip", model.Direct, install.Options{Update: true}); err == nil || !strings.Contains(err.Error(), "not verifiably porter-managed") {
+		t.Fatalf("expected unmanaged rejection, got %v", err)
 	}
 }
 func TestJSONShape(t *testing.T) {

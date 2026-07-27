@@ -24,6 +24,8 @@ claude-skill-porter import ~/Downloads/skills.zip \
   --canonical "$HOME/.agents/skills" --dry-run
 claude-skill-porter import ~/Downloads/skills.zip \
   --canonical "$HOME/.agents/skills"
+claude-skill-porter import ~/Downloads/skills-v2.zip \
+  --canonical "$HOME/.agents/skills" --update --dry-run
 
 claude-skill-porter link --canonical "$HOME/.agents/skills" \
   --project-root "$PWD" --skill code-review --dry-run
@@ -51,13 +53,15 @@ Compiled VS Code/Cursor extensions are reported as incompatible and refused.
 - Archive content is never executed.
 - Every `SKILL.md` root is detected; internal relative layout is preserved.
 - Skill names are normalized to lowercase kebab case.
-- Existing canonical entries cause an error and are never silently overwritten.
+- Existing canonical entries cause an error by default. Explicit `--update`
+  replaces only porter-managed entries whose recorded digest proves that their
+  payload has not been locally modified; the replacement is staged with rollback.
 - Project links never replace unrelated files or directories.
 - Every installed skill receives an auditable, typed `PORT_INFO.json`.
 
 ## Limitations
 
-ZIP is the only archive format. This version has no collision rename/overwrite,
+ZIP is the only archive format. This version has no collision rename or forced overwrite,
 frontmatter validation, registry updates, instruction-file conversion, global
 link management, or archive script execution. See [SPEC.md](SPEC.md) for the
 normative behavioral contract.
