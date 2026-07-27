@@ -586,6 +586,39 @@
       ],
       "description": "OpenTelemetry Semantic Conventions expert. Use when selecting, applying, or reviewing telemetry attributes. Triggers on tasks involving attribute selection, semantic convention compliance, attribute migration, or custom attribute decisions. Covers the attribute registry, naming patterns, attribute placement, and versioning. For span names, span kinds, and span status codes, see the otel-instrumentation skill."
     },
+    "type-design": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "typescript",
+        "type-design",
+        "domain-modeling",
+        "code-review"
+      ],
+      "description": "Design and audit TypeScript types as a modeling discipline — make illegal states unrepresentable, encode domain truth, and return a designed type with rejected alternatives or principle-grounded audit findings. Not a lint pass."
+    },
+    "artifact-catalog": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "agents"
+      ],
+      "tags": [
+        "documentation",
+        "knowledge-management",
+        "cross-repo",
+        "artifacts",
+        "audit"
+      ],
+      "description": "Keep a personal cross-repo artifact index current and route each artifact to where it belongs — commit, convert, attach, cross, or discard — by lifespan rather than format. Mode A files one artifact idempotently; Mode B sweeps repos, the personal workbench branch, and published artifacts, then diffs against the master."
+    },
     "worktree-disk-gc": {
       "version": "1.0.0",
       "author": "felipeblassioli",
