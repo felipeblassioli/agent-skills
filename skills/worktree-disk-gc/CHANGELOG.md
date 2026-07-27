@@ -11,10 +11,11 @@ All notable changes to the `worktree-disk-gc` skill.
   `locked`, `prunable`, `dirty-tracked`, `dirty-untracked`, `unpushed`,
   `in-use`, `recent`) and a per-tree `no-lockfile` gate. Human table and
   `--json` output. Bash 3.2 compatible.
-- `scripts/tests/test-worktree-nm-gc.sh` — 25 self-contained behavioural tests
+- `scripts/tests/test-worktree-nm-gc.sh` — 28 self-contained behavioural tests
   covering every gate, every opt-out flag, nested-worktree ownership,
   dry-run/apply separation, inspection failures, apply-time in-use refresh,
-  and the symlink refusal.
+  large untracked listings, exact `node_modules` path-component matching, and
+  the symlink refusal.
 
 ### Notes
 Two non-obvious behaviours are load-bearing and covered by tests:

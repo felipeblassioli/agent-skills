@@ -250,12 +250,20 @@ flush_worktree() {
       add_reason "status-unknown"
     fi
     if [ "$allow_untracked" != "true" ] && [ "$tracked_status_ok" = "true" ]; then
-      if full_status=$(git -C "$wt_path" status --porcelain --untracked-files=normal 2>/dev/null); then
-        untracked=$(printf '%s\n' "$full_status" | awk '/^\?\?/ && $0 !~ /node_modules/ { print; exit }')
+      full_status_file="$tmp/full-status"
+      if git -C "$wt_path" status --porcelain --untracked-files=normal > "$full_status_file" 2>/dev/null; then
+        untracked=$(awk '
+          /^\?\?/ {
+            path = substr($0, 4)
+            if (path !~ /(^|\/)node_modules(\/|$)/ && first == "") first = $0
+          }
+          END { if (first != "") print first }
+        ' "$full_status_file")
         [ -n "$untracked" ] && add_reason "dirty-untracked"
       else
         add_reason "status-unknown"
       fi
+      rm -f "$full_status_file"
     fi
 
     # pushed: every commit reachable from HEAD also lives on some remote ref

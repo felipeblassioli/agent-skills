@@ -74,6 +74,12 @@ q git -C "$root/wt-untracked" push -u origin untracked
 printf 'scratch\n' > "$root/wt-untracked/scratch.md"
 mk_nm "$root/wt-untracked"
 
+# an active-work filename that merely contains the node_modules substring
+q git -C "$main" worktree add -b lookalike "$root/wt-lookalike" main
+q git -C "$root/wt-lookalike" push -u origin lookalike
+printf 'debug notes\n' > "$root/wt-lookalike/node_modules-debug.md"
+mk_nm "$root/wt-lookalike"
+
 # nested worktree living INSIDE another worktree
 q git -C "$main" worktree add -b outer "$root/wt-outer" main
 q git -C "$root/wt-outer" push -u origin outer
@@ -102,6 +108,8 @@ check "no sibling lockfile => SKIP"        "SKIP"    "$(decision_for "$root/wt-n
 check "no-lockfile reason"                 "no-lockfile" "$(reasons_for "$root/wt-nolock")"
 check "dirty tracked => SKIP"              "SKIP"    "$(decision_for "$root/wt-dirty")"
 check "untracked-only => SKIP by default"  "SKIP"    "$(decision_for "$root/wt-untracked")"
+check "node_modules substring => SKIP"      "SKIP"    "$(decision_for "$root/wt-lookalike")"
+check "node_modules substring reason"       "dirty-untracked" "$(reasons_for "$root/wt-lookalike")"
 check "primary checkout excluded"          "SKIP"    "$(decision_for "$main")"
 check "primary checkout reason"            "main"    "$(reasons_for "$main")"
 
@@ -123,6 +131,14 @@ cat > "$root/shims/git" <<EOF
 case "\$*" in
   *"-C \$GC_FAIL_STATUS_PATH status "*) exit 70 ;;
   *"-C \$GC_FAIL_REACHABILITY_PATH rev-list "*) exit 71 ;;
+  *"-C \$GC_MANY_STATUS_PATH status --porcelain --untracked-files=normal"*)
+    i=0
+    while [ "\$i" -lt 6000 ]; do
+      printf '?? scratch-%05d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n' "\$i"
+      i=\$((i + 1))
+    done
+    exit 0
+    ;;
 esac
 exec "$real_git" "\$@"
 EOF
@@ -141,6 +157,12 @@ reach_dec=$(printf '%s' "$reach_json" | jq -r --arg p "$root/wt-clean" '.worktre
 reach_reason=$(printf '%s' "$reach_json" | jq -r --arg p "$root/wt-clean" '.worktrees[]|select(.path==$p)|.reasons')
 check "failed reachability check => SKIP" "SKIP" "$reach_dec"
 check "failed reachability reason" "reachability-unknown" "$reach_reason"
+
+many_json=$(GC_FAIL_STATUS_PATH=/dev/null GC_FAIL_REACHABILITY_PATH=/dev/null \
+  GC_MANY_STATUS_PATH="$root/wt-clean" PATH="$root/shims:$PATH" \
+  /bin/bash "$gc" $FLAGS 2>/dev/null)
+many_dec=$(printf '%s' "$many_json" | jq -r --arg p "$root/wt-clean" '.worktrees[]|select(.path==$p)|.decision')
+check "large untracked listing completes without SIGPIPE" "SKIP" "$many_dec"
 
 echo "nesting:"
 # wt-outer is clean+pushed; the nested inner worktree is unpushed. The outer
