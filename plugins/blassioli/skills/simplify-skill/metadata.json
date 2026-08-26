@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "August 2026",
+  "abstract": "Rewrite an existing skill in the cursor-team-kit register — under ~60 lines, Trigger/Workflow/Guardrails/Output, plain sentences, no tables — beside the original rather than over it, so the two registers can be compared. Classifies every section as load-bearing (rules whose violation changes the outcome, falsifiability and honesty gates, uninferable domain facts, and anything a CHANGELOG says was added after a real failure) or scaffolding (restated rules, prose in tables, rationale essays, ALL-CAPS emphasis, empty symmetry), keeps load-bearing rules even when they break the register, and closes with what the simple version can no longer do."
+}

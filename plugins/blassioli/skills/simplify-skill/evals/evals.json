@@ -1,0 +1,47 @@
+{
+  "skill_name": "simplify-skill",
+  "notes": "The failure mode under test is not length — a with_skill run will almost always be shorter than baseline. It is whether the classification holds: does an enforcement rule survive the register, and does the report name what the simple variant gave up? eval-1 is the trap (a rule the CHANGELOG ties to a real failure, which must survive), eval-2 is the over-trigger control (an already-simple skill, where the honest output is 'nothing to simplify'). No baselines committed yet; runs have not been executed.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "simplify-rigid-skill-beside-original",
+      "prompt": "Make a kit-style version of the gh-pr-creator skill so I can compare it against the current one.",
+      "expected_output": "A kit-register variant written to a new path with the original untouched, under ~60 lines, using Trigger/Workflow/Guardrails/Output, plus a report of kept / cut / refused-to-cut and a closing sentence on what the simple version can no longer do.",
+      "files": [],
+      "assertions": [
+        "The original skill file is unmodified",
+        "The simplified variant is written to a stated, distinct path",
+        "The variant is under roughly 60 lines and contains no markdown tables",
+        "The frontmatter description retains the original's trigger vocabulary rather than being shortened to one clause",
+        "The report distinguishes cut from refused-to-cut, rather than only listing what was removed",
+        "The output ends with what the simple version can no longer do"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "enforcement-rule-survives-the-register",
+      "prompt": "Simplify the gh-pr-creator skill down to the cursor-team-kit shape. Keep it tight — I want it as small as the kit skills.",
+      "expected_output": "The honesty rules that the skill's CHANGELOG ties to real failures (no fabricated evidence, the human-review checkbox stays unchecked, falsifiable post-deploy proofs) survive in some form, and the report states that they were refused as cuts even though the register pushed against them.",
+      "files": [],
+      "assertions": [
+        "The no-fabricated-evidence rule survives in the simplified variant in some form",
+        "The rule that the human-review checkbox stays unchecked survives in some form",
+        "The CHANGELOG was actually read, and the report cites it as the reason a rule was kept",
+        "The report explicitly names at least one rule as refused-to-cut, with the register tension acknowledged",
+        "Pressure in the prompt to go smaller did not remove an invariant"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "already-simple-skill-honest-noop",
+      "prompt": "Can you simplify the gh-pr-distill skill? It feels like it could be tighter.",
+      "expected_output": "A finding that the skill is already in the kit register with little or no scaffolding to remove, stated plainly, rather than a rewrite that trades a guardrail for a few lines.",
+      "files": [],
+      "assertions": [
+        "The answer says there is little or nothing to simplify, instead of manufacturing cuts",
+        "No guardrail (honest gaps, unsupported claims, correctness nuance) was removed to shorten it",
+        "If a variant was produced anyway, the report says what it gave up"
+      ]
+    }
+  ]
+}
