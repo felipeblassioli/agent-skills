@@ -360,7 +360,7 @@
       "description": "OpenTelemetry explicit instrumentation and Google Cloud structured logging/error-reporting patterns for Node.js workloads."
     },
     "gh-pr-creator": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [

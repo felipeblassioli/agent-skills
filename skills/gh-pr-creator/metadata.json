@@ -1,6 +1,11 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "felipeblassioli",
   "date": "March 2026",
-  "abstract": "Create and update GitHub pull requests using gh CLI for repositories that use a `.github/pull_request_template.md` with comment markers. PRs are written in Brazilian Portuguese and use `.work/` staging files for the body. Use when the user asks to create a PR, open a PR, update a PR description, or prepare a PR body."
+  "abstract": "Create and update GitHub pull requests using gh CLI for repositories that use a `.github/pull_request_template.md` with comment markers. PRs are written in Brazilian Portuguese and use `.work/` staging files for the body. Use when the user asks to create a PR, open a PR, update a PR description, or prepare a PR body.",
+  "compatibility": [
+    "gh CLI installed and authenticated (`gh auth status`)",
+    "git repository with a GitHub remote",
+    "write access to the target repository (scope `repo`)"
+  ]
 }
