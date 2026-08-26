@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "August 2026",
+  "abstract": "Rewrite a PR body around what a reviewer actually needs, by applying one deletion test to every paragraph, bullet, table row and proof: if this disappeared, would a competent reviewer be materially worse at reviewing this PR? What survives is rewritten from the final understanding of the change rather than the chronology of the investigation, preserving the repository's required sections, markers and language. Optimizes for reviewer understanding rather than shortness: correctness-bearing nuance and honest gaps are kept."
+}
