@@ -635,6 +635,23 @@
         "node-modules"
       ],
       "description": "Reclaim disk space from git worktree pools by deleting reproducible node_modules trees from worktrees that show no sign of active work, gated on clean tree, fully-pushed commits, no open files, idleness, and a sibling lockfile."
+    },
+    "gh-pr-distill": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "cursor",
+        "claude",
+        "agents"
+      ],
+      "tags": [
+        "github",
+        "pr",
+        "code-review",
+        "technical-writing"
+      ],
+      "description": "Rewrite a PR body around what a reviewer actually needs by applying one deletion test to every paragraph, bullet, row and proof, then rewriting what survives from the final understanding of the change rather than the investigation chronology. Preserves required template sections, markers and language; keeps correctness-bearing nuance and honest gaps."
     }
   },
   "targetPaths": {
