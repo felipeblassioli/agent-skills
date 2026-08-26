@@ -9,7 +9,7 @@
     {
       "name": "blassioli",
       "source": "./plugins/blassioli",
-      "description": "USE AT YOUR OWN RISK — Felipe Blassioli's personal sandbox plugin: GCP observability skills (Cloud Error Reporting triage, Cloud Logging noise triage, error → trace → code root-cause). Experimental; sandbox tier; skills may graduate to official plugins as they earn traction (the code reviewer graduated to code-quality).",
+      "description": "USE AT YOUR OWN RISK — Felipe Blassioli's personal sandbox plugin: GCP observability skills (Cloud Error Reporting triage, Cloud Logging noise triage, error → trace → code root-cause) and skill authoring (simplify a rigid skill into the cursor-team-kit register beside the original). Experimental; sandbox tier; skills may graduate to official plugins as they earn traction (the code reviewer graduated to code-quality).",
       "author": { "name": "Felipe Blassioli", "email": "felipeblassioli@gmail.com" }
     },
     {
