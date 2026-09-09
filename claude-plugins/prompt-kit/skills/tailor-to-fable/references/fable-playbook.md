@@ -58,8 +58,15 @@ extraction, rejected params).
 - **Reads:** `subagent_posture: spawns-readily`.
 - **Aligns:** prompt-audit R8 (orchestrator-subagent-posture).
 - **Do:** If the work decomposes, frame it as parallelisable and authorise
-  long-lived subagents / async orchestration. Guard the other way too: for work
-  that is trivially direct, say so, so it does not over-delegate.
+  long-lived subagents / async orchestration. Say which parts are small enough to
+  do directly, so it does not over-delegate trivially direct work.
+- **Also do — pin the subagents' tier.** A subagent whose `model` is unset inherits
+  the caller's, so authorising fan-out from the escalation tier silently runs every
+  delegated unit there. Observed: four subagents ran on the escalation tier because
+  their orchestrator did, on briefs that already carried the method — i.e. units
+  that were scoped enough to route down. Instruct the run to resolve
+  `delegation_aliases[tier]` per unit and pass it explicitly. (prompt-audit R12
+  blocks the omission.)
 
 ### M6 — Give it a memory file
 - **Reads:** profile note ("performs well with a place to write/reference
@@ -89,8 +96,56 @@ bio/life-sciences) where even benign work can trip a refusal → silent fallback
 When the task is in that territory, flag it: the tailored prompt cannot guarantee
 the run stays on the escalation model.
 
+### M9 — When the target is a fresh session, emit a handoff brief
+- **Reads:** `execution_signals.session_lifecycle.hand_off` + `.externalize`.
+- **Aligns:** prompt-audit R13 (context-assumed-not-carried, severity `block`).
+- **When:** `model-recommender` answered `where: fresh_session` — you want an
+  independent re-derivation, not a stronger model inside a transcript whose framing
+  you already distrust. The brief *is* the externalized state; write it to a file.
+- **Do:** the brief must stand alone. Sections, in the order that worked:
+
+  1. **Title = the defect as a claim**, not a request to look at something.
+  2. **Who is asking, and what you want back** — an independent read, not
+     confirmation.
+  3. **Your own retracted errors, stated plainly, then: assume another one exists
+     and go find it.** This is the move that earns the handoff. Without it the fresh
+     session tends to ratify your framing; with it, it hunts.
+  4. **"Treat everything below as a hypothesis, including the numbers"** — name
+     which numbers came from your own queries and are worth re-deriving.
+  5. **Orientation** — the system, then the defect as you currently frame it, then
+     the consequence chain.
+  6. **Evidence, and the instruments that produced it** — plus **the confound you
+     must reproduce**: the thing that already fooled you once.
+  7. **What constrains the fix** (invariants, compatibility, operational limits).
+  8. **Your current leaning, labelled as the thing you most want challenged**, with
+     the alternatives you can see and have *not* properly evaluated.
+  9. **Still open**, each item with its reachability — a log retention window, a
+     stale checkout, a query engine's missing features. An open question nobody can
+     reach is not an open question.
+  10. **How to verify independently** — every path named, and the environment's
+      sharp edges (stale branches, tool version limits).
+  11. **Boundaries** — what is read-only, what needs approval, what must not leave
+      the machine. M3 lands here.
+  12. **What you need back** — coverage-first (M8), plus "what would have to be true
+      for you to change your mind" and "what in my evidence does not hold up."
+  13. **Autonomy close** — work end to end, fan out (M5) with tiers pinned,
+      audit progress claims against tool results (M3), keep a lessons file (M6).
+
+- **Label every premise `verified` or `assumed`.** The value of a fresh context is
+  independent derivation, and it cannot re-derive what it cannot separate from
+  assertion. This is the R13 discipline.
+- **Cost note:** a handoff is not a saving on its own — the fresh session re-reads
+  what it needs. It pays off because it starts from a short prefix and a corrected
+  frame (`meta.context_cost_rule`), not because it skips work.
+
 ## Anti-over-tailoring
 A strong, already-outcome-oriented prompt needs little. If the input is a
 well-framed hard problem with clear boundaries, the honest output is a small
 diff (usually M4 + M7) — not a rewrite. Wanting to gut a good prompt means the
 transform miscalibrated; recheck before emitting.
+
+The same restraint applies to M9: a handoff brief is long because it must be
+self-contained, not because length is the point. The one that worked ran ~200
+lines for a multi-week investigation. A one-hour problem does not need that, and a
+brief padded past what the receiving session must know is just context cost paid
+twice.

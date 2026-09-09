@@ -1,18 +1,21 @@
 ---
 name: tailor-to-fable
 description: >-
-  Rewrites a prompt (or a rough idea) to maximize the escalation-tier model —
-  Fable 5 today — on a hard, ambiguous, long-horizon problem. It commits to that
-  target and applies the "un-prescribe and unleash a smarter collaborator"
-  transform: state the problem and withhold the solution, strip scaffolding
-  inherited from literal-following models, set explicit boundaries for long
-  autonomous runs, avoid the reasoning-echo trap that silently drops you back to
-  Opus, enable subagent orchestration, and set the run config (effort, thinking,
-  fallback) instead of phrasing effort into words. Use when you type
-  /tailor-to-fable, when you have already decided to run Fable 5, or when you ask
-  to optimize / adapt / tune a prompt for Fable or "the smartest model" on a hard
-  problem. To pick the model, use model-recommender; to shape any-tier intent,
-  use smart-prompt; to critique a prompt, use prompt-audit.
+  Rewrites a prompt, a rough idea, or a stuck investigation into a brief for the
+  escalation-tier model (resolved from ~/.claude/model-profiles.md, never
+  hardcoded) on a hard, ambiguous, long-horizon problem. Applies the "un-prescribe
+  and unleash a smarter collaborator" transform: state the problem and withhold the
+  solution, strip scaffolding inherited from literal-following models, set
+  boundaries for long autonomous runs, avoid the reasoning-echo trap that silently
+  falls back to a lesser model, enable subagent orchestration with each subagent's
+  tier pinned, and set the run config instead of phrasing effort into words. Also
+  writes the self-contained HANDOFF BRIEF when the answer is a fresh session rather
+  than a stronger model in this one. Use when you type /tailor-to-fable, when you
+  have already decided to run the escalation tier, when you ask to optimize / adapt
+  / tune a prompt for Fable or "the smartest model", or when you want to hand a
+  problem this session has framed to a fresh session for an independent read. To
+  pick the placement and tier, use model-recommender; to shape any-tier intent, use
+  smart-prompt; to critique a prompt, use prompt-audit.
 ---
 
 # tailor-to-fable
@@ -23,12 +26,15 @@ description: >-
 > pointers). If the profiles file is absent, stop and ask the user to install it
 > (see the prompt-kit README) — never guess Fable's posture or a model string.
 
-The premise the user brings: **Fable 5 is a collaborator smarter than the author,
-pointed at a problem too hard or too long for the deliberation tier.** You don't
-micromanage a genius. So this skill does one directed thing — it takes a prompt
-or a rough idea and rewrites it into the brief that gives that model the most
-room to solve the problem *well*, with guardrails, without tripping the traps
-that quietly demote it.
+The premise the user brings: **the escalation-tier model is a collaborator smarter
+than the author, pointed at a problem too hard or too long for the deliberation
+tier.** You don't micromanage a genius. So this skill does one directed thing — it
+takes a prompt, a rough idea, or a stuck investigation and rewrites it into the
+brief that gives that model the most room to solve the problem *well*, with
+guardrails, without tripping the traps that quietly demote it.
+
+The skill is named for Fable because that is what the escalation tier resolves to
+today and what people type. The target is whatever `tier_to_model.escalation` says.
 
 This is not routing (`model-recommender` decides the tier) and not general
 shaping (`smart-prompt` routes a loose intent to whatever tier fits). Here the
@@ -40,9 +46,8 @@ tune the prompt to *that* model's posture.
 The command is named for Fable, but the posture facts are volatile, so read them:
 
 1. Parse `~/.claude/model-profiles.md`. Take `tier_to_model.escalation` — the
-   model this skill tailors to (today `claude-fable-5`). If that tier ever points
-   elsewhere, tailor to *that* model's profile and note the name/target mismatch
-   to the user.
+   model this skill tailors to. If that tier points at a model whose profile is
+   absent, say so and stop; do not tailor to a posture you cannot read.
 2. Apply `meta.staleness_rule` to the resolved model's profile. If stale/missing,
    refresh per that rule before quoting a nuance; if you cannot refresh, proceed
    and **flag it stale** rather than guessing.
@@ -50,14 +55,21 @@ The command is named for Fable, but the posture facts are volatile, so read them
    triggers, effort/thinking defaults, rejected params, fallback) comes from that
    profile block. This skill states the *moves*; the profile states the *facts*.
 
-## Two input modes
+## Three input modes
 
 - **A prompt exists** → transform it: keep the intent, remove what throttles the
   target, add what it needs.
 - **A rough idea** → elevate it into a full brief first (objective, constraints,
   evidence to gather, boundaries, output contract), *then* apply the same moves.
-  Keep the altitude high — a rough idea for Fable should stay a well-framed
+  Keep the altitude high — a rough idea for this tier should stay a well-framed
   problem, not become a step script.
+- **A stuck investigation in the current session** → this is the handoff case, and
+  it is a different output: a self-contained brief for a **fresh** session (M9),
+  written to a file. Reach for it when `model-recommender` answered
+  `where: fresh_session` — an `escalate_when` signal fired *and* the current
+  framing is suspect. Raising the tier inside that session keeps the framing that is failing;
+  the point of the handoff is an independent re-derivation, so the brief must state
+  its premises rather than gesture at them (prompt-audit R13 blocks the omission).
 
 ## The transform (detail + snippet pointers in `references/fable-playbook.md`)
 
@@ -78,9 +90,12 @@ Load the playbook for the full rationale and the canonical snippet names.
   **silent fallback to `profile.fallback`** — you think you're on Fable but you're
   not. Cut it; surface progress via a send-to-user tool and read the adaptive
   thinking blocks.
-- **Enable orchestration.** It spawns subagents readily — frame fan-out-able work
-  as parallelisable and long-lived, and guard against over-delegating trivially
-  direct work.
+- **Enable orchestration, with each subagent's tier pinned.** It spawns subagents
+  readily — frame fan-out-able work as parallelisable and long-lived, say what is
+  small enough to do directly, and require an explicit
+  `delegation_aliases[tier]` on every delegating call. An unset `model` makes the
+  subagent inherit *this* tier, which is how fan-out from the escalation tier
+  quietly bills every delegated unit at escalation rates.
 - **Give it a memory file.** For long runs, point it at a markdown file to record
   and reference lessons.
 - **Set the run config, not worded effort.** Recommend `effort` high/xhigh (per
@@ -90,6 +105,10 @@ Load the playbook for the full rationale and the canonical snippet names.
 - **Coverage-first for review/finding tasks.** If the input is a review, ask for
   full coverage at the finding stage and move filtering downstream; "only
   high-severity" makes a literal follower drop recall.
+- **Adversarial premise, for a handoff.** State the conclusions you have already
+  had to retract, then ask it to assume another error exists and find it. Label
+  every premise `verified` or `assumed`. Without this a fresh session tends to
+  ratify the framing it was handed. (M9.)
 
 **Refusal caution (honesty).** If the task sits in `profile.refusal_triggers`
 territory (e.g. offensive-cyber, bio/life-sciences) — even benignly — Fable may
@@ -99,18 +118,23 @@ prompt guarantees a Fable run.
 ## Gate with prompt-audit, then emit
 
 Run `prompt-audit` on the tailored prompt with the target set to the escalation
-model. Its R2/R3/R8/R9/R10 encode these same Fable checks — let it confirm the
-transform didn't reintroduce a trap (especially R3, the reasoning-echo block).
-Apply its fixes. Never emit a prompt that trips a `block`.
+model. Its R2/R3/R8/R9/R10 encode these same escalation-tier checks, R12 catches an
+unpinned subagent tier, and R13 catches a handoff brief that leans on context the
+fresh session will not have. Let it confirm the transform didn't reintroduce a trap
+(especially R3, the reasoning-echo block). Apply its fixes. Never emit a prompt
+that trips a `block`.
 
 ## Output
 
 ```
-Target:     escalation tier → <model>  (profile last_verified <date>[, STALE])
+Target:     escalation tier → <model>  (api_verified <date>, prompting_verified <date>[, STALE])
 Run config: effort <high|xhigh>, thinking adaptive, fallback <profile.fallback> — <one line>
+Delegation: subagents pinned to <delegation_aliases[tier]> per unit — never inherited
 ```
 
-Then the tailored prompt in a fenced block, ready to paste or run.
+Then the tailored prompt in a fenced block, ready to paste or run. For the handoff
+mode, write the brief to a file instead and give the path — it is externalized
+state, and pasting it into this session defeats the purpose.
 
 Then **what changed and why** — a short bullet list mapping each edit to the
 profile field or `prompt-audit` rule_id that justifies it. (This changelog is for
@@ -122,9 +146,10 @@ relevant, the refusal caution.
 
 ## Composition (crisp boundaries)
 
-- `model-recommender` — owns the tier decision. Often runs *before* this skill:
-  it routes a hard task to the escalation tier, then this skill tailors the prompt
-  for it. tailor-to-fable does not re-decide the tier.
+- `model-recommender` — owns the placement and tier decision. Runs *before* this
+  skill: it answers `where` (`session` / `delegate` / `fresh_session`) and the tier,
+  then this skill writes the brief for it. tailor-to-fable does not re-decide
+  either; a `where: fresh_session` answer is what selects the M9 handoff mode.
 - `smart-prompt` — shapes a loose intent for *whatever* tier fits and may not pick
   escalation. tailor-to-fable is the opposite move: target fixed, prompt tuned.
   If given a raw idea, borrow smart-prompt's slot discipline to frame it, then

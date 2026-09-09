@@ -1,75 +1,111 @@
 {
   "skill_name": "model-recommender",
-  "notes": "Routing verdicts must be resolved against the installed ~/.claude/model-profiles.md, never from memory. Each case asserts the durable verdict (archetype + tier + effort) AND the resolved model string from tier_to_model. Two controls guard the failure modes that matter most: over-escalation (a hard-but-tractable task must stay on the deliberation tier, not jump to escalation/Fable) and graceful staleness (emit tier + effort and flag, never guess a string). Model strings in assertions are the values in tier_to_model as of 2026-07-05 — regrade against the file if it changed. Run with-skill vs baseline; grade each assertion with quoted evidence.",
+  "notes": "Verdicts must be resolved against the installed ~/.claude/model-profiles.md, never from memory. Assertions deliberately contain NO model strings: the previous version pinned them and went stale the moment tier_to_model changed, which is the same defect the skill exists to prevent. Assert the placement, the tier, the effort, and the LOOKUP PATH (tier_to_model[x] for a session, delegation_aliases[x] for a subagent); whether the resolved value is current is the job of meta.staleness_rule and the SessionStart hook. Each case names the failure mode it guards. Run with-skill vs baseline; grade each assertion with quoted evidence.",
   "evals": [
     {
       "id": 1,
-      "name": "build-a-plugin-deliberation-xhigh",
-      "prompt": "How should I build the loop-compiler plugin from scratch? Which model and effort?",
+      "name": "delegation-emits-alias-never-null",
+      "guards": "Observed defect: four subagents silently inherited the escalation tier because the Agent call's `model` was left null on prompts that already contained the method.",
+      "prompt": "I'm running this session on Fable. I want a subagent to apply the already-specified rename across the 12 call sites and run the test suite. What should I give it?",
       "files": [],
       "assertions": [
-        "Classifies the task as deliberation (ambiguous, high-leverage, get-it-right-once — architecture / breaking down work)",
-        "Emits the durable verdict first: deliberation tier, effort xhigh (coding/agentic deliberation), with a one-line reason",
-        "Resolves the model to claude-opus-4-8 via tier_to_model[deliberation]",
-        "Does NOT escalate to the escalation tier / claude-fable-5 (within the deliberation tier's ceiling)"
+        "Answers `Where: delegate` first — the unit has a stateable contract and a named verification command",
+        "Emits execution tier at effort high",
+        "Emits the target as an Agent-tool `model` ALIAS resolved from delegation_aliases[execution], not a model string from tier_to_model",
+        "States that leaving `model` null makes the subagent inherit the caller's model, i.e. this unit would run on the escalation tier",
+        "Does not recommend keeping the work in the session"
       ]
     },
     {
       "id": 2,
-      "name": "locate-code-recon-low",
-      "prompt": "Find where the retry/backoff logic lives in this service.",
+      "name": "recon-delegation-and-its-hard-limits",
+      "guards": "The cheapest tier is the one most often skipped; and it is the only current model whose context window and effort handling differ.",
+      "prompt": "Find every place the retry/backoff policy is configured in this service and summarize what each one sets.",
       "files": [],
       "assertions": [
-        "Classifies as recon (locate/read)",
-        "Emits recon tier, effort low",
-        "Resolves the model to claude-haiku-4-5-20251001 via tier_to_model[recon]",
+        "Answers `Where: delegate` with recon tier at effort low",
+        "Resolves the target from delegation_aliases[recon]",
+        "Surfaces at least one recon-profile delta that actually breaks a delegation — the 200K context window, or that `effort` errors on that model",
         "Does not route a pure lookup to a judgment tier"
       ]
     },
     {
       "id": 3,
-      "name": "scoped-implementation-execution-high",
-      "prompt": "Implement TICKET-451 exactly as specified — add cursor pagination to GET /users with unit tests. The spec and acceptance criteria are in the ticket.",
+      "name": "session-deliberation-no-over-escalation",
+      "guards": "Over-routing: treating 'hard' as a synonym for the escalation tier.",
+      "prompt": "Design a caching layer for these DB calls — the invalidation is tricky. Which model?",
       "files": [],
       "assertions": [
-        "Classifies as execution (already-scoped, on-rails, a specified unit)",
-        "Emits execution tier, effort high",
-        "Resolves the model to claude-sonnet-5 via tier_to_model[execution]",
-        "Does not route settled, spec'd work to the deliberation tier"
+        "Answers `Where: this session` — the work is the judgment",
+        "Emits deliberation tier at xhigh (or high, with a stated reason)",
+        "Resolves the target from tier_to_model[deliberation]",
+        "Does NOT pick the escalation tier, and says why: no escalate_when signal has fired and 'hard' is not one",
+        "Names a Watch signal that would justify escalating later"
       ]
     },
     {
       "id": 4,
-      "name": "phased-task-per-phase",
-      "prompt": "Plan, implement, and review a new billing module. What model per phase?",
+      "name": "consequence-override-beats-task-shape",
+      "guards": "Reversibility, not size, sets the floor. A one-line change to persistent state is not recon work.",
+      "prompt": "Tiny change: flip the default on this column in the production migration so new rows get the new value. One line. Which model?",
       "files": [],
       "assertions": [
-        "Recommends per phase, one line each, rather than a single averaged verdict",
-        "Plan phase → deliberation / claude-opus-4-8",
-        "Implement phase → execution / claude-sonnet-5",
-        "Review phase → deliberation / claude-opus-4-8"
+        "Applies routing_rubric.consequence_override and floors the tier at deliberation despite the task looking like trivial execution",
+        "Names the reason as reversibility/persistent state, not difficulty",
+        "Does not route it to recon or execution on the grounds that the diff is one line"
       ]
     },
     {
       "id": 5,
-      "name": "no-over-escalation-control",
-      "prompt": "Design a caching layer for these DB calls — the invalidation is tricky. Which model?",
+      "name": "phased-task-routed-per-phase",
+      "guards": "Averaging a mixed task into one verdict.",
+      "prompt": "Plan, implement, and review a new billing module. What model per phase?",
       "files": [],
       "assertions": [
-        "Classifies as deliberation (a hard design call, but within the deliberation tier's ceiling)",
-        "Resolves to claude-opus-4-8 at high or xhigh — NOT the escalation tier / claude-fable-5",
-        "Treats escalation as reserved (long-horizon / beyond the deliberation ceiling), not the default for 'hard'"
+        "Emits one line per phase rather than a single averaged verdict",
+        "Each line carries a placement (session vs delegate) as well as a tier and effort",
+        "Plan and review resolve to the deliberation tier; implement resolves to the execution tier",
+        "The implement phase is marked delegable and carries an alias, not a model string"
       ]
     },
     {
       "id": 6,
-      "name": "graceful-staleness-control",
-      "prompt": "Which model for reviewing this PR? (assume ~/.claude/model-profiles.md's deliberation profile is 90 days past its last_verified and the source is unreachable)",
+      "name": "mid-run-handoff-not-in-place-escalation",
+      "guards": "The flagship case: a stuck run whose framing is wrong. Raising the tier inside that session keeps the bad framing; a fresh session re-derives it.",
+      "prompt": "I've been on this defect for hours. Two different fixes both failed the same way, and I've re-explained the same constraint to you twice. Should I switch to a stronger model?",
       "files": [],
       "assertions": [
-        "Still emits the durable verdict: deliberation tier, effort high (review is deliberation)",
-        "Flags the profile / model table as stale rather than presenting a model string as verified",
-        "Does NOT invent or guess a model string when it cannot resolve/refresh"
+        "Names the fired execution_signals.escalate_when items — the defect surviving two independent fix attempts, and the constraint restated twice",
+        "Answers `Where: fresh session`, NOT raising the tier inside the current session",
+        "Cites session_lifecycle.hand_off — a long session defends its own earlier conclusions",
+        "Requires session_lifecycle.externalize first and names the file the durable state goes to",
+        "Points at tailor-to-fable to write the handoff brief"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "de-escalation-the-under-used-direction",
+      "guards": "Staying on a premium tier after the judgment is finished; de_escalate_when never fires because nobody checks it.",
+      "prompt": "Good — that diagnosis is right, the bug is the missing guard in the reducer. The fix is the same three-line pattern in each of the 9 reducers, and `pnpm test` covers it. Keep going?",
+      "files": [],
+      "assertions": [
+        "Fires execution_signals.de_escalate_when — the unknown resolved, and the remainder repeats an established pattern with a verification command",
+        "Drops the tier rather than continuing at the current one",
+        "Also flips the placement to delegate, and emits the alias from delegation_aliases",
+        "Does not treat the fact that the session is already on a higher tier as a reason to stay there"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "graceful-staleness-flags-one-half-only",
+      "guards": "A blanket STALE flag on a profile whose API facts are current is noise, and noise gets ignored.",
+      "prompt": "Which model for reviewing this PR? (assume the deliberation profile's prompting_verified is 90 days old and unreachable, but its api_verified is current)",
+      "files": [],
+      "assertions": [
+        "Still emits the durable verdict: deliberation tier with an effort",
+        "Flags prompting_verified as stale and does NOT flag api_verified or the tier_to_model string",
+        "Withholds or hedges the posture/nuance line rather than asserting a nuance it cannot verify",
+        "Does NOT invent or guess a model string"
       ]
     }
   ]

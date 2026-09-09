@@ -6,8 +6,14 @@ posture of the target model — several nuances INVERT across tiers, so "good pr
 model-relative, not absolute.
 
 Dependency: rules marked `requires_tier: true` need the target tier first. If the user
-didn't name a model, call `model-recommender` to resolve archetype → tier, then load that
-tier's profile from `~/.claude/model-profiles.md` before evaluating those rules.
+didn't name a model, call `model-recommender` to resolve the placement and tier, then load
+that tier's profile from `~/.claude/model-profiles.md` before evaluating those rules. Rules
+read posture from **profile fields** (`prescription_posture`, `subagent_posture`,
+`refusal_triggers`, `rejected_params`, `fallback`), never from a model name — the same
+prompt is good for one posture and bad for the other, and the names change.
+
+Rule ids are stable and never renumbered; `R11` was merged into `R4` and its id retired
+rather than reused, so a finding recorded against an id keeps its meaning.
 
 Output contract: emit findings (each: rule_id, severity, span, why) AND a rewritten prompt
 (`--fix` style). Severity ∈ {block, warn, nit}. Never silently rewrite without showing findings.
@@ -31,25 +37,25 @@ rules:
     requires_tier: true
     severity: warn
     fires_when: >
-      Target is Fable/escalation AND the prompt enumerates many discrete behaviors or is
-      heavily prescriptive; OR target is Opus/Sonnet AND the prompt relies on the model
-      generalizing scope it never stated.
+      profile.prescription_posture is `brief` AND the prompt enumerates many discrete
+      behaviors or is heavily prescriptive; OR the posture is `explicit` AND the prompt
+      relies on the model generalizing scope it never stated.
     finding: Prescription level is wrong for the target model's posture.
     fix: >
-      Fable: collapse enumerated rules into one brief high-level instruction; remove
+      posture `brief`: collapse enumerated rules into one high-level instruction; remove
       instructions inherited from older, more-prescriptive skills.
-      Opus/Sonnet: state scope explicitly ("apply to every section, not just the first") —
-      they follow literally and will not generalize.
+      posture `explicit`: state scope outright ("apply to every section, not just the
+      first") — a literal follower will not generalize scope you did not state.
 
   - id: R3-reasoning-echo-trap
     requires_tier: true
     severity: block
     fires_when: >
-      Target is Fable AND the prompt instructs the model to show / echo / transcribe /
-      explain its reasoning as response text.
+      `reasoning_extraction` is in profile.refusal_triggers AND the prompt instructs the
+      model to show / echo / transcribe / explain its reasoning as response text.
     finding: >
-      Can trigger the reasoning_extraction refusal on Fable and cause silent fallback to
-      Opus 4.8 — you think you're running Fable but you're not.
+      Can trigger the reasoning_extraction refusal and cause a SILENT fallback to
+      profile.fallback — the run looks like the tier you chose but is not.
     fix: >
       Remove the show-your-reasoning instruction. If you need reasoning visibility, read the
       adaptive thinking blocks, and surface progress via a send-to-user tool instead.
@@ -57,9 +63,16 @@ rules:
   - id: R4-negatives-to-positives
     requires_tier: false
     severity: warn
-    fires_when: The prompt steers with "don't X" / "avoid X" instructions.
-    finding: Negative instructions steer worse than positive directives or positive examples.
-    fix: Rewrite each "don't X" as the positive behavior you want, ideally with a short example.
+    fires_when: >
+      The prompt steers with "don't X" / "avoid X" — including the length variants
+      ("be concise", "don't over-explain") that used to be their own rule.
+    finding: >
+      Negative instructions steer worse than positive directives or examples. Length in
+      particular is complexity-calibrated now, so a blunt prohibition mostly suppresses
+      content you wanted.
+    fix: >
+      Rewrite each "don't X" as the positive behavior you want. For length, give a short
+      example at the target concision instead of a prohibition.
 
   - id: R5-unstated-expectations
     requires_tier: false
@@ -97,20 +110,22 @@ rules:
     fires_when: The prompt is an orchestrator brief and the target's subagent posture is non-default.
     finding: Delegation guidance doesn't match the model's spawning default.
     fix: >
-      Opus (spawns fewer): explicitly authorize fan-out for independent items / multi-file reads.
-      Fable (spawns readily): prefer async orchestration + long-lived subagents; guard against
-      over-delegation of trivially-direct work.
+      subagent_posture `spawns-fewer` or unverified: explicitly authorize fan-out for
+      independent items / multi-file reads rather than assuming it.
+      `spawns-readily`: prefer async orchestration + long-lived subagents; guard the other
+      way, against over-delegating trivially-direct work.
 
   - id: R9-rejected-params
     requires_tier: true
     severity: block
     fires_when: >
-      The prompt/harness sets a parameter the target rejects — e.g. non-default
-      temperature/top_p/top_k or manual extended-thinking budgets on Sonnet 5.
+      The prompt/harness sets a parameter in profile.rejected_params — non-default
+      temperature/top_p/top_k, manual extended-thinking budgets, forced tool_choice,
+      assistant prefill, or an `effort` value on a model whose effort_range is `none`.
     finding: Will 400 on the target model.
     fix: >
-      Remove the rejected params (see profile.rejected_params). For output/design variety on
-      Sonnet 5, use "propose N options first" instead of temperature.
+      Remove them — they return HTTP 400. For output/design variety, "propose N options
+      first" replaces the temperature knob that no longer exists.
 
   - id: R10-review-literal-filtering
     requires_tier: true
@@ -119,18 +134,46 @@ rules:
       A review/finding task instructs "only report high-severity" / "be conservative" /
       "don't nitpick".
     finding: >
-      Literal-following models obey this at the finding stage → measured recall drops even as
+      A literal follower obeys this at the finding stage → measured recall drops even as
       bug-finding improves.
     fix: >
       Ask for coverage at the finding stage (report everything with confidence + severity),
       and move filtering/ranking to a separate downstream step.
 
-  - id: R11-verbosity-via-negatives
+  - id: R12-delegation-model-unset
+    requires_tier: true
+    severity: block
+    fires_when: >
+      The prompt (or the plan it contains) delegates a unit of work to a subagent / Agent /
+      Task call and does not set that call's `model`, or sets it to a `tier_to_model`
+      string instead of a `delegation_aliases` alias.
+    finding: >
+      An unset `model` makes the subagent inherit the CALLER's model, so work that was
+      routed to a cheap tier silently runs on the caller's — observed: four subagents ran
+      on the escalation tier because their orchestrator did. A model string in that field
+      is a different value space and is invalid.
+    fix: >
+      Resolve the alias from delegation_aliases[tier] and pass it explicitly on every
+      delegating call. If the prompt already carries the method the subagent needs, that
+      is evidence the unit is scoped — route it DOWN, do not let it inherit upward.
+
+  - id: R13-context-assumed-not-carried
     requires_tier: false
-    severity: nit
-    fires_when: The prompt reduces length via "be concise" / "don't over-explain".
-    finding: Verbosity is now complexity-calibrated; blunt negatives steer poorly.
-    fix: Give a short positive example of the target concision level instead of a prohibition.
+    severity: block
+    fires_when: >
+      The prompt is written for a fresh session (a handoff brief, a subagent task, a
+      restart) but refers to context only the authoring session has — "as we discussed",
+      "the file you read earlier", "the same approach as before", an unnamed `it`/`this`,
+      or a conclusion whose evidence is not restated.
+    finding: >
+      The receiving session cannot resolve the reference and will either re-derive it
+      differently or invent it. This is the failure mode a handoff exists to avoid: the
+      point of a fresh context is independent re-derivation, which needs the premises
+      stated, not gestured at.
+    fix: >
+      Make the brief self-contained: name every file by path, restate each load-bearing
+      constraint and premise in full, and mark which premises are verified versus assumed.
+      Then re-read it as if you had never seen the original session.
 ```
 
 ## Self-consistency check (dogfood)

@@ -56,9 +56,13 @@ Every strong agentic prompt fills these; the archetype tunes which matter most:
    (e.g. `refs/README.md`, a cloned project), glance at them (Read/Glob/Grep)
    only enough to make the shaped prompt's "Context to gather" steps concrete and
    correct. This is shaping, not doing — implement nothing here.
-4. **Route the tier.** Call `model-recommender` on the underlying task to resolve
-   its archetype → tier + effort. Emit the tier name; let model-recommender own
-   the model string. Never write a model string into the shaped prompt.
+4. **Route the placement and tier.** Call `model-recommender` on the underlying
+   task. Emit its `Where` and the tier + effort; let model-recommender own the
+   target. Never write a model string into the shaped prompt. If it answers
+   `delegate`, the shaped prompt is a *subagent brief* — it must carry the
+   `delegation_aliases` alias on the delegating call and must stand alone (see
+   prompt-audit R12/R13). If it answers `fresh_session`, this is a handoff and
+   `tailor-to-fable` owns the brief, not this skill.
 5. **Fill the slots.** Instantiate the archetype's skeleton with the intent's
    specifics. Bake "ask before X" into the prompt where the clarify-first slot
    calls for it. Keep the altitude high — specify outcomes, not keystrokes.

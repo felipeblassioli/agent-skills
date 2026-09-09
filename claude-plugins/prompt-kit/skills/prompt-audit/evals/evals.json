@@ -1,6 +1,6 @@
 {
   "skill_name": "prompt-audit",
-  "notes": "Adversarial prompt linter. Grade both what it catches AND what it correctly leaves alone — a linter that flags everything is worthless. Cases 1–4 and 7 are true positives (a specific rule must fire at its severity); cases 5 and 6 are calibration controls (a rule must NOT fire — safety prohibitions are not R4 steering-negatives; a clean outcome-oriented prompt must not be gutted). Case 8 exercises the requires_tier dependency (no model named → call model-recommender first). Every fired finding must cite the rule_id + severity from prompt-audit-rules.md and be accompanied by a rewritten prompt. Rule ids/severities are those in prompt-audit-rules.md as of 2026-07-05.",
+  "notes": "Adversarial prompt linter. Grade both what it catches AND what it correctly leaves alone — a linter that flags everything is worthless. True positives must name a specific rule at its severity; the calibration controls must leave a clean prompt alone (safety prohibitions are not R4 steering-negatives; an outcome-oriented prompt must not be gutted). Assertions name rule ids and profile FIELDS, never model names: posture inverts across tiers and the names change. Rule ids/severities are those in prompt-audit-rules.md as of 2026-09-09; R11 was merged into R4 and its id retired.",
   "evals": [
     {
       "id": 1,
@@ -26,12 +26,13 @@
     },
     {
       "id": 3,
-      "name": "fable-reasoning-echo-R3",
+      "name": "reasoning-echo-R3",
       "prompt": "Audit this prompt (target: fable). Prompt: 'Solve the problem and show your full chain of thought — transcribe all your reasoning step by step in the response before the answer.'",
       "files": [],
       "assertions": [
-        "Fires R3-reasoning-echo-trap at severity block (target is Fable)",
-        "Explains the risk: can trigger the reasoning_extraction refusal and silently fall back to Opus 4.8",
+        "Fires R3-reasoning-echo-trap at severity block (target's refusal_triggers include reasoning_extraction)",
+        "Explains the risk: can trigger the reasoning_extraction refusal and silently fall back to profile.fallback, so the run is not on the tier you chose",
+        "Names the fallback target by reading profile.fallback rather than from memory",
         "Rewrite removes the show-your-reasoning instruction and suggests reading adaptive thinking blocks / a progress channel instead"
       ]
     },
@@ -85,9 +86,47 @@
       "prompt": "Audit this prompt (no target model given): 'Refactor the billing service to be faster.'",
       "files": [],
       "assertions": [
-        "Because no model is named, calls model-recommender to resolve the task's archetype → tier before evaluating requires_tier rules",
+        "Because no model is named, calls model-recommender to resolve the placement and tier before evaluating requires_tier rules",
         "Then audits against that tier's profile (execution vs deliberation posture)",
         "Fires R1/R5 (open-ended, no scope/acceptance) and rewrites with scope + verification"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "delegation-model-unset-R12",
+      "guards": "Observed defect: four subagents inherited the escalation tier because the Agent call's `model` was left null.",
+      "prompt": "Audit this orchestrator prompt: \"You are coordinating the migration. For each of the 9 packages, spawn a subagent with this brief: apply the codemod in scripts/codemod.ts to the package, run `pnpm -F <pkg> test`, and report pass/fail. Collect the results and summarize.\"",
+      "files": [],
+      "assertions": [
+        "Fires R12-delegation-model-unset at severity block",
+        "States that an unset `model` makes each subagent inherit the caller's model, so nine units run on the caller's tier",
+        "Rewrite passes an explicit alias resolved from delegation_aliases, not a tier_to_model string",
+        "Notes that the brief already carrying the method is evidence the unit is scoped, i.e. it should route DOWN"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "handoff-assumes-carried-context-R13",
+      "guards": "A handoff exists to get an independent re-derivation; a brief that gestures at context the new session lacks cannot get one.",
+      "prompt": "Audit this handoff brief for a fresh session: \"Take another look at the bug we discussed. The approach we tried before didn't work — the file you read earlier has the relevant handler. Same constraints as before. Figure out what we're missing.\"",
+      "files": [],
+      "assertions": [
+        "Fires R13-context-assumed-not-carried at severity block",
+        "Identifies each unresolvable reference — 'we discussed', 'the approach we tried', 'the file you read earlier', 'same constraints'",
+        "Rewrite names files by path, restates the constraints and premises in full, and marks which premises are verified versus assumed",
+        "Does not merely soften the wording — it makes the brief self-contained"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "self-contained-brief-not-flagged-control",
+      "guards": "R13 must not fire on a brief that legitimately references a file it names, or the rule becomes noise on every real handoff.",
+      "prompt": "Audit this handoff brief: \"Investigate why `POST /bookings` returns 409 for same-day reservations. Verified: the 409 comes from `src/booking/conflict.ts:88`, and the overlap check uses local dates (see the test at `test/conflict.spec.ts:41`). Assumed but NOT verified: that the reservation timezone is always the fleet's. Constraint: do not change the public response shape. Read those two files first and say whether the assumption holds.\"",
+      "files": [],
+      "assertions": [
+        "Does NOT fire R13 — every reference is named by path and each premise is labelled verified or assumed",
+        "Recognizes it as a well-formed investigation brief",
+        "Emits at most one or two minor findings and does not rewrite it wholesale"
       ]
     }
   ]

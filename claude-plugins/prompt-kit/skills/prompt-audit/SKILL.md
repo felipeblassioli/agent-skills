@@ -36,9 +36,13 @@ drift from it.
 Rules with `requires_tier: true` need the target model's tier and profile:
 
 1. If the user named a target model, use it. Otherwise **call `model-recommender`**
-   on the prompt's underlying task to resolve its archetype → tier.
+   on the prompt's underlying task to resolve its placement and tier. The
+   placement matters to the rules: a prompt destined for a subagent is audited for
+   R12 (an unpinned `model`) and R13 (context it cannot resolve), which do not
+   apply to a prompt you will run in this session.
 2. Load that tier's profile from `~/.claude/model-profiles.md` (apply its
-   `meta.staleness_rule`; refresh or flag stale). The profile supplies
+   `meta.staleness_rule`; refresh or flag stale — and flag only the half,
+   `api_verified` or `prompting_verified`, that actually aged out). The profile supplies
    `prescription_posture`, `subagent_posture`, `rejected_params`,
    `refusal_triggers`, etc. that several rules test against.
 
