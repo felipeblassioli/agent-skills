@@ -5,20 +5,21 @@
 > plugin so `model-recommender`, `prompt-audit`, `smart-prompt`, `tailor-to-fable`,
 > and `loop-compiler` share one copy. To install: copy this file to
 > `~/.claude/model-profiles.md`, set `meta.reviewer`, then apply
-> `meta.staleness_rule`.
+> `staleness_rule`.
 >
-> Two kinds of content live below, and they go stale at different rates:
-> - **Durable** — `routing_rubric`, `execution_signals`, `delegation_aliases`,
->   `meta.context_cost_rule`. These encode task shape and observable signals, not
->   a model lineup, and survive a model release.
+> Three kinds of content live below, and they go stale at different rates:
+> - **Policy hypotheses** — `routing_rubric`, `execution_signals`, and
+>   `context_cost_rule`. Re-evaluate them against outcomes, not just model releases.
+> - **Harness snapshot** — `delegation_aliases`; recheck against the installed
+>   Claude Code version and effective agent configuration.
 > - **Volatile snapshots** — `tier_to_model`, `pricing`, and the per-model
 >   profiles, captured on the `api_verified` / `prompting_verified` dates below.
 >   Refresh them against the canonical Anthropic pages in `meta.sources` before
 >   trusting a nuance; never ship the dates below as current without re-verifying.
 >
 > The plugin's SessionStart hook validates the **installed** copy on every session
-> — it fails loudly if a yaml block does not parse, a required block is missing, or
-> a tier lacks an alias or a profile. That is the drift guard for this template.
+> — it emits an advisory warning if YAML does not parse, a required block is
+> missing, or a tier lacks a matching alias or profile. That is the drift guard for this template.
 
 
 Single source of truth for model routing and per-model prompting nuances.
@@ -26,8 +27,10 @@ Read by `prompt-kit` (`model-recommender`, `prompt-audit`, `tailor-to-fable`) an
 `loop-compiler`. Canonical home: `~/.claude/model-profiles.md` (versioned in dotclaude).
 
 Parsing contract: consumers read every fenced ```yaml block below and merge them.
-Prose is for humans; the yaml is the data. Model strings appear in exactly one place
-(`tier_to_model`); everything else routes by tier, never by string.
+Prose is for humans; the yaml is the data. Resolve models through `tier_to_model`,
+then match the exact profile `model_id`.
+Each profile also declares its `delegation_alias`; the guard checks those bindings.
+`staleness_rule` and `context_cost_rule` are top-level keys, not children of `meta`.
 
 ## Meta + staleness rule
 
@@ -50,7 +53,7 @@ staleness_rule: |
     - api_verified       : ids, context window, effort range, rejected params,
                            thinking defaults, pricing. Refresh at >90 days.
     - prompting_verified : posture/nuance notes. Refresh at >30 days, or when
-                           tier_to_model resolves to a key with no profile.
+                           tier_to_model resolves to an id with no matching model_id.
   Refresh = fetch the source, rewrite the affected keys, bump that date only.
   If you cannot refresh, emit the tier/effort verdict anyway and flag WHICH half is
   stale. Never guess a model string, a rejected param, or a nuance.
@@ -67,18 +70,20 @@ context_cost_rule: |
       ~$0.12/turn between 25-100 turns, ~$0.22/turn past 400.
     - the tier is a ~2x multiplier on top of that: median $0.33/turn on fable-5-1 vs
       $0.17 on opus-5, over sessions >=200 turns (n=6 vs n=125).
-  Therefore turn count and context length are the dominant cost variables and the
-  tier is a second-order one. Prefer moving work OUT of the session prefix
-  (delegate, externalize, restart) over downgrading work that needs judgment.
-  Revalidate if pricing changes or if per-turn cost stops tracking session length.
+  These observations motivate placement experiments; they do not establish that
+  delegation or restarting reduces total cost at equal quality. Task difficulty,
+  worker usage, cache pricing, retries and rehydration confound the comparison.
+  Compare verified completion, total usage and latency before claiming savings.
+  List-price repricing is not a measured subscription bill. Revalidate on changes
+  to pricing, harness context inheritance, model availability or task mix.
 ```
 
-## Routing rubric (durable — task characteristics, not a model ranking)
+## Routing rubric (experimental policy)
 
 ```yaml
 routing_rubric:
-  # Two independent decisions. Answer WHERE first: it is the larger cost lever
-  # (meta.context_cost_rule), and it is what these skills are actually used for.
+  # Decide placement and capability independently. Placement-first is a procedure,
+  # not a proven ranking of their cost effects (see context_cost_rule).
   where:
     # These three keys are the values consumers emit verbatim as `Where:`.
     session: >
@@ -89,16 +94,16 @@ routing_rubric:
       The unit has a stateable contract (inputs, done-condition, how it is verified)
       and its intermediate reading is not needed later in the session. Locating,
       reading, summarizing, mechanical edits across known files, independent
-      verification. Delegating keeps those tokens out of the session prefix, so every
-      later turn stays cheaper.
+      verification. Specify whether the child inherits history and what it returns.
+      A separate worker can limit parent context growth; total savings are unproven.
     fresh_session: >
       The problem is already framed but the framing is suspect, or an independent
-      re-derivation is worth more than continuing. Chosen by execution_signals, not
-      by task shape — see session_lifecycle.hand_off and .restart.
+      re-derivation is worth more than continuing. Preserve the selected tier unless
+      capability evidence independently justifies changing it — see session_lifecycle.hand_off and .restart.
   tier:
     recon:
       when: isolated, reversible, pattern-following; locate / read / summarize; no design choice
-      effort: low
+      effort: none         # the current recon profile does not support an effort parameter
     execution:
       when: >
         bounded multi-file integration or debugging with a known target state; the
@@ -111,35 +116,46 @@ routing_rubric:
       effort: xhigh         # high when the deliverable itself is long prose
     escalation:
       when: >
-        NOT a synonym for "hard". Reserve for: the deliberation tier already tried and
-        the framing did not move; OR long-horizon autonomous work measured in hours;
-        OR a decision expensive enough that an independent second derivation is worth
-        ~2x per turn
+        After reassessment, evidence indicates the selected tier cannot meet the
+        task contract; OR the expected cost of an error warrants stronger capability
+        up front; OR the user explicitly requests this tier. Duration or repeated
+        failure alone is insufficient. A fresh derivation can use the same tier.
       effort: high          # low/medium here can still beat a lower tier at xhigh
   consequence_override: >
     Reversibility, not difficulty, sets the floor. Persistent state, published
     contracts, credentials, concurrency, destructive or outward-facing operations →
-    deliberation or above regardless of task shape. Cheap and reversible → drop a
-    tier even when the problem looks interesting.
+    deliberation or above regardless of task shape. Bounded, reversible work with a
+    strong verifier is a candidate for a lower tier. Reapply this floor after every de-escalation; a named test command alone
+    does not prove the relevant failure is covered.
 ```
 
 ## Execution signals (observable — what changes a routing decision mid-run)
 
 ```yaml
 execution_signals:
-  escalate_when:            # any one is sufficient; all are visible in the transcript
-    - the same defect survives two independent fix attempts (the framing is wrong, not the code)
-    - you have restated the same constraint twice — the context is no longer holding it
-    - two or more load-bearing premises are unverified and the cost of being wrong is high
-    - an autonomous run has passed ~1h with no verifiable checkpoint
+  reassess_when:
+    - the same defect survives two independent fix attempts
+    - the user repeats or disputes a constraint
+    - load-bearing premises remain unverified and the cost of error is high
+    - an autonomous run passes roughly one hour without a verifiable checkpoint
+  reassess: >
+    Inspect the failed verification and locate the source of the disputed constraint
+    (user request, repository policy, or an agent assumption). Correct invented or
+    superseded boundaries. Distinguish missing evidence, tooling/dependency failure,
+    weak verification, and framing problems from a capability limit. If unresolved,
+    state what evidence is missing; uncertainty alone does not mandate a higher tier.
+  escalate_when:
+    - reassessment identifies a capability limit relevant to the task contract
+    - the cost of error justifies stronger capability before attempting the work
+    - the user explicitly requests the escalation tier
   de_escalate_when:         # the under-used direction — check it after every diagnosis
     - the unknown resolved — there is now a stateable contract and a verification command
     - the remaining work repeats a pattern already established in this session
     - you are narrating procedure rather than deciding anything
   session_lifecycle:
     externalize: >
-      Precondition for everything below: write the durable state (decisions, verified
-      facts, live constraints, open questions) to a file. Re-reading a state file is
+      Before compacting, handing off or restarting, write durable state (decisions,
+      verified facts, constraint sources, open questions) to a file. Re-reading a state file is
       not wasted work — it is the mechanism that makes long and restarted runs
       survivable, and it is cheap next to re-deriving.
     keep: >
@@ -151,15 +167,18 @@ execution_signals:
       already spent.
     hand_off: >
       You want a different model, or an independent re-derivation, on a problem this
-      session has already framed. Emit a handoff brief into a FRESH session; do not
-      switch tier inside a session whose framing you distrust.
+      session has already framed. Emit a self-contained brief into a FRESH session,
+      preserving the chosen tier.
+      Change capability only with a separate reason; require explicit history
+      isolation in harnesses whose workers or forks inherit the transcript.
     restart: >
-      The framing is what is wrong, or a correction has been repeated. A long session
-      defends its earlier conclusions; a fresh one re-derives them from the state
-      file. Cheaper than it feels.
+      Reassessment finds accumulated assumptions obstruct independent investigation.
+      Start from source-anchored facts and labelled hypotheses; preserve the tier
+      unless separately justified. A fresh brief can also bias the recipient, so
+      permit confirmation, refutation, no additional defect, or inconclusive findings.
 ```
 
-## Tier → model, and the delegation alias (THE ONLY place concrete strings live)
+## Tier bindings (checked against profile identity snapshots)
 
 ```yaml
 tier_to_model:
@@ -170,10 +189,10 @@ tier_to_model:
 # Update this table on a model release; profiles below refresh via staleness_rule.
 
 delegation_aliases:
-  # The Agent/Task tool's `model` field is an ALIAS ENUM, not a model id — passing a
-  # string from tier_to_model there is invalid. Leaving it NULL is worse: the subagent
-  # inherits the caller's model. Observed: four subagents silently ran on the
-  # escalation tier because their orchestrator was on it. Always pass the alias.
+  # Claude-specific call targets, not a universal provider API. Check the installed
+  # tool schema before use. A named agent may already select the intended model;
+  # defaults, version-specific precedence and organizational restrictions can alter
+  # the effective target. The guard checks profile agreement, not live availability.
   recon:        haiku
   execution:    sonnet
   deliberation: opus
@@ -190,6 +209,8 @@ pricing:                    # $/MTok, list. cache_read verified only where noted
 
 ```yaml
 opus-5:
+  model_id: claude-opus-5
+  delegation_alias: opus
   tier: deliberation
   source_url: https://platform.claude.com/docs/en/models/opus-5/overview
   api_verified: 2026-09-09
@@ -221,6 +242,8 @@ opus-5:
 
 ```yaml
 sonnet-5:
+  model_id: claude-sonnet-5
+  delegation_alias: sonnet
   tier: execution
   source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5
   api_verified: 2026-09-09
@@ -252,6 +275,8 @@ sonnet-5:
 
 ```yaml
 fable-5-1:
+  model_id: claude-fable-5-1
+  delegation_alias: fable
   tier: escalation
   source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1
   api_verified: 2026-09-09
@@ -306,6 +331,8 @@ fable-5-1:
 
 ```yaml
 haiku-4.5:
+  model_id: claude-haiku-4-5-20251001
+  delegation_alias: haiku
   tier: recon
   source_url: null                  # no dedicated prompting page exists for this model
   api_verified: 2026-09-09
