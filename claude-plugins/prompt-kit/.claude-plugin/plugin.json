@@ -2,13 +2,19 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prompt-kit",
   "displayName": "prompt-kit",
-  "version": "0.2.0",
-  "description": "Model routing (model-recommender), prompt authoring (smart-prompt), adversarial prompt review (prompt-audit), and escalation-tier tailoring (tailor-to-fable), driven by a shared, self-refreshing ~/.claude/model-profiles.md so routing never drifts between them or from loop-compiler.",
+  "version": "0.3.0",
+  "description": "Model and placement routing (model-recommender), prompt authoring (smart-prompt), adversarial prompt review (prompt-audit), and escalation-tier tailoring plus handoff briefs (tailor-to-fable), driven by a shared, self-refreshing ~/.claude/model-profiles.md so routing never drifts between them or from loop-compiler. Routes by task shape and observed execution signals rather than a static model ranking, and distinguishes a session's model string from a subagent's model alias.",
   "author": {
     "name": "Felipe Blassioli",
     "url": "https://github.com/felipeblassioli"
   },
   "homepage": "https://github.com/felipeblassioli/agent-skills",
   "license": "MIT",
-  "keywords": ["prompt-engineering", "model-routing", "prompt-audit", "claude", "model-selection"]
+  "keywords": [
+    "prompt-engineering",
+    "model-routing",
+    "prompt-audit",
+    "claude",
+    "model-selection"
+  ]
 }
