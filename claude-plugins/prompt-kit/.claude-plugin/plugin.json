@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prompt-kit",
   "displayName": "prompt-kit",
-  "version": "0.3.0",
-  "description": "Model and placement routing (model-recommender), prompt authoring (smart-prompt), adversarial prompt review (prompt-audit), and escalation-tier tailoring plus handoff briefs (tailor-to-fable), driven by a shared, self-refreshing ~/.claude/model-profiles.md so routing never drifts between them or from loop-compiler. Routes by task shape and observed execution signals rather than a static model ranking, and distinguishes a session's model string from a subagent's model alias.",
+  "version": "0.3.1",
+  "description": "Experimental Claude routing advice, prompt authoring and prompt review using shared model profiles. Separates placement from capability, preserves selected tiers in handoffs, and checks profile consistency. Routing quality, savings and Codex compatibility are not established.",
   "author": {
     "name": "Felipe Blassioli",
     "url": "https://github.com/felipeblassioli"

@@ -15,6 +15,9 @@ prompt is good for one posture and bad for the other, and the names change.
 Rule ids are stable and never renumbered; `R11` was merged into `R4` and its id retired
 rather than reused, so a finding recorded against an id keeps its meaning.
 
+`block` is an audit-output severity enforced through skill instructions, not a
+deterministic runtime gate. The SessionStart hook validates profile structure only.
+
 Output contract: emit findings (each: rule_id, severity, span, why) AND a rewritten prompt
 (`--fix` style). Severity ∈ {block, warn, nit}. Never silently rewrite without showing findings.
 
@@ -140,22 +143,26 @@ rules:
       Ask for coverage at the finding stage (report everything with confidence + severity),
       and move filtering/ranking to a separate downstream step.
 
+  # Keep the R12 id stable; its invariant is effective selection, not call syntax.
   - id: R12-delegation-model-unset
     requires_tier: true
     severity: block
     fires_when: >
-      The prompt (or the plan it contains) delegates a unit of work to a subagent / Agent /
-      Task call and does not set that call's `model`, or sets it to a `tier_to_model`
-      string instead of a `delegation_aliases` alias.
+      A delegated unit has no established effective model selection, its effective
+      model conflicts with the intended tier, or the proposed call value is invalid
+      for the installed harness schema. An omitted call parameter alone is not a
+      violation when a named agent definition resolves to the intended model.
     finding: >
-      An unset `model` makes the subagent inherit the CALLER's model, so work that was
-      routed to a cheap tier silently runs on the caller's — observed: four subagents ran
-      on the escalation tier because their orchestrator did. A model string in that field
-      is a different value space and is invalid.
+      The effective delegated model is unresolved, mismatched, or invalid. Defaults,
+      agent definitions, restrictions and version-specific precedence can change it;
+      a call parameter is not proof of which model will run.
     fix: >
-      Resolve the alias from delegation_aliases[tier] and pass it explicitly on every
-      delegating call. If the prompt already carries the method the subagent needs, that
-      is evidence the unit is scoped — route it DOWN, do not let it inherit upward.
+      Inspect the selected definition and applicable harness resolution rules. Keep
+      a matching intentional definition; otherwise propose a supported explicit call
+      value using delegation_aliases for Claude. If resolution is unavailable, state
+      that gap. Verify the actual model in task/usage metadata when the run executes.
+      Reapply consequence_override before lowering capability; a bounded brief alone
+      does not establish safety or verifier coverage.
 
   - id: R13-context-assumed-not-carried
     requires_tier: false

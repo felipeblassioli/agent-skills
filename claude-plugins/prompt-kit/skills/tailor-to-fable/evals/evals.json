@@ -1,6 +1,6 @@
 {
   "skill_name": "tailor-to-fable",
-  "notes": "Directed single-target prompt transform for the escalation-tier model, resolved from tier_to_model.escalation. Grade the transform, not routing: it must (a) resolve the target and read posture from ~/.claude/model-profiles.md rather than hardcode either; (b) apply the un-prescribe-and-unleash moves where the profile fact holds; (c) NEVER emit a prompt asking the model to echo/explain its reasoning (would trip reasoning_extraction -> silent fallback); (d) set run config (effort/thinking/fallback), not worded effort, and drop rejected params; (e) pin every delegated subagent's tier explicitly; (f) gate through prompt-audit; (g) not gut an already-strong prompt. Assertions name no model string: the target is whatever the file resolves to. Move ids (M1-M9) and rule ids (R2/R3/R8/R9/R10/R12/R13) are those in references/fable-playbook.md and the prompt-audit rule set as of 2026-09-09.",
+  "notes": "Two modes: explicit escalation tailoring resolves tier_to_model.escalation; fresh-session handoffs preserve the selected tier and supported effort. Grade profile-conditioned transforms, effective delegation selection, self-contained context and willingness to return no additional defect. Cases are behavioral specifications; executed evidence is recorded separately.",
   "evals": [
     {
       "id": 1,
@@ -79,7 +79,7 @@
       "files": [],
       "assertions": [
         "Recognizes the handoff mode (M9), not the prompt-transform mode, and writes the brief to a FILE, giving the path rather than pasting it into this session",
-        "Includes the adversarial premise: the retracted findings stated plainly, plus an instruction to assume another error exists and find it",
+        "States retracted findings as history and asks for independent premise checks; permits confirmation, refutation, no additional defect or inconclusive results",
         "Labels every premise verified or assumed, and marks which numbers came from the author's own queries and are worth re-deriving",
         "Includes boundaries (M3), coverage-first output contract (M8), fan-out with subagent tiers pinned (M5/R12), and a lessons file (M6)",
         "Passes prompt-audit R13 — no reference to context only the authoring session has; every file named by path",
@@ -94,9 +94,21 @@
       "files": [],
       "assertions": [
         "Applies M5 — authorises the fan-out rather than suppressing it",
-        "Requires an explicit model alias from delegation_aliases on each delegating call, and says an unset `model` makes the subagent inherit the escalation tier",
-        "Notes that a brief already carrying the method is evidence the unit is scoped, so it routes DOWN",
+        "Requires intentional effective model selection from a matching named definition or supported explicit call value; does not assert omission always inherits",
+        "Checks consequence_override and verifier strength before lowering capability",
         "Emits the Delegation line in the output block"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "same-tier-handoff-preserves-target",
+      "prompt": "model-recommender selected Where: fresh_session, Verdict: deliberation, effort high. Keep the same model. Write a brief to independently check whether src/cache.ts invalidates on update; our present hypothesis is unverified and there may be no defect. Use the supplied profile fixture.",
+      "files": [],
+      "assertions": [
+        "Resolves tier_to_model.deliberation rather than escalation",
+        "Preserves supported effort high and avoids escalation-only fallback or thinking settings",
+        "Labels the hypothesis unverified and permits no defect or inconclusive results",
+        "Writes a self-contained file for a fresh context without requiring inherited history"
       ]
     }
   ]

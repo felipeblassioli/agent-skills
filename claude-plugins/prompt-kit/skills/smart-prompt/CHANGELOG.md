@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.1 - 2026-09-09
+
+### Fixed
+
+- Preserve the selected tier and supported effort when handing off to tailor-to-fable.
+- Carry effective delegation selection and context inheritance rather than assuming an explicit call parameter proves the target.
+
+Evidence: plugin `docs/evidence.md`, "Conservative routing corrections". New
+behavioral cases are specifications; no with-skill versus baseline delta is claimed.
+
 ## 0.2.0 - 2026-09-09
 
 ### Added

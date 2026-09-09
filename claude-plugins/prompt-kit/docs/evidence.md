@@ -1,5 +1,9 @@
 # Evidence
 
+Historical observations below retain their original wording. The final
+"Conservative routing corrections" entry supersedes their causal savings claims,
+universal inheritance assumptions and automatic escalation policy.
+
 ## 2026-07-05 — added third skill: smart-prompt (prompt authoring)
 
 Added `smart-prompt`, completing the triad (author / route / critique). Design
@@ -286,3 +290,67 @@ a nuance — the only moment it can change an outcome. The same reasoning split
 `last_verified` into `api_verified` / `prompting_verified`: three of four profiles
 have an open prompting gap and current API facts, and one flag for both made the
 flag meaningless.
+
+
+## 2026-09-09 — Conservative routing corrections
+
+Reviewed against PR #135 head `9d62ec76dae91ce22609c6a2a91ac6ed86c7dfec`.
+The transcript corpus was not reanalyzed. Its reported dollar deltas are
+counterfactual list-price estimates, not demonstrated savings or subscription
+billing. Incorrect cache-rate assumptions can affect ratios as well as absolute
+values. Correction frequency does not measure undetected defects. Placement,
+model, task difficulty, verification and retries must be separated experimentally.
+
+### Changes and boundaries
+
+- Fresh-session handoffs preserve the chosen tier and supported effort. They do
+  not automatically select escalation or require another defect to exist.
+- R12 checks effective model selection, including intentional named-agent
+  definitions. It is an audit-output rule, not an Agent-call interception hook.
+- Repeated failures or disputed constraints trigger reassessment of authority,
+  evidence, verification and tooling. A capability change requires its own reason;
+  de-escalation retains the consequence floor.
+- Consumers use top-level `staleness_rule` and `context_cost_rule`. Profiles now
+  declare exact `model_id` and `delegation_alias` identities. The installed file
+  must be updated separately; this change did not modify it or `loop-compiler`.
+- Provider-specific runtime behavior and the next experiment are documented in
+  [portability.md](portability.md). Codex integration is not implemented.
+
+### Deterministic validation
+
+The original hook silently accepted prose-only profiles, mismatched aliases and
+model mappings without matching profiles in isolated review fixtures. The
+regression suite exercises the actual hook through its optional fixture path,
+without modifying the installed profile or calling a model.
+
+- `python3 claude-plugins/prompt-kit/hooks/tests/test-model-profiles.py` — 19 tests
+  passed: clean example; missing/empty/prose-only input; empty and unclosed fences;
+  malformed YAML; missing policy blocks; policy path mismatch; accidental map
+  notes; missing/mismatched aliases; missing/duplicate/wrong-tier profiles; changed
+  model identity; and unavailable yq. Each invocation is bounded to five seconds.
+- `bash scripts/validate-skill.sh claude-plugins/prompt-kit/skills/<skill>` for
+  all four skills — `pass: true`, no errors or warnings.
+- `bash scripts/marketplace-consistency.sh` — `marketplace-consistency: clean`.
+- `claude plugin validate --strict claude-plugins/prompt-kit` — validation passed
+  on installed Claude Code 2.1.201. This checks packaging, not live routing.
+- Fenced YAML and JSON parse checks — 10 YAML blocks and 10 JSON files parsed.
+- `bash -n claude-plugins/prompt-kit/hooks/check-model-profiles.sh` and
+  `git diff --check` — passed.
+
+### Independent behavioral smoke exercise
+
+One fresh Codex subagent read the revised skills and committed example fixture,
+without the prior review conclusions, installed profiles or external access.
+It exercised three separate requests while the implementation was reviewed:
+
+| Request | Observed output |
+|---|---|
+| Fresh investigation on the same deliberation model at high effort | Preserved tier and effort, wrote an isolated handoff, labelled the hypothesis unverified and permitted no defect/inconclusive findings |
+| Named inventory-reader with a matching definition and verified precedence, no call override | Did not fire R12 or force an override; distinguished configured selection from execution and omitted unsupported recon effort |
+| Repeated correction of an agent-invented human-review prerequisite | Retracted the invented boundary, kept the current session and did not recommend a stronger model |
+
+These are synthetic instruction-following smoke results on a Codex subagent,
+not Claude runtime exercises, an executed full eval suite, a without-skill
+comparison, or a provider compatibility certification. No cost or quality delta
+is claimed. The smoke scenarios have corresponding cases in the updated eval
+specifications; repeatability and effects on real work remain unverified.

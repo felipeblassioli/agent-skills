@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.1 - 2026-09-09
+
+### Fixed
+
+- Keep R12 stable while checking effective model selection rather than requiring every call to override a matching agent definition.
+- Clarify that audit block severity does not intercept runtime calls; correct top-level policy lookup.
+
+Evidence: plugin `docs/evidence.md`, "Conservative routing corrections". New
+behavioral cases are specifications; no with-skill versus baseline delta is claimed.
+
 ## 0.2.0 - 2026-09-09
 
 ### Added

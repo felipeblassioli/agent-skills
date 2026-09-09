@@ -60,13 +60,12 @@ extraction, rejected params).
 - **Do:** If the work decomposes, frame it as parallelisable and authorise
   long-lived subagents / async orchestration. Say which parts are small enough to
   do directly, so it does not over-delegate trivially direct work.
-- **Also do — pin the subagents' tier.** A subagent whose `model` is unset inherits
-  the caller's, so authorising fan-out from the escalation tier silently runs every
-  delegated unit there. Observed: four subagents ran on the escalation tier because
-  their orchestrator did, on briefs that already carried the method — i.e. units
-  that were scoped enough to route down. Instruct the run to resolve
-  `delegation_aliases[tier]` per unit and pass it explicitly. (prompt-audit R12
-  blocks the omission.)
+- **Also do — establish the effective model.** Inspect the selected agent
+  definition and installed harness precedence. Keep a matching model definition;
+  otherwise propose a supported `delegation_aliases[tier]` call value. Omission
+  alone does not establish inheritance, and a call override alone does not prove
+  execution. Reapply the consequence floor before lowering capability and check
+  actual model metadata when executed. (prompt-audit R12.)
 
 ### M6 — Give it a memory file
 - **Reads:** profile note ("performs well with a place to write/reference
@@ -101,15 +100,17 @@ the run stays on the escalation model.
 - **Aligns:** prompt-audit R13 (context-assumed-not-carried, severity `block`).
 - **When:** `model-recommender` answered `where: fresh_session` — you want an
   independent re-derivation, not a stronger model inside a transcript whose framing
-  you already distrust. The brief *is* the externalized state; write it to a file.
+  you already distrust. Preserve the routed tier and supported effort, including same-model handoffs.
+  Request a fresh context explicitly; a fork may inherit the transcript. Write
+  the source-anchored brief to a file.
 - **Do:** the brief must stand alone. Sections, in the order that worked:
 
-  1. **Title = the defect as a claim**, not a request to look at something.
+  1. **Title = the question or suspected defect**, explicitly labelled when unverified.
   2. **Who is asking, and what you want back** — an independent read, not
      confirmation.
-  3. **Your own retracted errors, stated plainly, then: assume another one exists
-     and go find it.** This is the move that earns the handoff. Without it the fresh
-     session tends to ratify your framing; with it, it hunts.
+  3. **Retracted findings and their falsifiers.** Ask for independent checks of
+     the premises; permit confirmation, refutation, no additional defect, or an
+     inconclusive result. Do not require the recipient to find an error.
   4. **"Treat everything below as a hypothesis, including the numbers"** — name
      which numbers came from your own queries and are worth re-deriving.
   5. **Orientation** — the system, then the defect as you currently frame it, then
@@ -128,15 +129,14 @@ the run stays on the escalation model.
       the machine. M3 lands here.
   12. **What you need back** — coverage-first (M8), plus "what would have to be true
       for you to change your mind" and "what in my evidence does not hold up."
-  13. **Autonomy close** — work end to end, fan out (M5) with tiers pinned,
+  13. **Autonomy close** — work end to end, fan out (M5) with effective model selection established,
       audit progress claims against tool results (M3), keep a lessons file (M6).
 
 - **Label every premise `verified` or `assumed`.** The value of a fresh context is
   independent derivation, and it cannot re-derive what it cannot separate from
   assertion. This is the R13 discipline.
-- **Cost note:** a handoff is not a saving on its own — the fresh session re-reads
-  what it needs. It pays off because it starts from a short prefix and a corrected
-  frame (`meta.context_cost_rule`), not because it skips work.
+- **Cost note:** a fresh context rehydrates evidence and may repeat work. Lower total cost and
+  a corrected frame are hypotheses to test (`context_cost_rule`), not guarantees.
 
 ## Anti-over-tailoring
 A strong, already-outcome-oriented prompt needs little. If the input is a

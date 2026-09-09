@@ -177,8 +177,9 @@ catalog:
         single-agent: one agent owns every unit. Simpler; no constraint can be lost in a handoff.
         owner-orchestrator: >
           the owner keeps the judgment and delegates each scoped unit, pinning
-          `delegation_aliases[tier]` per call. Cheaper per unit and keeps the
-          owner's context short — but every delegated brief must stand alone
+          effective model selection per unit (matching definition or supported explicit
+          call value). Verify actual usage rather than assuming savings; bound the
+          owner's context — but every delegated brief must stand alone
           (prompt-audit R12/R13).
     slot_emphasis:
       - anchors                   # the tracker items ARE the spec; do not restate them
