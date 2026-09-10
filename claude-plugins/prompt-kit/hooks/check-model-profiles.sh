@@ -67,11 +67,22 @@ if yq -e 'keys' "$tmp/all.yaml" >/dev/null 2>&1; then
   # 2. the contract the skills depend on
   for k in tier_to_model delegation_aliases routing_rubric execution_signals staleness_rule context_cost_rule \
     routing_rubric.where routing_rubric.consequence_override \
-    execution_signals.reassess_when execution_signals.reassess \
     execution_signals.escalate_when execution_signals.de_escalate_when \
     execution_signals.session_lifecycle; do
     yq -e ".$k" "$tmp/all.yaml" >/dev/null 2>&1 || problems+=("required block \`$k\` is missing")
   done
+  # Both extensions are optional for legacy consumers; partial adoption is a defect.
+  # See README Shared profiles and PR #136 review: never require an implicit migration.
+  if yq -e '.execution_signals | (has("reassess_when") or has("reassess"))' "$tmp/all.yaml" >/dev/null 2>&1; then
+    for k in reassess_when reassess; do
+      yq -e ".execution_signals.$k" "$tmp/all.yaml" >/dev/null 2>&1 || problems+=("required block \`execution_signals.$k\` is missing from the reassessment extension")
+    done
+  fi
+  identity_fields="$(yq '[.[] | select(tag=="!!map") | select(has("model_id") or has("delegation_alias"))] | length' "$tmp/all.yaml")"
+  if [ "$identity_fields" != 0 ]; then
+    incomplete="$(yq '[.[] | select(tag=="!!map") | select(has("tier") and has("api_verified")) | select(.model_id == null or .model_id == "" or .delegation_alias == null or .delegation_alias == "")] | length' "$tmp/all.yaml")"
+    [ "$incomplete" = 0 ] || problems+=("profile identity extension is incomplete — every profile needs model_id and delegation_alias")
+  fi
   tiers="$(yq -o=json -I=0 '.tier_to_model | keys | sort' "$tmp/all.yaml" 2>/dev/null)"
   for k in delegation_aliases routing_rubric.tier; do
     got="$(yq -o=json -I=0 ".$k | keys | sort" "$tmp/all.yaml" 2>/dev/null)"
@@ -84,6 +95,11 @@ if yq -e 'keys' "$tmp/all.yaml" >/dev/null 2>&1; then
   # Profile identity is explicit: tier coverage alone accepts stale model mappings.
   # Compare aliases to the profile snapshot, not an evergreen built-in model enum.
   while IFS= read -r tier; do
+    if [ "$identity_fields" = 0 ]; then
+      count="$(TIER="$tier" yq '[.[] | select(tag=="!!map") | select(has("api_verified") and .tier == strenv(TIER))] | length' "$tmp/all.yaml")"
+      [ "$count" = 1 ] || problems+=("legacy tier $tier must have exactly one candidate profile (found $count)")
+      continue
+    fi
     model="$(TIER="$tier" yq -r '.tier_to_model[strenv(TIER)]' "$tmp/all.yaml")"
     matches="$(MODEL="$model" yq -o=json -I=0 '[.[] | select(tag=="!!map") | select(.model_id == strenv(MODEL))]' "$tmp/all.yaml")"
     count="$(printf '%s' "$matches" | yq 'length')"

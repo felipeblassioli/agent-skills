@@ -45,6 +45,67 @@ class ProfileGuardTests(unittest.TestCase):
     def test_committed_example_is_silent(self):
         self.check(text=EXAMPLE)
 
+    def legacy(self):
+        for profile in self.data.values():
+            if isinstance(profile, dict) and 'api_verified' in profile:
+                profile.pop('model_id')
+                profile.pop('delegation_alias')
+        for key in ('reassess_when', 'reassess'):
+            self.data['execution_signals'].pop(key)
+        self.data['execution_signals']['escalate_when'] = [
+            'repeated failures', 'investigation running longer than one hour']
+
+    def test_legacy_profile_upgrade_is_silent(self):
+        self.legacy()
+        self.check()
+
+    def test_legacy_duplicate_tier_warns(self):
+        self.legacy()
+        self.data['duplicate-profile'] = copy.deepcopy(self.data['sonnet-5'])
+        self.check('legacy tier execution must have exactly one candidate profile (found 2)')
+
+    def test_legacy_missing_profile_warns(self):
+        self.legacy()
+        del self.data['sonnet-5']
+        self.check('legacy tier execution must have exactly one candidate profile (found 0)')
+
+    def test_partial_identity_extension_warns(self):
+        self.legacy()
+        self.data['sonnet-5']['model_id'] = self.data['tier_to_model']['execution']
+        self.check('profile identity extension is incomplete')
+
+    def test_alias_only_extension_warns(self):
+        self.legacy()
+        self.data['sonnet-5']['delegation_alias'] = 'sonnet'
+        self.check('profile identity extension is incomplete')
+
+    def test_identity_without_reassessment_extension_is_silent(self):
+        for key in ('reassess_when', 'reassess'):
+            del self.data['execution_signals'][key]
+        self.check()
+
+    def test_reassessment_without_identity_extension_is_silent(self):
+        signals = copy.deepcopy(self.data['execution_signals'])
+        self.legacy()
+        self.data['execution_signals'] = signals
+        self.check()
+
+    def test_one_profile_missing_identity_warns(self):
+        del self.data['sonnet-5']['model_id']
+        self.check('profile identity extension is incomplete')
+
+    def test_legacy_partial_reassessment_warns(self):
+        self.legacy()
+        self.data['execution_signals']['reassess'] = 'Check authority and evidence.'
+        self.check('execution_signals.reassess_when` is missing')
+
+    def test_legacy_identity_is_not_certified(self):
+        self.legacy()
+        self.data['tier_to_model']['execution'] = 'unprofiled-model'
+        # Legacy structural acceptance cannot certify identity. Consumers must
+        # withhold profile advice until its key/source matches the target.
+        self.check()
+
     def test_missing_file_warns(self):
         result = subprocess.run(['/bin/bash', str(HOOK), str(self.profile)],
                                 capture_output=True, text=True, timeout=5)
