@@ -4,6 +4,8 @@
 
 ### Fixed
 
+- Keep R12 a draft/evidence check; report unavailable runtime information separately and accept legacy profiles.
+
 - Keep R12 stable while checking effective model selection rather than requiring every call to override a matching agent definition.
 - Clarify that audit block severity does not intercept runtime calls; correct top-level policy lookup.
 

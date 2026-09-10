@@ -3,8 +3,10 @@ name: tailor-to-fable
 description: >-
   Tailors prompts to the explicitly selected escalation-tier profile, or writes
   a self-contained fresh-session handoff preserving model-recommender's selected
-  tier and effort. Use for /tailor-to-fable, explicit escalation-tier tailoring,
-  or an independent investigation brief. Handoff mode does not imply escalation.
+  tier and effort. Use for /tailor-to-fable, "optimize/adapt/tune this for Fable",
+  a brief for an explicitly requested escalation model, or restarting a stuck
+  investigation with independent re-derivation. Handles existing prompts and rough
+  ideas. Handoff mode does not imply escalation; model selection belongs to model-recommender.
 ---
 
 # tailor-to-fable
@@ -25,8 +27,11 @@ user. The skill name is not authority to upgrade a handoff's model.
 1. Select the mode before resolving a profile. A handoff uses
    `tier_to_model[selected_tier]`; if no tier was selected, ask `model-recommender`
    to choose it. A fresh session can use the same model as the current session.
-2. Match the target to the profile's exact `model_id`. Stop target-specific
-   tailoring when the profile is absent or inconsistent.
+2. Follow `model-recommender`'s profile compatibility resolver, including for an
+   explicit target. Legacy files are supported; tier membership alone does not
+   verify model identity. Withhold target-specific tailoring/settings when identity
+   is unverified; a generic self-contained brief can still be written. Stop on
+   malformed data or inconsistent explicit bindings.
 3. Apply the top-level `staleness_rule`. Withhold unavailable posture facts and
    flag the affected half rather than inventing a nuance.
 4. Apply each move only when its profile field and the receiving harness support
@@ -86,7 +91,9 @@ Load the playbook for the full rationale and the canonical snippet names.
   high-severity" makes a literal follower drop recall.
 - **Independent premise check, for a handoff.** State retracted conclusions as
   history, not as proof another defect exists. Label premises `verified` or
-  `assumed`, cite their sources, and request independent checks. Accept confirmation,
+  `assumed`, cite their sources, and actively try to falsify the framing through
+  credible alternatives and reproducible counterexamples. Report which claims
+  survive those checks. Accept confirmation,
   refutation, no additional defect, or an inconclusive result. (M9.)
 
 **Refusal caution (honesty).** If the task sits in `profile.refusal_triggers`
@@ -106,7 +113,7 @@ that trips a `block`.
 ## Output
 
 ```
-Target:     <selected tier> → <model> (api_verified <date>, prompting_verified <date>[, STALE])
+Target:     <selected tier> → <model> (profile identity verified | unverified; dates when verified)
 Run config: <only profile-verified settings supported by the receiving harness>
 Delegation: <effective selection source per unit; proposed or execution-verified>
 Context:    <fresh brief without inherited transcript, or explicit inheritance>

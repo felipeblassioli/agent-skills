@@ -148,19 +148,22 @@ rules:
     requires_tier: true
     severity: block
     fires_when: >
-      A delegated unit has no established effective model selection, its effective
-      model conflicts with the intended tier, or the proposed call value is invalid
-      for the installed harness schema. An omitted call parameter alone is not a
-      violation when a named agent definition resolves to the intended model.
+      A delegated unit specifies neither a model selection nor an identified named
+      agent definition that supplies it; or supplied/available evidence establishes
+      a conflicting selection or a call value invalid for the harness schema.
+      Omission is allowed when a matching named definition supplies the model.
+      An identified but unavailable definition or unavailable runtime metadata is
+      a separate verification gap, not evidence that this rule fires.
     finding: >
-      The effective delegated model is unresolved, mismatched, or invalid. Defaults,
-      agent definitions, restrictions and version-specific precedence can change it;
-      a call parameter is not proof of which model will run.
+      The draft lacks an intentional selection source, or available evidence shows
+      a mismatch or invalid value. A call parameter alone is not execution proof.
     fix: >
-      Inspect the selected definition and applicable harness resolution rules. Keep
-      a matching intentional definition; otherwise propose a supported explicit call
-      value using delegation_aliases for Claude. If resolution is unavailable, state
-      that gap. Verify the actual model in task/usage metadata when the run executes.
+      Name the intended selection source. Keep a matching named definition;
+      otherwise propose a call value using delegation_aliases for Claude and state
+      whether schema support is verified. Do not force an override solely because
+      runtime access is unavailable. Check definition/schema/precedence at dispatch;
+      verify actual model metadata when executed. Keep that obligation separate from
+      the draft audit.
       Reapply consequence_override before lowering capability; a bounded brief alone
       does not establish safety or verifier coverage.
 

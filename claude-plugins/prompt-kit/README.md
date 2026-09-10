@@ -44,8 +44,16 @@ The file contains fenced YAML mappings. Consumers merge the top-level mappings:
 
 Model and alias identifiers are repeated in profile identity fields so the guard
 can reject a mapping to an absent or mismatched profile. These are snapshots,
-not proof of current model availability or the installed tool schema. Older
-profiles must add the identity fields and updated execution signals before use.
+not proof of current model availability or the installed tool schema. Legacy
+profiles without either identity field remain supported: the hook checks unique
+tier coverage, while consumers verify the candidate profile's key/source against
+the resolved target before quoting model-specific settings or posture. If identity
+cannot be verified, routing can still propose a target but withholds profile advice.
+Legacy structural acceptance does not certify model/alias identity. Once any
+identity field is added, every profile must supply both; partial adoption warns.
+Likewise, `reassess_when` and `reassess` are optional together. Without them,
+consumers treat legacy `escalate_when` events as reassessment triggers, not proof
+that stronger capability is needed. No installed-file migration is required.
 Keep aliases and API parameters scoped to the harness/version where verified.
 
 An omitted subagent call parameter may resolve through an intentional named-agent
@@ -66,7 +74,8 @@ cached updates; restart or reload after changing the plugin.
 
 The SessionStart hook emits additional context when the profile is missing or
 structurally inconsistent. It checks fenced YAML, required policy blocks, tier
-coverage, exact model/profile identity and agreement of delegation aliases. It
+coverage, and (when the identity extension is present) exact model/profile identity
+and agreement of delegation aliases. It
 stays silent on a consistent file. It is advisory and returns exit 0 even for a
 warning; it never blocks an Agent invocation.
 

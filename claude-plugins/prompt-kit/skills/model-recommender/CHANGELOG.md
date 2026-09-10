@@ -4,6 +4,8 @@
 
 ### Fixed
 
+- Support legacy profiles without migration; make reassessment decisions explicit and restore invocation cues.
+
 - Separate context reset from capability escalation; reassess failed checks and constraint authority first.
 - Resolve exact model/profile identity, respect effective agent selection, and omit unsupported effort.
 - Treat economic conclusions as hypotheses and reapply consequence floors on de-escalation.

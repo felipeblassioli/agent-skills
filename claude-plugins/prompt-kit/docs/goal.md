@@ -11,7 +11,8 @@ four skills sharing `~/.claude/model-profiles.md`.
   supported call value. Configuration is not proof of execution.
 - Repeated failures trigger reassessment of evidence, constraints, verification
   and tooling before capability changes. Reapply consequence floors on de-escalation.
-- Model/profile identity is exact. Top-level policy paths match consumer lookups.
+- Extended profiles bind exact identity; legacy profiles require key/source
+  verification before model-specific advice. Top-level policy paths match lookups.
   Unsupported effort or unverified posture must not become runtime instructions.
 - Advice does not expand authorization. The hook warns about structural problems;
   prompt-audit severity does not create a runtime interception mechanism.

@@ -108,8 +108,9 @@ the run stays on the escalation model.
   1. **Title = the question or suspected defect**, explicitly labelled when unverified.
   2. **Who is asking, and what you want back** — an independent read, not
      confirmation.
-  3. **Retracted findings and their falsifiers.** Ask for independent checks of
-     the premises; permit confirmation, refutation, no additional defect, or an
+  3. **Retracted findings and their falsifiers.** Actively try to falsify the
+     framing: test credible alternatives, reproduce counterexamples, and report
+     which premises survive independent checks. Permit confirmation, refutation, no additional defect, or an
      inconclusive result. Do not require the recipient to find an error.
   4. **"Treat everything below as a hypothesis, including the numbers"** — name
      which numbers came from your own queries and are worth re-deriving.

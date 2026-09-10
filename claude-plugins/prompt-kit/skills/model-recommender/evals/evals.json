@@ -139,6 +139,29 @@
         "Identifies missing duplicate-side-effect verification",
         "Does not equate a named green test command with adequate verification"
       ]
+    },
+    {
+      "id": 12,
+      "name": "legacy-profile-repetition-reassesses",
+      "prompt": "Use a legacy profile with no model_id/delegation_alias fields and neither reassess field. Its old escalate_when lists repeated corrections and long runs. I repeated a correction because you invented an approval requirement. The task is authorized and nothing else failed. Pick the route.",
+      "files": [],
+      "assertions": [
+        "Accepts the legacy format without requiring migration",
+        "Retracts the invented prerequisite and emits one decision to continue without escalation",
+        "Treats old escalate_when observations as reassessment triggers"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "legacy-target-identity-unverified",
+      "prompt": "A parseable legacy file has exactly one profile per tier and no identity extension. tier_to_model.execution now names a different model from that profile key/source, and its new model documentation is unavailable. Recommend bounded execution and effort.",
+      "files": [],
+      "assertions": [
+        "Can emit placement/tier and the proposed table target",
+        "Does not treat tier membership as verified model identity",
+        "Withholds profile-derived effort/settings/posture and labels identity unverified",
+        "Does not rewrite the shared profile or invent identity fields"
+      ]
     }
   ]
 }

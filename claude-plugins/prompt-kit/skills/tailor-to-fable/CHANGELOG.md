@@ -4,6 +4,8 @@
 
 ### Fixed
 
+- Accept legacy profile resolution, restore tailoring cues and require active falsification without presuming a defect.
+
 - Resolve handoff targets from the selected tier, including same-model fresh sessions; retain explicit escalation tailoring.
 - Gate runtime settings by the selected profile and accept confirmation, refutation, no additional defect or inconclusive findings.
 - Respect matching named-agent definitions when establishing effective delegation targets.

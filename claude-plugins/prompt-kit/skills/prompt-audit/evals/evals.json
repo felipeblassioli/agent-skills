@@ -150,6 +150,17 @@
         "Does not attribute execution-tier savings to the proposed run",
         "Explains that the named definition controls the effective model here"
       ]
+    },
+    {
+      "id": 14,
+      "name": "named-definition-unavailable-is-runtime-gap",
+      "prompt": "Audit this draft offline: delegate the bounded source inventory to named agent inventory-reader, using its model selection. Its definition and runtime schema are not accessible here. Do not execute.",
+      "files": [],
+      "assertions": [
+        "Does not fire R12 solely because definition/schema/runtime metadata is unavailable",
+        "Names the runtime verification gap without claiming effective selection is verified",
+        "Does not force a call override or execute merely to audit the draft"
+      ]
     }
   ]
 }
