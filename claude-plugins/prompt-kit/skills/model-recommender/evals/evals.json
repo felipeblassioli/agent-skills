@@ -1,75 +1,166 @@
 {
   "skill_name": "model-recommender",
-  "notes": "Routing verdicts must be resolved against the installed ~/.claude/model-profiles.md, never from memory. Each case asserts the durable verdict (archetype + tier + effort) AND the resolved model string from tier_to_model. Two controls guard the failure modes that matter most: over-escalation (a hard-but-tractable task must stay on the deliberation tier, not jump to escalation/Fable) and graceful staleness (emit tier + effort and flag, never guess a string). Model strings in assertions are the values in tier_to_model as of 2026-07-05 — regrade against the file if it changed. Run with-skill vs baseline; grade each assertion with quoted evidence.",
+  "notes": "Experimental behavioral cases. Use the committed example as an isolated profile fixture, not a changing installed profile; record the actual fixture, harness, model and effort. Grade with-skill and baseline against the same cases with quoted evidence. These assertions are evaluation specifications, not executed routing proofs. Profile consistency does not prove live model availability.",
   "evals": [
     {
       "id": 1,
-      "name": "build-a-plugin-deliberation-xhigh",
-      "prompt": "How should I build the loop-compiler plugin from scratch? Which model and effort?",
+      "name": "delegation-emits-alias-never-null",
+      "guards": "Observed defect: four subagents silently inherited the escalation tier because the Agent call's `model` was left null on prompts that already contained the method.",
+      "prompt": "I'm running this session on Fable. I want a subagent to apply the already-specified rename across the 12 call sites and run the test suite. What should I give it?",
       "files": [],
       "assertions": [
-        "Classifies the task as deliberation (ambiguous, high-leverage, get-it-right-once — architecture / breaking down work)",
-        "Emits the durable verdict first: deliberation tier, effort xhigh (coding/agentic deliberation), with a one-line reason",
-        "Resolves the model to claude-opus-4-8 via tier_to_model[deliberation]",
-        "Does NOT escalate to the escalation tier / claude-fable-5 (within the deliberation tier's ceiling)"
+        "Answers `Where: delegate` first — the unit has a stateable contract and a named verification command",
+        "Emits execution tier at effort high",
+        "Emits the target as an Agent-tool `model` ALIAS resolved from delegation_aliases[execution], not a model string from tier_to_model",
+        "Identifies model resolution as proposed until agent definitions, harness precedence and actual execution metadata are checked; does not assert omission always inherits the caller",
+        "Does not recommend keeping the work in the session"
       ]
     },
     {
       "id": 2,
-      "name": "locate-code-recon-low",
-      "prompt": "Find where the retry/backoff logic lives in this service.",
+      "name": "recon-delegation-and-its-hard-limits",
+      "guards": "The cheapest tier is the one most often skipped; and it is the only current model whose context window and effort handling differ.",
+      "prompt": "Find every place the retry/backoff policy is configured in this service and summarize what each one sets.",
       "files": [],
       "assertions": [
-        "Classifies as recon (locate/read)",
-        "Emits recon tier, effort low",
-        "Resolves the model to claude-haiku-4-5-20251001 via tier_to_model[recon]",
+        "Answers Where: delegate with recon tier; because its effort_range is none, omits a runtime effort parameter and reports not supported",
+        "Resolves the target from delegation_aliases[recon]",
+        "Surfaces a verified recon-profile limitation, without recommending an unsupported effort value",
         "Does not route a pure lookup to a judgment tier"
       ]
     },
     {
       "id": 3,
-      "name": "scoped-implementation-execution-high",
-      "prompt": "Implement TICKET-451 exactly as specified — add cursor pagination to GET /users with unit tests. The spec and acceptance criteria are in the ticket.",
+      "name": "session-deliberation-no-over-escalation",
+      "guards": "Over-routing: treating 'hard' as a synonym for the escalation tier.",
+      "prompt": "Design a caching layer for these DB calls — the invalidation is tricky. Which model?",
       "files": [],
       "assertions": [
-        "Classifies as execution (already-scoped, on-rails, a specified unit)",
-        "Emits execution tier, effort high",
-        "Resolves the model to claude-sonnet-5 via tier_to_model[execution]",
-        "Does not route settled, spec'd work to the deliberation tier"
+        "Answers Where: session because the work requires judgment",
+        "Emits deliberation tier at xhigh (or high, with a stated reason)",
+        "Resolves the target from tier_to_model[deliberation]",
+        "Does not escalate solely because the task is described as hard; considers risk and respects an explicit user model choice",
+        "Names a Watch signal that would justify escalating later"
       ]
     },
     {
       "id": 4,
-      "name": "phased-task-per-phase",
-      "prompt": "Plan, implement, and review a new billing module. What model per phase?",
+      "name": "consequence-override-beats-task-shape",
+      "guards": "Reversibility, not size, sets the floor. A one-line change to persistent state is not recon work.",
+      "prompt": "Tiny change: flip the default on this column in the production migration so new rows get the new value. One line. Which model?",
       "files": [],
       "assertions": [
-        "Recommends per phase, one line each, rather than a single averaged verdict",
-        "Plan phase → deliberation / claude-opus-4-8",
-        "Implement phase → execution / claude-sonnet-5",
-        "Review phase → deliberation / claude-opus-4-8"
+        "Applies routing_rubric.consequence_override and floors the tier at deliberation despite the task looking like trivial execution",
+        "Names the reason as reversibility/persistent state, not difficulty",
+        "Does not route it to recon or execution on the grounds that the diff is one line"
       ]
     },
     {
       "id": 5,
-      "name": "no-over-escalation-control",
-      "prompt": "Design a caching layer for these DB calls — the invalidation is tricky. Which model?",
+      "name": "phased-task-routed-per-phase",
+      "guards": "Averaging a mixed task into one verdict.",
+      "prompt": "Plan, implement, and review a billing-module display-only rename. Implementation is limited to local labels; public contracts, monetary calculations and persistence are unchanged. Existing snapshot tests cover the labels. What model per phase?",
       "files": [],
       "assertions": [
-        "Classifies as deliberation (a hard design call, but within the deliberation tier's ceiling)",
-        "Resolves to claude-opus-4-8 at high or xhigh — NOT the escalation tier / claude-fable-5",
-        "Treats escalation as reserved (long-horizon / beyond the deliberation ceiling), not the default for 'hard'"
+        "Emits one line per phase rather than a single averaged verdict",
+        "Each line carries a placement (session vs delegate) as well as a tier and effort",
+        "Plan and review resolve to the deliberation tier; implement resolves to the execution tier",
+        "The implement phase is marked delegable and carries an alias, not a model string"
       ]
     },
     {
       "id": 6,
-      "name": "graceful-staleness-control",
-      "prompt": "Which model for reviewing this PR? (assume ~/.claude/model-profiles.md's deliberation profile is 90 days past its last_verified and the source is unreachable)",
+      "name": "mid-run-handoff-not-in-place-escalation",
+      "guards": "The flagship case: a stuck run whose framing is wrong. Raising the tier inside that session keeps the bad framing; a fresh session re-derives it.",
+      "prompt": "I've been on this defect for hours. Two different fixes both failed the same way, and I've re-explained the same constraint to you twice. Should I switch to a stronger model?",
       "files": [],
       "assertions": [
-        "Still emits the durable verdict: deliberation tier, effort high (review is deliberation)",
-        "Flags the profile / model table as stale rather than presenting a model string as verified",
-        "Does NOT invent or guess a model string when it cannot resolve/refresh"
+        "Names the observed failures as reassess_when events, without declaring framing or capability to be the cause",
+        "Checks the failed verification and the source of the repeated constraint before choosing placement or capability",
+        "If recommending a fresh session, preserves the selected tier unless a separate capability reason justifies escalation",
+        "Requires externalizing source-anchored state before a handoff, and passes the selected tier to tailor-to-fable"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "de-escalation-the-under-used-direction",
+      "guards": "Staying on a premium tier after the judgment is finished; de_escalate_when never fires because nobody checks it.",
+      "prompt": "Good — that diagnosis is right, the bug is the missing guard in the reducer. The fix is the same three-line pattern in each of the 9 reducers, and `pnpm test` covers it. Keep going?",
+      "files": [],
+      "assertions": [
+        "Fires execution_signals.de_escalate_when — the unknown resolved, and the remainder repeats an established pattern with a verification command",
+        "Considers lowering the tier only after reapplying consequence_override and checking the relevant verifier coverage",
+        "Considers delegation with an intentional effective model and explicit context inheritance",
+        "Does not treat the fact that the session is already on a higher tier as a reason to stay there"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "graceful-staleness-flags-one-half-only",
+      "guards": "A blanket STALE flag on a profile whose API facts are current is noise, and noise gets ignored.",
+      "prompt": "Which model for reviewing this PR? (assume the deliberation profile's prompting_verified is 90 days old and unreachable, but its api_verified is current)",
+      "files": [],
+      "assertions": [
+        "Still emits the durable verdict: deliberation tier with an effort",
+        "Flags prompting_verified as stale and does NOT flag api_verified or the tier_to_model string",
+        "Withholds or hedges the posture/nuance line rather than asserting a nuance it cannot verify",
+        "Does NOT invent or guess a model string"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "invented-boundary-is-not-capability-failure",
+      "prompt": "You twice insisted I need a human review before creating a draft PR. I never imposed that rule, repository policy permits it, and I already authorized the draft. Nothing else is failing. Do we need a stronger model?",
+      "files": [],
+      "assertions": [
+        "Traces constraint authority and retracts the invented boundary",
+        "Does not escalate or restart solely because the user repeated a correction",
+        "Continues within existing authorization"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "same-tier-fresh-investigation",
+      "prompt": "Use a fresh session on the deliberation tier to independently check our conclusion. The current transcript mixes two competing hypotheses. There is no evidence of a capability limit; I want the same model.",
+      "files": [],
+      "assertions": [
+        "Selects fresh_session and deliberation without escalation",
+        "Specifies an isolated brief without inherited transcript",
+        "Hands the selected tier and supported effort to tailor-to-fable"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "deescalation-preserves-consequence-floor",
+      "prompt": "The diagnosis is settled. Apply the familiar retry pattern to the production payment writer. Unit tests pass but none check duplicate charges after timeouts. Can this drop to execution tier?",
+      "files": [],
+      "assertions": [
+        "Applies the consequence floor despite a repetitive implementation",
+        "Identifies missing duplicate-side-effect verification",
+        "Does not equate a named green test command with adequate verification"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "legacy-profile-repetition-reassesses",
+      "prompt": "Use a legacy profile with no model_id/delegation_alias fields and neither reassess field. Its old escalate_when lists repeated corrections and long runs. I repeated a correction because you invented an approval requirement. The task is authorized and nothing else failed. Pick the route.",
+      "files": [],
+      "assertions": [
+        "Accepts the legacy format without requiring migration",
+        "Retracts the invented prerequisite and emits one decision to continue without escalation",
+        "Treats old escalate_when observations as reassessment triggers"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "legacy-target-identity-unverified",
+      "prompt": "A parseable legacy file has exactly one profile per tier and no identity extension. tier_to_model.execution now names a different model from that profile key/source, and its new model documentation is unavailable. Recommend bounded execution and effort.",
+      "files": [],
+      "assertions": [
+        "Can emit placement/tier and the proposed table target",
+        "Does not treat tier membership as verified model identity",
+        "Withholds profile-derived effort/settings/posture and labels identity unverified",
+        "Does not rewrite the shared profile or invent identity fields"
       ]
     }
   ]

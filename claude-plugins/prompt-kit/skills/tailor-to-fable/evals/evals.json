@@ -1,6 +1,6 @@
 {
   "skill_name": "tailor-to-fable",
-  "notes": "Directed single-target prompt transform for the escalation-tier model (Fable 5 as of 2026-07-05 profile). Grade the transform, not routing: it must (a) resolve the target from tier_to_model.escalation and read posture from ~/.claude/model-profiles.md rather than hardcode it; (b) apply the un-prescribe-and-unleash moves where the profile fact holds; (c) NEVER emit a prompt asking the model to echo/explain its reasoning (would trip reasoning_extraction -> silent fallback); (d) set run config (effort/thinking/fallback), not worded effort, and drop rejected params; (e) gate through prompt-audit; (f) not gut an already-strong prompt. Case 1 is the flagship transform; case 2 the reasoning-echo block; case 3 rough-idea elevation; case 4 rejected-params; case 5 refusal caution; case 6 anti-over-tailoring control. Move ids (M1-M8) and rule ids (R2/R3/R8/R9/R10) are those in references/fable-playbook.md and the prompt-audit rule set as of 2026-07-14.",
+  "notes": "Two modes: explicit escalation tailoring resolves tier_to_model.escalation; fresh-session handoffs preserve the selected tier and supported effort. Grade profile-conditioned transforms, effective delegation selection, self-contained context and willingness to return no additional defect. Cases are behavioral specifications; executed evidence is recorded separately.",
   "evals": [
     {
       "id": 1,
@@ -8,7 +8,7 @@
       "prompt": "/tailor-to-fable Here is my prompt for a hard refactor. Step 1: open src/. Step 2: list every module. Step 3: for each module, think very hard and summarize progress every 3 files. Step 4: refactor the auth layer to remove the god-object. Be extremely thorough.",
       "files": [],
       "assertions": [
-        "Resolves target from tier_to_model.escalation (Fable 5) and reads its profile; writes no model string into the emitted prompt",
+        "Resolves target from tier_to_model.escalation and reads that model's profile; writes no model string into the emitted prompt",
         "M1: collapses the numbered step-script into a framed problem (goal: remove the auth god-object; constraints/acceptance stated) leaving the HOW open",
         "M2/M7: removes 'think very hard' and 'be extremely thorough' (worded effort) and the 'summarize every 3 files' scaffolding; recommends effort high/xhigh + thinking adaptive as run config instead",
         "M3: adds explicit boundaries and a progress-audit line for the long autonomous run",
@@ -21,7 +21,7 @@
       "prompt": "/tailor-to-fable Solve this scheduling problem and, in your final answer, show and explain your full chain of reasoning step by step so I can follow it.",
       "files": [],
       "assertions": [
-        "M4/R3: removes the 'show and explain your full chain of reasoning as the answer' instruction — flags it would risk the reasoning_extraction refusal and a SILENT fallback to profile.fallback (Opus 4.8)",
+        "M4/R3: removes the 'show and explain your full chain of reasoning as the answer' instruction — flags it would risk the reasoning_extraction refusal and a SILENT fallback to profile.fallback (read from the file, not from memory)",
         "Offers the safe substitute: read adaptive thinking blocks / surface progress via a send-to-user tool, keep the answer the solution",
         "prompt-audit gate confirms no R3 block remains before emitting"
       ]
@@ -69,6 +69,46 @@
         "Recognizes an already outcome-oriented, well-bounded prompt; the honest output is a SMALL diff (mainly M7 run config), not a rewrite",
         "Does not gut the prompt or inject invented scaffolding just to show work; says so if effectively no transform is needed beyond run config",
         "prompt-audit reports mostly clean"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "handoff-brief-for-a-fresh-session-M9",
+      "guards": "The flagship case. A stuck investigation handed to a fresh session for an independent read — the mode that found a third error and refuted two premises. Raising the tier in place would have kept the failing frame.",
+      "prompt": "I've been investigating this for two weeks and I don't trust my own conclusion. Two of my published findings were already wrong and I had to retract them. I want a fresh session with a stronger model to review the framing itself. Write me the brief.",
+      "files": [],
+      "assertions": [
+        "Recognizes the handoff mode (M9), not the prompt-transform mode, and writes the brief to a FILE, giving the path rather than pasting it into this session",
+        "States retracted findings as history and asks for independent premise checks; permits confirmation, refutation, no additional defect or inconclusive results",
+        "Labels every premise verified or assumed, and marks which numbers came from the author's own queries and are worth re-deriving",
+        "Includes boundaries (M3), coverage-first output contract (M8), fan-out with subagent tiers pinned (M5/R12), and a lessons file (M6)",
+        "Passes prompt-audit R13 — no reference to context only the authoring session has; every file named by path",
+        "Does NOT ask the fresh session to echo its reasoning (R3)"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "subagent-tier-pinned-not-inherited-R12",
+      "guards": "Observed cost defect: fan-out authorised from the escalation tier ran four subagents on that tier because `model` was left unset on briefs that already carried the method.",
+      "prompt": "Tailor this for the escalation tier: \"Investigate the flaky integration suite across the four services. Spawn subagents to read each service's test setup and report what differs.\"",
+      "files": [],
+      "assertions": [
+        "Applies M5 — authorises the fan-out rather than suppressing it",
+        "Requires intentional effective model selection from a matching named definition or supported explicit call value; does not assert omission always inherits",
+        "Checks consequence_override and verifier strength before lowering capability",
+        "Emits the Delegation line in the output block"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "same-tier-handoff-preserves-target",
+      "prompt": "model-recommender selected Where: fresh_session, Verdict: deliberation, effort high. Keep the same model. Write a brief to independently check whether src/cache.ts invalidates on update; our present hypothesis is unverified and there may be no defect. Use the supplied profile fixture.",
+      "files": [],
+      "assertions": [
+        "Resolves tier_to_model.deliberation rather than escalation",
+        "Preserves supported effort high and avoids escalation-only fallback or thinking settings",
+        "Labels the hypothesis unverified and permits no defect or inconclusive results",
+        "Writes a self-contained file for a fresh context without requiring inherited history"
       ]
     }
   ]

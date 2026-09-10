@@ -13,9 +13,13 @@ Two provenance levels:
 - **candidate** — seeded from the method but not yet earned through real use;
   promote via `growth-loop.md` once a real case proves it.
 
-`routing` names a `model-recommender` archetype (`deliberation` / `execution` /
-`recon` / `escalation`) and effort — **never a model string.** Phased shapes list
-a `phases` sequence; `smart-prompt` routes each phase independently.
+`routing` names a `model-recommender` **tier** (`deliberation` / `execution` /
+`recon` / `escalation`), an effort, and a `where` (`session` / `delegate`) —
+**never a model string, and never an Agent-tool alias.** Phased shapes list a
+`phases` sequence; `smart-prompt` routes each phase independently, so a phase may
+be delegated while the shape as a whole runs in the session. These are defaults:
+`model-recommender` owns the final call, and `routing_rubric.consequence_override`
+can raise a tier the catalog suggested.
 
 ```yaml
 catalog:
@@ -27,12 +31,13 @@ catalog:
       - "turn a fuzzy goal into a reviewable implementation plan"
       - "plan before touching code (get-it-right-once)"
     routing:
-      archetype: deliberation
+      tier: deliberation
       effort: high
+      where: session
     phases:
-      - archetype: recon        # gather the exemplars cheaply
+      - tier: recon        # gather the exemplars cheaply
         effort: low
-      - archetype: deliberation # extract the pattern, then plan
+      - tier: deliberation # extract the pattern, then plan
         effort: high
     slot_emphasis:
       - context-to-gather       # the anchors ARE the point; be concrete
@@ -68,8 +73,9 @@ catalog:
       - "summarize how this repo does Z"
       - "read-only orientation before deciding anything"
     routing:
-      archetype: recon
+      tier: recon
       effort: low
+      where: delegate
     slot_emphasis:
       - context-to-gather
       - output-contract         # a structured map, not a fix
@@ -93,12 +99,13 @@ catalog:
       - "find the root cause of <error / stack trace>"
       - "diagnose before fixing"
     routing:
-      archetype: deliberation
+      tier: deliberation
       effort: high
+      where: session
     phases:
-      - archetype: recon        # reproduce and localize
+      - tier: recon        # reproduce and localize
         effort: low
-      - archetype: deliberation # hypothesize and confirm
+      - tier: deliberation # hypothesize and confirm
         effort: high
     slot_emphasis:
       - context-to-gather       # reproduce first
@@ -125,8 +132,9 @@ catalog:
       - "make the change and prove it with <a check>"
       - "on-rails edit with a clear done-condition"
     routing:
-      archetype: execution
+      tier: execution
       effort: high
+      where: delegate
     slot_emphasis:
       - acceptance-criteria
       - verification            # the named command that exits 0
@@ -142,6 +150,75 @@ catalog:
       Verification: `<command>` exits 0. Run it; if it fails, iterate until green.
       Output: a summary of what changed and the verification result.
 
+  - id: tracker-driven-epic-delivery
+    provenance: validated          # promoted 2026-09-09 from 3 ledger candidates
+    intent_signals:
+      - "deliver this epic / tracking issue end to end, not a plan for it"
+      - "work through the child issues in dependency order, one PR each"
+      - "continue execution of a multi-item plan I already approved"
+      - "own it autonomously and make the calls; open PRs as you go"
+    routing:
+      tier: deliberation           # the owner. Child units route independently.
+      effort: xhigh
+      where: session
+    axes:
+      # This shape has two dials. They are what distinguished the three ledger
+      # candidates it replaces; collapsing them into one archetype with axes beat
+      # keeping three near-duplicates.
+      cadence:
+        per-unit-gate: >
+          stop after each reviewable unit and wait. Choose when the units are
+          coupled, the plan is unproven, or a wrong unit is expensive to unwind.
+        boundary-gated: >
+          run to completion inside a stated boundary list; human checkpoints come
+          from PR review, not from the loop. Choose when units are independent and
+          each lands behind a review gate anyway.
+      orchestration:
+        single-agent: one agent owns every unit. Simpler; no constraint can be lost in a handoff.
+        owner-orchestrator: >
+          the owner keeps the judgment and delegates each scoped unit, pinning
+          effective model selection per unit (matching definition or supported explicit
+          call value). Verify actual usage rather than assuming savings; bound the
+          owner's context — but every delegated brief must stand alone
+          (prompt-audit R12/R13).
+    slot_emphasis:
+      - anchors                   # the tracker items ARE the spec; do not restate them
+      - acceptance-criteria       # each item's own criteria, verbatim
+      - verification              # a named command per unit, run before claiming done
+      - boundaries                # what needs approval; what must never happen
+      - output-contract           # one reviewable unit (usually one PR) per item
+    skeleton: |
+      Objective: deliver <epic / tracking item> end to end — <N> child items in
+      the dependency order stated there, one reviewable unit per item.
+
+      The spec of record is the tracker, not this prompt. Each child item carries
+      its own scope, acceptance criteria, and definition of done; read them and
+      treat them as authoritative rather than re-deriving them from here. If an
+      item's stated decision proves wrong against the real code, stop and report
+      instead of quietly re-deciding it.
+
+      Before starting, reconcile: which items already landed, are in flight, or
+      were superseded. Deliver what remains.
+
+      Environment preconditions (a fresh session cannot rediscover these cheaply):
+      - <worktree / checkout layout, and the command form that respects it>
+      - <build or bootstrap step needed in a fresh working copy>
+      - <CI gates that constrain the unit: title conventions, template checkboxes>
+
+      Per unit: <the verification command>. Verify each done-claim against actual
+      tool output — CI result, test output — before reporting it as done.
+
+      Boundaries: <the hard list — no production mutations; never merge your own
+      unit; items whose artifact requires human review by design>.
+
+      Cadence: <per-unit gate | boundary-gated, per the axes above>.
+
+      Keep a lessons file at <path>: corrections and confirmed approaches, with why
+      each mattered, so the next pass does not start from zero.
+
+      Deliverable: one reviewable unit per child item, each independently
+      verifiable, plus a short close-out of what landed, what was deferred and why.
+
   - id: adversarial-review
     provenance: validated
     intent_signals:
@@ -149,8 +226,9 @@ catalog:
       - "what's wrong with this before it merges"
       - "coverage-first, severity-ranked findings"
     routing:
-      archetype: deliberation
+      tier: deliberation
       effort: high
+      where: session
     slot_emphasis:
       - output-contract         # ranked findings with confidence
       - anchors                 # judge against acceptance criteria

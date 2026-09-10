@@ -1,5 +1,10 @@
 # Evidence
 
+Historical observations below preserve the reported corpus and counterfactuals.
+The final review entries supersede causal savings claims, universal inheritance
+assumptions and automatic escalation policy. Dollar figures are retrospective
+list-price estimates throughout, not measured bills or demonstrated savings.
+
 ## 2026-07-05 — added third skill: smart-prompt (prompt authoring)
 
 Added `smart-prompt`, completing the triad (author / route / critique). Design
@@ -156,3 +161,241 @@ Agent frontmatter (`recon: haiku`, `story-implementer: sonnet`, `diff-reviewer:
 opus`) stays — Claude Code requires a `model:` — now documented as mirrors of the
 tiers. Edits made in the separate `~/personal/felipeblassioli/loop-compiler` repo;
 not committed.
+
+## 2026-09-09 — rebuilt routing on measured session evidence
+
+Source: 1171 local Claude Code transcripts (`~/.claude/projects/**/*.jsonl`), of
+which 1151 carry priceable usage, plus 660 subagent transcripts. Prices are list
+prices from the bundled `claude-api` reference; the cache-read rate is verified
+only for the escalation-tier model and derived (10% of input) elsewhere, so all
+absolute dollars and ratios depend on those assumptions. Session ids are
+omitted — they map to private work.
+
+### What the corpus says, before any policy change
+
+1. **The execution and recon tiers exist almost only as subagents.** The
+   execution-tier model shows 9853 subagent assistant messages against 177 in a
+   main loop; the recon-tier model shows 2445 against **zero**. Main-loop routing
+   is in practice a choice between the deliberation and escalation tiers.
+   *Consequence:* routing advice phrased as "run this on X" answered a question
+   nobody was asking. Every sampled invocation of `model-recommender` was really
+   asking what to hand a subagent. Hence `routing_rubric.where` and
+   `delegation_aliases`.
+
+2. **Cost concentrates in a few long sessions, and cache reads dominate them.**
+   Top 1% of sessions = 28% of spend, top 5% = 55%, top 25% = 90%. In a long
+   deliberation-tier session ~60% of the bill is re-reading the prefix, not output.
+   Median cost per assistant turn roughly doubles with length: ~$0.12 between 25
+   and 100 turns, ~$0.22 past 400. The tier is a ~2x multiplier on top of that
+   (median $0.33/turn escalation vs $0.17 deliberation over sessions ≥200 turns,
+   n=6 vs n=125).
+   *Consequence:* the dominant cost variable is turn count and context length, not
+   model choice. Encoded as `meta.context_cost_rule`, which the rubric leans on to
+   answer `where` before `tier`.
+
+3. **A delegating session's fan-out can cost more than the session.** In the one
+   fully traced handoff, the main loop cost ~$42 and its four subagents ~$102.
+
+4. **A lower-tier candidate cohort: inherited model selection on delegation.**
+   Of 660 subagent transcripts, 378 ran a premium tier. Splitting by `agentType`
+   separates a deliberate choice from an inherited one — a named agent type may
+   pin a premium model in its own definition, but `general-purpose` and `Explore`
+   have no such definition in the reported environment. The author's review also
+   reports no settings/environment override, supporting caller inheritance for
+   this cohort. This review did not reanalyze those transcripts or configurations:
+
+   | delegated runs | tier reported | list-price estimate | execution-tier repricing | estimated delta |
+   |---|---|---|---|---|
+   | 296 `general-purpose` | premium (inherited) | $829 | $309 | **$519** |
+   | 35 `Explore` (read-only search) | premium (inherited) | $188 | $75 | **$113** |
+   | 82 named agent types | premium (may be deliberate) | $444 | $177 | not claimed |
+
+   The reported 331-run cohort supports testing intentional lower-tier selection.
+   The author's proposed ~2.5× token-price framing is a pricing comparison, not
+   proof of the capability the work needed, equal-quality completion or a rate-limit
+   benefit. The four traced instances were call-site sweeps and a numeric
+   re-derivation with stateable contracts: useful candidates for execution/recon
+   evaluation. R12 now checks intentional selection sources without treating an
+   omitted call parameter as universal evidence of inheritance.
+
+5. **Steering is rare; capability is not the bottleneck.** 21 distinct
+   corrections in 2048 human turns (~1%) after de-duplicating fork-copied turns
+   and reading each match by hand. An earlier keyword-only pass reported 7–9% by
+   matching benign task language ("wrong", "revert", "stop"). Recorded because the
+   inflated number would have justified policy the evidence does not support.
+
+6. **A hypothesis that did not survive.** "The escalation tier duplicates
+   investigation" — 56–59% repeat-read rate — dissolved on inspecting *what* was
+   re-read: its own scratchpad state files, its own transcript, and harness-spilled
+   `tool-results/*.txt`. Excluding those, repository re-reads were 0.8% at the
+   deliberation tier. Externalized-state re-hydration is what made a multi-day run
+   survivable, not waste. This is why `session_lifecycle` makes `externalize` the
+   precondition for compact/hand off/restart instead of treating re-reading as a
+   cost to remove.
+
+### Counterfactuals — what the revised policy would have routed
+
+Six real sessions, spanning the required outcomes. "Would have" is a judgement
+about routing, not a re-run; none of these were replayed.
+
+| # | task shape (observed) | actual | revised policy | effect |
+|---|---|---|---|---|
+| 1 | five tasks in one prefix: "how do I run X locally", replicate a named exemplar's proxy config, debug a hanging dev server, add uniform error handling, then three adversarial review passes. 598 turns, 311 shell calls, 0 delegation, $149 | one deliberation-tier session throughout | recon→delegate; exemplar replication→delegate execution; the two failed dev-server fixes fire `escalate_when` but framing is trusted → raise in place; error handling→delegate execution; the three review turns→**this session, deliberation** | **cheaper**: the mechanical bulk leaves the premium prefix, and the review turns start from a short one. Same-tier floor for the reviews is deliberate, not a saving |
+| 2 | a defect investigation the author no longer trusted — two published conclusions already retracted | framed at the deliberation tier, then handed by hand to a fresh escalation-tier session with a ~200-line brief; that session reframed the defect upstream, found a third error, refuted two premises | `escalate_when` fires (≥2 unverified load-bearing premises, high cost of being wrong) + framing distrusted → **`where: fresh session`** + M9 brief | **escalation, endorsed.** The policy reaches the decision the author reached by instinct, and additionally blocks the four inherited-tier subagents (R12) — the traced $77 overpay on that one session |
+| 3 | multi-week repository engagement. 5598 turns, 287 user turns, **70 auto-compactions**, 6 delegations, $1843 (its fork family ~$5.3k ≈ 17% of all measured spend). Opened with a lookup | escalation tier for the whole run | escalation tier **kept** (long-horizon autonomous work is the rubric's own second clause); opening lookup delegated; 70 auto-compactions read as the `compact` signal firing unattended → deliberate `externalize` + `restart` boundaries | **premium, endorsed** — with a lifecycle bound. Extrapolating the cost/length curve, holding sessions near the 400-turn band rather than 5598 moves the per-turn rate from $0.33 toward $0.22. **This is an extrapolation, not a measurement** |
+| 4 | adversarial PR re-review with explicit distrust of both the author's replies and a second reviewer. 143 turns, $57 | escalation tier — and `model-recommender` ran **58 times** in that session without preventing it | `deliberation` — "adversarial diagnosis, final ownership/review" is the deliberation clause verbatim; escalation needs a *fired signal*, and "this is hard / I don't trust it" is not one | **cheaper**: $57 → ~$28. The instructive part is that the old rubric had no signal test, so invoking the skill 58 times could not catch it |
+| 5 | observability audit → proof pass → smallest patch sequence. 3 user turns, 450 turns, 226 shell calls, 0 delegation, $111 | deliberation tier throughout | turn 0 deliberation (correct); turns 1–2 fire `de_escalate_when` — the user says "the diagnosis is sufficient, implement the smallest patch sequence", which *is* the signal — → drop a tier **and delegate** the patch sequence | **cheaper**: the user performed the de-escalation in prose and the tooling ignored it. This is the case the `de_escalate_when` list exists for |
+| 6 | "deliver this epic end to end, 6 child issues, one PR each, make every call yourself". 544 turns, 199 shell calls, 0 delegation, $224 | escalation tier, single agent, no delegation | matches the newly promoted `tracker-driven-epic-delivery` archetype: deliberation-tier owner at xhigh, `cadence: boundary-gated` (stated in the request), `orchestration: owner-orchestrator` with each unit's alias pinned | **cheaper and better-shaped** — but see the limitation below |
+
+### Where the policy is wrong or unproven
+
+- **`escalate_when` cannot distinguish "the context lost a constraint" from "the
+  constraint was wrong".** In counterfactual 6 the user asked the same question
+  twice ("why is human review needed? we can keep stacking PRs"), which trips
+  *"you have restated the same constraint twice"*. But the repetition was the user
+  disputing a boundary the run had invented, not the run forgetting one. The signal
+  would have fired and recommended escalation where the correct action was to fix
+  the boundary list. Stated as a known false-positive; not fixed, because the
+  distinguishing evidence (who owns the constraint) is not mechanically available.
+- **The handoff's value is confounded.** The one traced escalation handoff changed
+  four things at once: model, a fresh context, adversarial framing, and independent
+  re-derivation. Its result cannot be attributed to the model. The policy therefore
+  routes on *task shape and signals*, and the escalation clause says "worth an
+  independent second derivation" rather than "the model is smarter".
+- **Delegated-unit quality is unmeasured.** Every "cheaper" counterfactual assumes
+  a delegated execution-tier unit returns the same verified result. The units in
+  question had named verification commands, which is the tier's own contract, but
+  no A/B was run.
+- **Cache-read pricing is verified for one model only**; the others are derived.
+  Both ratios and absolute list-price estimates depend on these assumptions.
+- **Named-agent premium runs are not claimed as waste.** 82 runs, $444: their
+  definitions may pin a premium model deliberately. Only the 331 runs with no
+  definition to pin one are counted as inherited.
+
+### Mechanism vs proof
+
+Configured **and regression-tested against synthetic breakage**: the SessionStart
+guard now fails on a non-parsing yaml block, a missing required block, a list item
+that silently became a map, a tier with no alias, and a tier with no profile — six
+injected defects, each caught, and silent on the clean file. Two of those defects
+were **live in the shipped file**: the escalation profile's `rejected_params` did
+not parse at all, and two `notes` items parsed as maps. So "the yaml is the data"
+had been false in practice, and no consumer could see it.
+
+Configured but **not proven in use**: R12/R13, the `where` axis, the execution
+signals, the promoted archetype, and every eval case added today. They encode
+measured history; they have not yet routed a live session.
+
+Deliberately **not** added: staleness warnings in the hook. Dates age daily and
+some gaps cannot be closed (a model with no published prompting page), so a
+boot-time staleness warning fires forever and trains the reader to ignore the hook.
+Staleness stays in `meta.staleness_rule`, evaluated when a skill is about to quote
+a nuance — the only moment it can change an outcome. The same reasoning split
+`last_verified` into `api_verified` / `prompting_verified`: three of four profiles
+have an open prompting gap and current API facts, and one flag for both made the
+flag meaningless.
+
+
+## 2026-09-09 — Conservative routing corrections
+
+Reviewed against PR #135 head `9d62ec76dae91ce22609c6a2a91ac6ed86c7dfec`.
+The transcript corpus was not reanalyzed. Its reported dollar deltas are
+counterfactual list-price estimates, not demonstrated savings or subscription
+billing. Incorrect cache-rate assumptions can affect ratios as well as absolute
+values. Correction frequency does not measure undetected defects. Placement,
+model, task difficulty, verification and retries must be separated experimentally.
+
+### Changes and boundaries
+
+- Fresh-session handoffs preserve the chosen tier and supported effort. They do
+  not automatically select escalation or require another defect to exist.
+- R12 checks effective model selection, including intentional named-agent
+  definitions. It is an audit-output rule, not an Agent-call interception hook.
+- Repeated failures or disputed constraints trigger reassessment of authority,
+  evidence, verification and tooling. A capability change requires its own reason;
+  de-escalation retains the consequence floor.
+- Consumers use top-level `staleness_rule` and `context_cost_rule`. The example
+  declares exact `model_id` and `delegation_alias` identities. The first revision
+  incorrectly required an installed-file migration; the review response below
+  restores legacy compatibility without changing that file or `loop-compiler`.
+- Provider-specific runtime behavior and the next experiment are documented in
+  [portability.md](portability.md). Codex integration is not implemented.
+
+### Deterministic validation
+
+The original hook silently accepted prose-only profiles, mismatched aliases and
+model mappings without matching profiles in isolated review fixtures. The
+regression suite exercises the actual hook through its optional fixture path,
+without modifying the installed profile or calling a model.
+
+- `python3 claude-plugins/prompt-kit/hooks/tests/test-model-profiles.py` — 19 tests
+  passed: clean example; missing/empty/prose-only input; empty and unclosed fences;
+  malformed YAML; missing policy blocks; policy path mismatch; accidental map
+  notes; missing/mismatched aliases; missing/duplicate/wrong-tier profiles; changed
+  model identity; and unavailable yq. Each invocation is bounded to five seconds.
+- `bash scripts/validate-skill.sh claude-plugins/prompt-kit/skills/<skill>` for
+  all four skills — `pass: true`, no errors or warnings.
+- `bash scripts/marketplace-consistency.sh` — `marketplace-consistency: clean`.
+- `claude plugin validate --strict claude-plugins/prompt-kit` — validation passed
+  on installed Claude Code 2.1.201. This checks packaging, not live routing.
+- Fenced YAML and JSON parse checks — 10 YAML blocks and 10 JSON files parsed.
+- `bash -n claude-plugins/prompt-kit/hooks/check-model-profiles.sh` and
+  `git diff --check` — passed.
+
+### Independent behavioral smoke exercise
+
+One fresh Codex subagent read the revised skills and committed example fixture,
+without the prior review conclusions, installed profiles or external access.
+It exercised three separate requests while the implementation was reviewed:
+
+| Request | Observed output |
+|---|---|
+| Fresh investigation on the same deliberation model at high effort | Preserved tier and effort, wrote an isolated handoff, labelled the hypothesis unverified and permitted no defect/inconclusive findings |
+| Named inventory-reader with a matching definition and verified precedence, no call override | Did not fire R12 or force an override; distinguished configured selection from execution and omitted unsupported recon effort |
+| Repeated correction of an agent-invented human-review prerequisite | Retracted the invented boundary, kept the current session and did not recommend a stronger model |
+
+These are synthetic instruction-following smoke results on a Codex subagent,
+not Claude runtime exercises, an executed full eval suite, a without-skill
+comparison, or a provider compatibility certification. No cost or quality delta
+is claimed. The smoke scenarios have corresponding cases in the updated eval
+specifications; repeatability and effects on real work remain unverified.
+
+## 2026-09-09 — Review response: preserve the installed profile contract
+
+Accepted the [author's compatibility finding and operational feedback](https://github.com/felipeblassioli/agent-skills/pull/136#issuecomment-5611676435).
+The prior PR head `9fd8c76` emitted six warnings against the actual installed
+legacy profile. The revised hook emits zero stdout/stderr bytes and exits 0 on
+that same file. A SHA-256 comparison before/after confirms the installed file was
+unchanged; no shared-data migration or `loop-compiler` change was performed.
+
+Both hook and consuming skills now support legacy profiles. Complete optional
+identity extensions retain strict checks; partial extensions warn. Legacy tier
+coverage identifies a candidate only: model-specific settings/posture require
+key/source identity verification, otherwise consumers withhold that advice.
+Legacy escalation events initiate reassessment rather than an automatic upgrade.
+
+Restored concrete invocation cues and decisive routing outcomes. Handoff briefs
+actively seek falsifiers while allowing no-defect and inconclusive conclusions.
+R12 checks the draft and available evidence; inaccessible named definitions or
+runtime metadata produce a separate verification gap. The portability recommendation
+is shortened and removed from the skill body. Trigger recall and Claude behavioral
+improvements remain unverified; these are reviewed instruction changes.
+
+Validation on the revised implementation:
+
+- `python3 claude-plugins/prompt-kit/hooks/tests/test-model-profiles.py` — **29 passed**.
+  Includes legacy upgrades, ambiguous/missing legacy tiers, independently optional
+  extensions, partial adoption, and all prior strict identity and parse regressions.
+  A negative-capability control explicitly shows that legacy structural acceptance
+  cannot certify a changed model mapping.
+- All four `bash scripts/validate-skill.sh claude-plugins/prompt-kit/skills/<skill>`
+  checks — `pass: true`, no errors or warnings.
+- `bash scripts/marketplace-consistency.sh` — clean;
+  `claude plugin validate --strict claude-plugins/prompt-kit` — passed on 2.1.201.
+- Ten fenced YAML blocks and ten JSON files parsed; hook `bash -n` and
+  `git diff --check` passed.
+
+The new legacy-consumer and offline-audit eval cases are specifications, not
+executed model benchmarks. The earlier Codex smoke result remains limited to
+instruction legibility on that harness; no Claude execution, trigger-recall,
+quality-equivalence, rate-limit benefit or cross-provider result is claimed.

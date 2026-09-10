@@ -69,6 +69,33 @@
         "Sanitizes first: strips any secrets/internal hostnames and minimizes personal data before writing",
         "Does NOT write into the plugin (public repo) and does NOT auto-promote to the catalog — promotion is human-gated"
       ]
+    },
+    {
+      "id": 7,
+      "name": "promoted-tracker-driven-epic-delivery",
+      "guards": "The first growth-loop promotion. Guards both that the archetype is matched and that its axes are chosen rather than ignored — the axes are the whole reason it replaced three candidates.",
+      "prompt": "/smart-prompt I want to deliver this tracking epic end to end — 6 child issues in the order it lists, a PR per issue. Don't come back to me after each one.",
+      "files": [],
+      "assertions": [
+        "Matches tracker-driven-epic-delivery, not scoped-implementation or context-anchored-planning",
+        "Chooses cadence: boundary-gated (the intent explicitly rules out a per-unit gate) and says so",
+        "Chooses an orchestration axis value and gives a reason, rather than leaving it unstated",
+        "Emitted prompt treats the tracker items as the spec of record and does NOT restate their acceptance criteria",
+        "Includes the reconcile-first step (what already landed, is in flight, or was superseded), a named per-unit verification command, a boundary list, and a lessons file",
+        "If it routes any unit to a subagent, it pins the delegation alias (prompt-audit R12)",
+        "Names no concrete model string"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "fresh-session-does-not-upgrade",
+      "prompt": "Shape a handoff for an independent recheck of src/parser.ts. I want a fresh session on the same deliberation model, not a capability change. Treat the suspected missing null guard as unverified.",
+      "files": [],
+      "assertions": [
+        "Passes fresh_session plus the selected deliberation tier to tailor-to-fable",
+        "Does not substitute the escalation target because of the handoff writer name",
+        "Requires a self-contained brief and accepts no additional defect"
+      ]
     }
   ]
 }

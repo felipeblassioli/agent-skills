@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.2.1 - 2026-09-09
+
+### Fixed
+
+- Accept legacy profile resolution, restore tailoring cues and require active falsification without presuming a defect.
+
+- Resolve handoff targets from the selected tier, including same-model fresh sessions; retain explicit escalation tailoring.
+- Gate runtime settings by the selected profile and accept confirmation, refutation, no additional defect or inconclusive findings.
+- Respect matching named-agent definitions when establishing effective delegation targets.
+
+Evidence: plugin `docs/evidence.md`, "Conservative routing corrections". New
+behavioral cases are specifications; no with-skill versus baseline delta is claimed.
+
+## 0.2.0 - 2026-09-09
+
+### Added
+
+- **M9 — handoff brief.** A third input mode: a stuck investigation in the current
+  session becomes a self-contained brief for a *fresh* session, written to a file.
+  Derived from the one that worked in local history: it reframed a defect upstream,
+  found a third error, and refuted two of the author's premises. Its load-bearing
+  parts are the adversarial premise (state your own retracted conclusions, then ask
+  it to assume another error exists), premises labelled `verified` / `assumed`, the
+  confound that already fooled you once, the leaning marked as the thing you most
+  want challenged, and open items annotated with their reachability.
+- Subagent tiers must be pinned. Authorising fan-out from the escalation tier with
+  `model` unset runs every delegated unit on that tier — observed four times in one
+  run. M5 now requires an explicit `delegation_aliases[tier]` per call, and the
+  output block carries a `Delegation` line.
+
+### Changed
+
+- No model name is hardcoded anywhere, including the skill description and the
+  prose framing: the target is whatever `tier_to_model.escalation` resolves to. The
+  skill keeps its name because that is what gets typed.
+- Gates on the new prompt-audit R12 (unpinned subagent tier) and R13 (a handoff
+  leaning on context the fresh session lacks) in addition to R2/R3/R8/R9/R10.
+- Target line reports `api_verified` and `prompting_verified` separately.
+
 ## 0.1.0 - 2026-07-14
 
 ### Added

@@ -1,5 +1,5 @@
 {
-  "description": "prompt-kit SessionStart guard — warns if the shared routing source ~/.claude/model-profiles.md is missing (silent when present).",
+  "description": "prompt-kit SessionStart guard — warns if the shared routing source ~/.claude/model-profiles.md is missing, unparseable, or internally inconsistent (silent when it is clean).",
   "hooks": {
     "SessionStart": [
       {

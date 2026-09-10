@@ -56,9 +56,15 @@ Every strong agentic prompt fills these; the archetype tunes which matter most:
    (e.g. `refs/README.md`, a cloned project), glance at them (Read/Glob/Grep)
    only enough to make the shaped prompt's "Context to gather" steps concrete and
    correct. This is shaping, not doing — implement nothing here.
-4. **Route the tier.** Call `model-recommender` on the underlying task to resolve
-   its archetype → tier + effort. Emit the tier name; let model-recommender own
-   the model string. Never write a model string into the shaped prompt.
+4. **Route the placement and tier.** Call `model-recommender` on the underlying
+   task. Emit its `Where` and the tier + effort; let model-recommender own the
+   target. Never write a model string into the shaped prompt. If it answers
+   `delegate`, the shaped prompt is a *subagent brief* — it must identify the
+   effective model selection (a matching agent definition or supported explicit
+   call value), context inheritance and a self-contained brief (see
+   prompt-audit R12/R13). If it answers `fresh_session`, pass the selected tier and effort to `tailor-to-fable`
+   for its handoff mode. That mode preserves the selection, including a fresh
+   session on the same model; it must not silently upgrade to escalation.
 5. **Fill the slots.** Instantiate the archetype's skeleton with the intent's
    specifics. Bake "ask before X" into the prompt where the clarify-first slot
    calls for it. Keep the altitude high — specify outcomes, not keystrokes.
@@ -70,7 +76,7 @@ Every strong agentic prompt fills these; the archetype tunes which matter most:
 ## Output
 
 ```
-Archetype: <archetype-id>  →  routing: <tier> tier, effort <effort>
+Archetype: <archetype-id> → Where: <placement>, <tier> tier, effort <supported value | not supported>
 ```
 
 Then the shaped prompt in a fenced block, ready to paste or run as its own
