@@ -85,6 +85,17 @@
         "If it routes any unit to a subagent, it pins the delegation alias (prompt-audit R12)",
         "Names no concrete model string"
       ]
+    },
+    {
+      "id": 8,
+      "name": "fresh-session-does-not-upgrade",
+      "prompt": "Shape a handoff for an independent recheck of src/parser.ts. I want a fresh session on the same deliberation model, not a capability change. Treat the suspected missing null guard as unverified.",
+      "files": [],
+      "assertions": [
+        "Passes fresh_session plus the selected deliberation tier to tailor-to-fable",
+        "Does not substitute the escalation target because of the handoff writer name",
+        "Requires a self-contained brief and accepts no additional defect"
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "skill_name": "model-recommender",
-  "notes": "Verdicts must be resolved against the installed ~/.claude/model-profiles.md, never from memory. Assertions deliberately contain NO model strings: the previous version pinned them and went stale the moment tier_to_model changed, which is the same defect the skill exists to prevent. Assert the placement, the tier, the effort, and the LOOKUP PATH (tier_to_model[x] for a session, delegation_aliases[x] for a subagent); whether the resolved value is current is the job of meta.staleness_rule and the SessionStart hook. Each case names the failure mode it guards. Run with-skill vs baseline; grade each assertion with quoted evidence.",
+  "notes": "Experimental behavioral cases. Use the committed example as an isolated profile fixture, not a changing installed profile; record the actual fixture, harness, model and effort. Grade with-skill and baseline against the same cases with quoted evidence. These assertions are evaluation specifications, not executed routing proofs. Profile consistency does not prove live model availability.",
   "evals": [
     {
       "id": 1,
@@ -12,7 +12,7 @@
         "Answers `Where: delegate` first — the unit has a stateable contract and a named verification command",
         "Emits execution tier at effort high",
         "Emits the target as an Agent-tool `model` ALIAS resolved from delegation_aliases[execution], not a model string from tier_to_model",
-        "States that leaving `model` null makes the subagent inherit the caller's model, i.e. this unit would run on the escalation tier",
+        "Identifies model resolution as proposed until agent definitions, harness precedence and actual execution metadata are checked; does not assert omission always inherits the caller",
         "Does not recommend keeping the work in the session"
       ]
     },
@@ -23,9 +23,9 @@
       "prompt": "Find every place the retry/backoff policy is configured in this service and summarize what each one sets.",
       "files": [],
       "assertions": [
-        "Answers `Where: delegate` with recon tier at effort low",
+        "Answers Where: delegate with recon tier; because its effort_range is none, omits a runtime effort parameter and reports not supported",
         "Resolves the target from delegation_aliases[recon]",
-        "Surfaces at least one recon-profile delta that actually breaks a delegation — the 200K context window, or that `effort` errors on that model",
+        "Surfaces a verified recon-profile limitation, without recommending an unsupported effort value",
         "Does not route a pure lookup to a judgment tier"
       ]
     },
@@ -36,10 +36,10 @@
       "prompt": "Design a caching layer for these DB calls — the invalidation is tricky. Which model?",
       "files": [],
       "assertions": [
-        "Answers `Where: this session` — the work is the judgment",
+        "Answers Where: session because the work requires judgment",
         "Emits deliberation tier at xhigh (or high, with a stated reason)",
         "Resolves the target from tier_to_model[deliberation]",
-        "Does NOT pick the escalation tier, and says why: no escalate_when signal has fired and 'hard' is not one",
+        "Does not escalate solely because the task is described as hard; considers risk and respects an explicit user model choice",
         "Names a Watch signal that would justify escalating later"
       ]
     },
@@ -59,7 +59,7 @@
       "id": 5,
       "name": "phased-task-routed-per-phase",
       "guards": "Averaging a mixed task into one verdict.",
-      "prompt": "Plan, implement, and review a new billing module. What model per phase?",
+      "prompt": "Plan, implement, and review a billing-module display-only rename. Implementation is limited to local labels; public contracts, monetary calculations and persistence are unchanged. Existing snapshot tests cover the labels. What model per phase?",
       "files": [],
       "assertions": [
         "Emits one line per phase rather than a single averaged verdict",
@@ -75,11 +75,10 @@
       "prompt": "I've been on this defect for hours. Two different fixes both failed the same way, and I've re-explained the same constraint to you twice. Should I switch to a stronger model?",
       "files": [],
       "assertions": [
-        "Names the fired execution_signals.escalate_when items — the defect surviving two independent fix attempts, and the constraint restated twice",
-        "Answers `Where: fresh session`, NOT raising the tier inside the current session",
-        "Cites session_lifecycle.hand_off — a long session defends its own earlier conclusions",
-        "Requires session_lifecycle.externalize first and names the file the durable state goes to",
-        "Points at tailor-to-fable to write the handoff brief"
+        "Names the observed failures as reassess_when events, without declaring framing or capability to be the cause",
+        "Checks the failed verification and the source of the repeated constraint before choosing placement or capability",
+        "If recommending a fresh session, preserves the selected tier unless a separate capability reason justifies escalation",
+        "Requires externalizing source-anchored state before a handoff, and passes the selected tier to tailor-to-fable"
       ]
     },
     {
@@ -90,8 +89,8 @@
       "files": [],
       "assertions": [
         "Fires execution_signals.de_escalate_when — the unknown resolved, and the remainder repeats an established pattern with a verification command",
-        "Drops the tier rather than continuing at the current one",
-        "Also flips the placement to delegate, and emits the alias from delegation_aliases",
+        "Considers lowering the tier only after reapplying consequence_override and checking the relevant verifier coverage",
+        "Considers delegation with an intentional effective model and explicit context inheritance",
         "Does not treat the fact that the session is already on a higher tier as a reason to stay there"
       ]
     },
@@ -106,6 +105,62 @@
         "Flags prompting_verified as stale and does NOT flag api_verified or the tier_to_model string",
         "Withholds or hedges the posture/nuance line rather than asserting a nuance it cannot verify",
         "Does NOT invent or guess a model string"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "invented-boundary-is-not-capability-failure",
+      "prompt": "You twice insisted I need a human review before creating a draft PR. I never imposed that rule, repository policy permits it, and I already authorized the draft. Nothing else is failing. Do we need a stronger model?",
+      "files": [],
+      "assertions": [
+        "Traces constraint authority and retracts the invented boundary",
+        "Does not escalate or restart solely because the user repeated a correction",
+        "Continues within existing authorization"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "same-tier-fresh-investigation",
+      "prompt": "Use a fresh session on the deliberation tier to independently check our conclusion. The current transcript mixes two competing hypotheses. There is no evidence of a capability limit; I want the same model.",
+      "files": [],
+      "assertions": [
+        "Selects fresh_session and deliberation without escalation",
+        "Specifies an isolated brief without inherited transcript",
+        "Hands the selected tier and supported effort to tailor-to-fable"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "deescalation-preserves-consequence-floor",
+      "prompt": "The diagnosis is settled. Apply the familiar retry pattern to the production payment writer. Unit tests pass but none check duplicate charges after timeouts. Can this drop to execution tier?",
+      "files": [],
+      "assertions": [
+        "Applies the consequence floor despite a repetitive implementation",
+        "Identifies missing duplicate-side-effect verification",
+        "Does not equate a named green test command with adequate verification"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "legacy-profile-repetition-reassesses",
+      "prompt": "Use a legacy profile with no model_id/delegation_alias fields and neither reassess field. Its old escalate_when lists repeated corrections and long runs. I repeated a correction because you invented an approval requirement. The task is authorized and nothing else failed. Pick the route.",
+      "files": [],
+      "assertions": [
+        "Accepts the legacy format without requiring migration",
+        "Retracts the invented prerequisite and emits one decision to continue without escalation",
+        "Treats old escalate_when observations as reassessment triggers"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "legacy-target-identity-unverified",
+      "prompt": "A parseable legacy file has exactly one profile per tier and no identity extension. tier_to_model.execution now names a different model from that profile key/source, and its new model documentation is unavailable. Recommend bounded execution and effort.",
+      "files": [],
+      "assertions": [
+        "Can emit placement/tier and the proposed table target",
+        "Does not treat tier membership as verified model identity",
+        "Withholds profile-derived effort/settings/posture and labels identity unverified",
+        "Does not rewrite the shared profile or invent identity fields"
       ]
     }
   ]

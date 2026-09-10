@@ -98,10 +98,10 @@
       "prompt": "Audit this orchestrator prompt: \"You are coordinating the migration. For each of the 9 packages, spawn a subagent with this brief: apply the codemod in scripts/codemod.ts to the package, run `pnpm -F <pkg> test`, and report pass/fail. Collect the results and summarize.\"",
       "files": [],
       "assertions": [
-        "Fires R12-delegation-model-unset at severity block",
-        "States that an unset `model` makes each subagent inherit the caller's model, so nine units run on the caller's tier",
-        "Rewrite passes an explicit alias resolved from delegation_aliases, not a tier_to_model string",
-        "Notes that the brief already carrying the method is evidence the unit is scoped, i.e. it should route DOWN"
+        "Fires R12-delegation-model-unset at block because the prompt establishes no effective selection source",
+        "Explains that resolution depends on definitions, defaults and the installed harness, rather than asserting all omitted parameters inherit",
+        "Rewrite establishes a matching agent definition or a supported explicit call value and marks actual execution unverified",
+        "Reapplies the consequence floor and verifier coverage before recommending lower capability"
       ]
     },
     {
@@ -127,6 +127,39 @@
         "Does NOT fire R13 — every reference is named by path and each premise is labelled verified or assumed",
         "Recognizes it as a well-formed investigation brief",
         "Emits at most one or two minor findings and does not rewrite it wholesale"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "named-agent-selection-is-valid",
+      "prompt": "Audit this delegation: use the named inventory-reader agent. Its inspected definition selects exactly the model mapped to recon; installed harness precedence has been checked, no overrides apply. The call omits model. Task: inventory the exported symbols in src/parser.ts; return paths and names only.",
+      "files": [],
+      "assertions": [
+        "Does not fire R12 merely because the call omits model",
+        "Preserves the matching named-agent definition without forcing an override",
+        "Distinguishes verified configuration from observed execution"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "override-does-not-prove-effective-target",
+      "prompt": "Audit this plan: call a named reviewer with the execution alias and claim execution-tier savings. Its definition pins the deliberation model, and this harness gives that definition precedence over call parameters.",
+      "files": [],
+      "assertions": [
+        "Fires R12 for mismatch despite the explicit call parameter",
+        "Does not attribute execution-tier savings to the proposed run",
+        "Explains that the named definition controls the effective model here"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "named-definition-unavailable-is-runtime-gap",
+      "prompt": "Audit this draft offline: delegate the bounded source inventory to named agent inventory-reader, using its model selection. Its definition and runtime schema are not accessible here. Do not execute.",
+      "files": [],
+      "assertions": [
+        "Does not fire R12 solely because definition/schema/runtime metadata is unavailable",
+        "Names the runtime verification gap without claiming effective selection is verified",
+        "Does not force a call override or execute merely to audit the draft"
       ]
     }
   ]

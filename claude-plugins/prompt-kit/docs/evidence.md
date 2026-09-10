@@ -1,5 +1,10 @@
 # Evidence
 
+Historical observations below preserve the reported corpus and counterfactuals.
+The final review entries supersede causal savings claims, universal inheritance
+assumptions and automatic escalation policy. Dollar figures are retrospective
+list-price estimates throughout, not measured bills or demonstrated savings.
+
 ## 2026-07-05 — added third skill: smart-prompt (prompt authoring)
 
 Added `smart-prompt`, completing the triad (author / route / critique). Design
@@ -163,7 +168,7 @@ Source: 1171 local Claude Code transcripts (`~/.claude/projects/**/*.jsonl`), of
 which 1151 carry priceable usage, plus 660 subagent transcripts. Prices are list
 prices from the bundled `claude-api` reference; the cache-read rate is verified
 only for the escalation-tier model and derived (10% of input) elsewhere, so all
-absolute dollars are estimates while the *ratios* are robust. Session ids are
+absolute dollars and ratios depend on those assumptions. Session ids are
 omitted — they map to private work.
 
 ### What the corpus says, before any policy change
@@ -191,24 +196,27 @@ omitted — they map to private work.
 3. **A delegating session's fan-out can cost more than the session.** In the one
    fully traced handoff, the main loop cost ~$42 and its four subagents ~$102.
 
-4. **The one mechanically-avoidable overpay: an unset `model` on delegation.**
+4. **A lower-tier candidate cohort: inherited model selection on delegation.**
    Of 660 subagent transcripts, 378 ran a premium tier. Splitting by `agentType`
    separates a deliberate choice from an inherited one — a named agent type may
    pin a premium model in its own definition, but `general-purpose` and `Explore`
-   have no such definition, so their model came from the caller:
+   have no such definition in the reported environment. The author's review also
+   reports no settings/environment override, supporting caller inheritance for
+   this cohort. This review did not reanalyze those transcripts or configurations:
 
-   | delegated runs | tier actually used | cost | at execution tier | delta |
+   | delegated runs | tier reported | list-price estimate | execution-tier repricing | estimated delta |
    |---|---|---|---|---|
    | 296 `general-purpose` | premium (inherited) | $829 | $309 | **$519** |
    | 35 `Explore` (read-only search) | premium (inherited) | $188 | $75 | **$113** |
    | 82 named agent types | premium (may be deliberate) | $444 | $177 | not claimed |
 
-   $632 of avoidable spend across 331 runs from one omitted parameter — ~2% of
-   measured spend, but 100% deterministic to catch. Hence `delegation_aliases`
-   (the Agent `model` field is an alias enum, not a model id) and prompt-audit
-   **R12** at severity `block`. The four traced instances were call-site sweeps and
-   a numeric re-derivation — all with a stateable contract, i.e. execution/recon
-   work that had merely inherited upward.
+   The reported 331-run cohort supports testing intentional lower-tier selection.
+   The author's proposed ~2.5× token-price framing is a pricing comparison, not
+   proof of the capability the work needed, equal-quality completion or a rate-limit
+   benefit. The four traced instances were call-site sweeps and a numeric
+   re-derivation with stateable contracts: useful candidates for execution/recon
+   evaluation. R12 now checks intentional selection sources without treating an
+   omitted call parameter as universal evidence of inheritance.
 
 5. **Steering is rare; capability is not the bottleneck.** 21 distinct
    corrections in 2048 human turns (~1%) after de-duplicating fork-copied turns
@@ -259,7 +267,7 @@ about routing, not a re-run; none of these were replayed.
   question had named verification commands, which is the tier's own contract, but
   no A/B was run.
 - **Cache-read pricing is verified for one model only**; the others are derived.
-  Ratios survive this, absolute dollars are estimates.
+  Both ratios and absolute list-price estimates depend on these assumptions.
 - **Named-agent premium runs are not claimed as waste.** 82 runs, $444: their
   definitions may pin a premium model deliberately. Only the 331 runs with no
   definition to pin one are counted as inherited.
@@ -286,3 +294,108 @@ a nuance — the only moment it can change an outcome. The same reasoning split
 `last_verified` into `api_verified` / `prompting_verified`: three of four profiles
 have an open prompting gap and current API facts, and one flag for both made the
 flag meaningless.
+
+
+## 2026-09-09 — Conservative routing corrections
+
+Reviewed against PR #135 head `9d62ec76dae91ce22609c6a2a91ac6ed86c7dfec`.
+The transcript corpus was not reanalyzed. Its reported dollar deltas are
+counterfactual list-price estimates, not demonstrated savings or subscription
+billing. Incorrect cache-rate assumptions can affect ratios as well as absolute
+values. Correction frequency does not measure undetected defects. Placement,
+model, task difficulty, verification and retries must be separated experimentally.
+
+### Changes and boundaries
+
+- Fresh-session handoffs preserve the chosen tier and supported effort. They do
+  not automatically select escalation or require another defect to exist.
+- R12 checks effective model selection, including intentional named-agent
+  definitions. It is an audit-output rule, not an Agent-call interception hook.
+- Repeated failures or disputed constraints trigger reassessment of authority,
+  evidence, verification and tooling. A capability change requires its own reason;
+  de-escalation retains the consequence floor.
+- Consumers use top-level `staleness_rule` and `context_cost_rule`. The example
+  declares exact `model_id` and `delegation_alias` identities. The first revision
+  incorrectly required an installed-file migration; the review response below
+  restores legacy compatibility without changing that file or `loop-compiler`.
+- Provider-specific runtime behavior and the next experiment are documented in
+  [portability.md](portability.md). Codex integration is not implemented.
+
+### Deterministic validation
+
+The original hook silently accepted prose-only profiles, mismatched aliases and
+model mappings without matching profiles in isolated review fixtures. The
+regression suite exercises the actual hook through its optional fixture path,
+without modifying the installed profile or calling a model.
+
+- `python3 claude-plugins/prompt-kit/hooks/tests/test-model-profiles.py` — 19 tests
+  passed: clean example; missing/empty/prose-only input; empty and unclosed fences;
+  malformed YAML; missing policy blocks; policy path mismatch; accidental map
+  notes; missing/mismatched aliases; missing/duplicate/wrong-tier profiles; changed
+  model identity; and unavailable yq. Each invocation is bounded to five seconds.
+- `bash scripts/validate-skill.sh claude-plugins/prompt-kit/skills/<skill>` for
+  all four skills — `pass: true`, no errors or warnings.
+- `bash scripts/marketplace-consistency.sh` — `marketplace-consistency: clean`.
+- `claude plugin validate --strict claude-plugins/prompt-kit` — validation passed
+  on installed Claude Code 2.1.201. This checks packaging, not live routing.
+- Fenced YAML and JSON parse checks — 10 YAML blocks and 10 JSON files parsed.
+- `bash -n claude-plugins/prompt-kit/hooks/check-model-profiles.sh` and
+  `git diff --check` — passed.
+
+### Independent behavioral smoke exercise
+
+One fresh Codex subagent read the revised skills and committed example fixture,
+without the prior review conclusions, installed profiles or external access.
+It exercised three separate requests while the implementation was reviewed:
+
+| Request | Observed output |
+|---|---|
+| Fresh investigation on the same deliberation model at high effort | Preserved tier and effort, wrote an isolated handoff, labelled the hypothesis unverified and permitted no defect/inconclusive findings |
+| Named inventory-reader with a matching definition and verified precedence, no call override | Did not fire R12 or force an override; distinguished configured selection from execution and omitted unsupported recon effort |
+| Repeated correction of an agent-invented human-review prerequisite | Retracted the invented boundary, kept the current session and did not recommend a stronger model |
+
+These are synthetic instruction-following smoke results on a Codex subagent,
+not Claude runtime exercises, an executed full eval suite, a without-skill
+comparison, or a provider compatibility certification. No cost or quality delta
+is claimed. The smoke scenarios have corresponding cases in the updated eval
+specifications; repeatability and effects on real work remain unverified.
+
+## 2026-09-09 — Review response: preserve the installed profile contract
+
+Accepted the [author's compatibility finding and operational feedback](https://github.com/felipeblassioli/agent-skills/pull/136#issuecomment-5611676435).
+The prior PR head `9fd8c76` emitted six warnings against the actual installed
+legacy profile. The revised hook emits zero stdout/stderr bytes and exits 0 on
+that same file. A SHA-256 comparison before/after confirms the installed file was
+unchanged; no shared-data migration or `loop-compiler` change was performed.
+
+Both hook and consuming skills now support legacy profiles. Complete optional
+identity extensions retain strict checks; partial extensions warn. Legacy tier
+coverage identifies a candidate only: model-specific settings/posture require
+key/source identity verification, otherwise consumers withhold that advice.
+Legacy escalation events initiate reassessment rather than an automatic upgrade.
+
+Restored concrete invocation cues and decisive routing outcomes. Handoff briefs
+actively seek falsifiers while allowing no-defect and inconclusive conclusions.
+R12 checks the draft and available evidence; inaccessible named definitions or
+runtime metadata produce a separate verification gap. The portability recommendation
+is shortened and removed from the skill body. Trigger recall and Claude behavioral
+improvements remain unverified; these are reviewed instruction changes.
+
+Validation on the revised implementation:
+
+- `python3 claude-plugins/prompt-kit/hooks/tests/test-model-profiles.py` — **29 passed**.
+  Includes legacy upgrades, ambiguous/missing legacy tiers, independently optional
+  extensions, partial adoption, and all prior strict identity and parse regressions.
+  A negative-capability control explicitly shows that legacy structural acceptance
+  cannot certify a changed model mapping.
+- All four `bash scripts/validate-skill.sh claude-plugins/prompt-kit/skills/<skill>`
+  checks — `pass: true`, no errors or warnings.
+- `bash scripts/marketplace-consistency.sh` — clean;
+  `claude plugin validate --strict claude-plugins/prompt-kit` — passed on 2.1.201.
+- Ten fenced YAML blocks and ten JSON files parsed; hook `bash -n` and
+  `git diff --check` passed.
+
+The new legacy-consumer and offline-audit eval cases are specifications, not
+executed model benchmarks. The earlier Codex smoke result remains limited to
+instruction legibility on that harness; no Claude execution, trigger-recall,
+quality-equivalence, rate-limit benefit or cross-provider result is claimed.

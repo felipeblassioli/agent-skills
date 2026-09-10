@@ -15,6 +15,9 @@ prompt is good for one posture and bad for the other, and the names change.
 Rule ids are stable and never renumbered; `R11` was merged into `R4` and its id retired
 rather than reused, so a finding recorded against an id keeps its meaning.
 
+`block` is an audit-output severity enforced through skill instructions, not a
+deterministic runtime gate. The SessionStart hook validates profile structure only.
+
 Output contract: emit findings (each: rule_id, severity, span, why) AND a rewritten prompt
 (`--fix` style). Severity ∈ {block, warn, nit}. Never silently rewrite without showing findings.
 
@@ -140,22 +143,29 @@ rules:
       Ask for coverage at the finding stage (report everything with confidence + severity),
       and move filtering/ranking to a separate downstream step.
 
+  # Keep the R12 id stable; its invariant is effective selection, not call syntax.
   - id: R12-delegation-model-unset
     requires_tier: true
     severity: block
     fires_when: >
-      The prompt (or the plan it contains) delegates a unit of work to a subagent / Agent /
-      Task call and does not set that call's `model`, or sets it to a `tier_to_model`
-      string instead of a `delegation_aliases` alias.
+      A delegated unit specifies neither a model selection nor an identified named
+      agent definition that supplies it; or supplied/available evidence establishes
+      a conflicting selection or a call value invalid for the harness schema.
+      Omission is allowed when a matching named definition supplies the model.
+      An identified but unavailable definition or unavailable runtime metadata is
+      a separate verification gap, not evidence that this rule fires.
     finding: >
-      An unset `model` makes the subagent inherit the CALLER's model, so work that was
-      routed to a cheap tier silently runs on the caller's — observed: four subagents ran
-      on the escalation tier because their orchestrator did. A model string in that field
-      is a different value space and is invalid.
+      The draft lacks an intentional selection source, or available evidence shows
+      a mismatch or invalid value. A call parameter alone is not execution proof.
     fix: >
-      Resolve the alias from delegation_aliases[tier] and pass it explicitly on every
-      delegating call. If the prompt already carries the method the subagent needs, that
-      is evidence the unit is scoped — route it DOWN, do not let it inherit upward.
+      Name the intended selection source. Keep a matching named definition;
+      otherwise propose a call value using delegation_aliases for Claude and state
+      whether schema support is verified. Do not force an override solely because
+      runtime access is unavailable. Check definition/schema/precedence at dispatch;
+      verify actual model metadata when executed. Keep that obligation separate from
+      the draft audit.
+      Reapply consequence_override before lowering capability; a bounded brief alone
+      does not establish safety or verifier coverage.
 
   - id: R13-context-assumed-not-carried
     requires_tier: false

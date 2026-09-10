@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1 - 2026-09-09
+
+### Fixed
+
+- Support legacy profiles without migration; make reassessment decisions explicit and restore invocation cues.
+
+- Separate context reset from capability escalation; reassess failed checks and constraint authority first.
+- Resolve exact model/profile identity, respect effective agent selection, and omit unsupported effort.
+- Treat economic conclusions as hypotheses and reapply consequence floors on de-escalation.
+
+Evidence: plugin `docs/evidence.md`, "Conservative routing corrections". New
+behavioral cases are specifications; no with-skill versus baseline delta is claimed.
+
 ## 0.2.0 - 2026-09-09
 
 ### Changed

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1 - 2026-09-09
+
+### Fixed
+
+- Accept legacy profile resolution, restore tailoring cues and require active falsification without presuming a defect.
+
+- Resolve handoff targets from the selected tier, including same-model fresh sessions; retain explicit escalation tailoring.
+- Gate runtime settings by the selected profile and accept confirmation, refutation, no additional defect or inconclusive findings.
+- Respect matching named-agent definitions when establishing effective delegation targets.
+
+Evidence: plugin `docs/evidence.md`, "Conservative routing corrections". New
+behavioral cases are specifications; no with-skill versus baseline delta is claimed.
+
 ## 0.2.0 - 2026-09-09
 
 ### Added
