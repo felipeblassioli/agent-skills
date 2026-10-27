@@ -11,9 +11,9 @@ description: Create and update GitHub pull requests using gh CLI for repositorie
 - The PR body must follow the repo's `.github/pull_request_template.md` exactly, preserving comment markers. **Always read the repo's live template at runtime** (step 1); the reference copy in [assets/pull_request_template.md](assets/pull_request_template.md) is only a fallback and may lag the repo. Fill whatever subsections the repo's template defines — do not hardcode a fixed set.
 - PR body files are staged in `.work/` before submission (never deleted — they serve as history).
 - Use `gh pr create --body-file` / `gh pr edit --body-file` to avoid shell escaping issues.
-- Commit titles follow Conventional Commits: `type(scope): description` (title in English is acceptable; body in PT-BR).
-- The body earns its length. Draft, then run the **reviewer pass** (step 5) before submitting —
-  it is a mandatory step, not an optional polish.
+- Commit and PR titles follow Conventional Commits: `type(scope): description` (title in English is acceptable; body in PT-BR). On Turbi repos the PR title and body are machine-gated (step 6).
+- The body earns its length. Draft, then run the **reviewer pass** (step 5) and the **gate
+  check** (step 6) before submitting — both are mandatory steps, not optional polish.
 
 ## Binding rules — honesty and scope (read before writing anything)
 
@@ -26,12 +26,15 @@ you MUST NOT:
   rates, or issue numbers. If a command wasn't run, write `não executado` — never
   `deve passar` / "should pass" / "provavelmente verde". A plausible-sounding guess is a
   lie with better grammar.
-- **Check a human-only box.** Any checkbox that asserts a *human* action — e.g.
-  `- [ ] Um humano revisou o diff COMPLETO` — stays `[ ]`. Marking it yourself is a false
-  attestation of something you cannot do. Leave it for the human and say so if asked.
-- **Claim rigor you didn't produce.** The *"Testado adversarialmente"* checkbox may be
-  `[x]` only when a real break-the-fix proof exists — point to it in "Risco antes do
-  merge". No proof → leave `[ ]`.
+- **Attest a human action.** The human review of the full diff is not yours to claim. Write
+  it as a plain bullet that states its status in words —
+  `- Revisão humana do diff completo: **pendente** (o autor agente não atesta isso).` —
+  never as a checkbox. On Turbi repos an unchecked `- [ ]` fails the required VTEC check,
+  and ticking it to turn the check green is exactly the false attestation this rule
+  forbids; the bullet keeps the gap honest *and* the gate green (step 6).
+- **Claim rigor you didn't produce.** `- Testado adversarialmente: <onde está a prova>` only
+  when a real break-the-fix proof exists — point to it in "Risco antes do merge". No proof →
+  `- Testado adversarialmente: não — <motivo>`. A bullet, never a box, either way.
 - **Misstate provenance.** "Gerado por" names the real author: model + version + harness
   when you wrote it; `humano` only when a human did. Don't launder agent-written text as
   human-authored.
@@ -140,6 +143,11 @@ Read `.github/pull_request_template.md`. The standard template pattern uses comm
 
 Content goes **between** the opening marker line and its corresponding `<!-- ...:end -->`. Never remove or reorder the markers.
 
+The one template text you do **not** copy verbatim: checklist lines. Some templates
+(turbi-guard's) ship `- [ ] Um humano revisou…` / `- [ ] Testado adversarialmente…`; rewrite
+each as a plain bullet stating its status in words (see Binding rules). Left as boxes they
+fail the VTEC gate (step 6).
+
 ### 2. Gather context
 
 Run in parallel to understand the full change set:
@@ -216,7 +224,7 @@ When the repo's template defines `###` subsections inside the `comments` block, 
 
 | Subseção | Skill | Preencher com |
 |----------|-------|---------------|
-| **Autoria e rigor** | *author* (this skill) | `Gerado por` (modelo/versão + harness, ou "humano"); `Prompt/origem` (opcional, **redigido** — sem segredos/PII/hosts); os dois checkboxes. O checkbox *"testado adversarialmente"* é satisfeito pela break-the-fix de "Risco antes do merge" — aponte, não duplique. **Nunca marque a caixa "um humano revisou o diff" nem invente a break-the-fix** — ver [Binding rules](#binding-rules--honesty-and-scope-read-before-writing-anything). |
+| **Autoria e rigor** | *author* (this skill) | `Gerado por` (modelo/versão + harness, ou "humano"); `Prompt/origem` (opcional, **redigido** — sem segredos/PII/hosts); duas linhas de status **em bullet, nunca checkbox**: `- Revisão humana do diff completo: **pendente** (o autor agente não atesta isso).` e `- Testado adversarialmente: <onde está a prova>`. A segunda é satisfeita pela break-the-fix de "Risco antes do merge" — aponte, não duplique. **Nunca atribua a revisão humana a si nem invente a break-the-fix** — ver [Binding rules](#binding-rules--honesty-and-scope-read-before-writing-anything). |
 | **Risco antes do merge** | `pre-merge-verify` | SHA + escopo do diff, análise de regressão, prova break-the-fix, teto local≠CI, testes com resultado REAL |
 | **Verificação pós-deploy** | `post-deploy-verify` (PLAN) | **Apenas a *declaração* estável (só isso vai no corpo):** classifique a mudança em **UMA** classe (`behavior`/`tracing-correlation`/`tracing-otel`/`logger`/`process-safety`/`infra` — se abranger várias, separe os artefatos ou divida o PR); pares `[OB-n]`↔`[PD-n]`, cada um escopado à `revision_name` + janela pós-deploy e que **passa no teste de falseabilidade** ([Binding rules](#binding-rules--honesty-and-scope-read-before-writing-anything)); guarda RED (vs. a revision anterior como baseline); gatilho de rollback explícito. O corpo **aponta** para o comentário `<!-- post-deploy-verification -->` (aberto como *stub*, resultados ⬜ TODO, em PLAN) — **não duplique** ali a evidência que evolui. N/A com justificativa concreta se nada for observável. |
 
@@ -236,7 +244,7 @@ fails. Two hard limits on this pass:
   after context has faded — is where invented test counts, SHAs, and revision names appear.
   If a keep-list gap is real, go get the evidence and re-draft.
 - **Honest-gap floor.** Never cut `não executado`, `INCONCLUSIVE`, an `N/A` plus its concrete
-  reason, the local≠CI ceiling, the unchecked human-review box, an `[OB-n]`/`[PD-n]` pair, a
+  reason, the local≠CI ceiling, the `pendente` human-review bullet, an `[OB-n]`/`[PD-n]` pair, a
   break-the-fix proof, an accepted risk, or a follow-up reference. Those *are* keep-list
   content (risk and verification). A shorter body that dropped a named gap now overclaims.
 
@@ -244,7 +252,36 @@ Expect the result to be noticeably shorter than the draft; that is the point, no
 See [references/reviewer-pass.md](references/reviewer-pass.md) for the cut-list, the
 release-notes tells, worked before/after rewrites, and the exit checklist.
 
-### 6. Create or update the PR
+### 6. Gate check (before every `gh pr create` / `gh pr edit`)
+
+```bash
+grep -nE -- '([-*+]|[0-9]+[.)]) +\[[ xX]\] ' .work/body-pr-<slug>.md   # must print nothing
+```
+
+Any hit is a checklist item: rewrite it as a bullet that states its status in words
+(Binding rules) and re-run. The pattern covers what the gate rejects — `- [ ] …` anywhere in
+the raw body; HTML comments and code fences do not hide it — and also ticked and `*`/numbered
+items, because ticking is the tempting way to turn the check green and is how a false
+attestation gets in. It ignores a quoted mention such as `"- [ ]"`, which turbi-guard's own
+template comment contains.
+
+On Turbi repos the required check **`VTEC - Pull Request Description`** (app
+`vtec-pr-analyzer`) fails the whole PR when any of these holds:
+
+- the body has an unchecked `- [ ] …` line;
+- a `:init:required` section has fewer than 10 characters (trimmed) between its markers —
+  text outside the markers does not count;
+- the title is not Conventional Commits (`type: …` / `type(scope): …`; the `:` is
+  required), is only a ticket ID, or its description is under 16 characters with no action
+  verb (`adiciona`, `corrige`, …). A ticket ID goes in front: `[CF-123] feat: …`.
+
+The check run publishes no output; the failing rule is named only in the
+`vtec-pr-analyzer[bot]` evaluation comment on the PR. There is no re-run button: saving a
+title/body edit re-runs it, and a push re-runs it for code. Drafts get no check until
+"Ready for review". Source of truth: the VTEC troubleshooting doc, section "Descrição e
+título".
+
+### 7. Create or update the PR
 
 **Create:**
 
@@ -273,7 +310,7 @@ gh pr edit <NUMBER> --body-file .work/body-pr-<slug>.md
 
 Add `-R OWNER/REPO` when running from outside the repo or from a different clone.
 
-### 7. Add proof comments
+### 8. Add proof comments
 
 After PR creation, attach test evidence as a PR comment:
 
@@ -304,6 +341,7 @@ Binding rules above).
 | Create PR | `gh pr create --title "..." --body-file .work/body-pr-<slug>.md` |
 | Create draft PR | `gh pr create --draft --title "WIP: ..." --body-file .work/body-pr-<slug>.md` |
 | Update PR body | `gh pr edit <N> --body-file .work/body-pr-<slug>.md` |
+| Gate check before create/edit | the step-6 `grep` on `.work/body-pr-<slug>.md` must print nothing |
 | Add comment | `gh pr comment <N> --body "..."` |
 | Check CI status | `gh pr checks <N>` |
 | Cross-repo | Add `-R OWNER/REPO` to any command |
@@ -329,10 +367,17 @@ The traps that actually break a PR body — *trap → do this instead → where 
   and fill whatever subsections *it* defines. Check: did you `cat` the repo template this
   run, or assume the bundled copy?
 - **Fabrication and human-only fields (see [Binding rules](#binding-rules--honesty-and-scope-read-before-writing-anything)).**
-  The template can't stop an agent from inventing `30 suites pass` or ticking
-  "um humano revisou o diff". Only paste output you actually ran; leave the human-review
-  checkbox `[ ]`; mark "testado adversarialmente" only when a real break-the-fix exists.
-  Check: can you point to the command output / proof behind every claim and checkbox?
+  The template can't stop an agent from inventing `30 suites pass` or claiming
+  "um humano revisou o diff". Only paste output you actually ran; the human-review bullet
+  says **pendente**; "testado adversarialmente" points to a real break-the-fix or says
+  `não`. Check: can you point to the command output / proof behind every claim and status
+  line?
+- **An unchecked box reds the VTEC gate, and the check says nothing.** A `- [ ]` —
+  including one copied from the repo template — fails `VTEC - Pull Request Description`;
+  the run has no output, so the PR just sits red. Ticking the box "fixes" it by attesting
+  what nobody did. Write status lines as bullets and run the step-6 grep
+  before every create/edit. Check: the grep prints nothing; on a red PR, read the
+  `vtec-pr-analyzer[bot]` comment.
 - **A conciseness pass that deletes an honest gap makes the PR worse.** Step 5 cuts prose,
   not disclosure — a named gap that vanishes silently becomes an implied PASS, and a claim
   that appears at edit time is usually invented. Keep the [honest-gap

@@ -3,8 +3,9 @@
 A worked `.work/body-pr-<slug>.md` for turbi-guard's three-subsection template,
 shown **after** the step-5 reviewer pass — this is what survives the cut, not a
 first draft. Copy the shape, not the content — every field must reflect *this* PR's
-real evidence (see the **Binding rules** in `SKILL.md`: no fabricated output,
-human-only checkbox stays `[ ]` unless a human checked it).
+real evidence (see the **Binding rules** in `SKILL.md`: no fabricated output, the
+human-review status stays **pendente** — the agent never attests it — and no line is a
+checkbox, so the VTEC gate's grep in step 6 prints nothing).
 
 File: `.work/body-pr-seed-safety.md`
 
@@ -50,8 +51,8 @@ sem `_assert_local_env` passar primeiro. É isso que o diff deve mostrar.
 
 ### Autoria e rigor
 Gerado por: Claude Code / Opus 4.8. Prompt/origem: "proteger os scripts de seed contra execução em produção".
-- [x] Um humano revisou o diff COMPLETO antes de submeter.
-- [x] Testado adversarialmente, não só o happy path (ver break-the-fix em "Risco antes do merge").
+- Revisão humana do diff completo: **pendente** (o autor agente não atesta isso).
+- Testado adversarialmente: break-the-fix em "Risco antes do merge".
 
 ### Risco antes do merge
 - SHA `abc1234` · escopo: `Makefile` + 2 SQLs de seed; **não** toca código de produção nem migrações.

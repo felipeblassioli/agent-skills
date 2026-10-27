@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 as recorded in `metadata.json` (or `assets/metadata.json` / registry) for this skill.
 
+## 1.2.0 - 2026-10-27
+
+### Changed
+
+- **Status lines are bullets, never checkboxes.** Human review and adversarial testing are
+  written as `- Revisão humana do diff completo: **pendente** (o autor agente não atesta
+  isso).` and `- Testado adversarialmente: <onde está a prova>`. The required Turbi check
+  `VTEC - Pull Request Description` fails on any unchecked `- [ ]` anywhere in the raw body,
+  so the old rule — leave the human-review box `[ ]` — went red on every PR that followed
+  it (four in Sep–Oct 2026), and the only checkbox that passes is the false attestation.
+  Binding rules, the Comentários table, the Gotchas, `references/reviewer-pass.md` and the
+  fallback template follow.
+- Checklist lines in a repo's live template (turbi-guard ships two) are rewritten as status
+  bullets; the comment markers stay verbatim.
+
+### Added
+
+- **Step 6, gate check** before every `gh pr create` / `gh pr edit`:
+  `grep -nE -- '([-*+]|[0-9]+[.)]) +\[[ xX]\] ' <body>` must print nothing. It covers the
+  gate's pattern plus ticked and `*`/numbered items, and skips quoted mentions such as the
+  `"- [ ]"` in turbi-guard's template comment. The step also lists the gate's other rules
+  (≥10 characters inside each `:init:required` pair, Conventional Commits title), says the
+  check run carries no output (read the `vtec-pr-analyzer[bot]` comment) and that saving an
+  edit is the only re-run.
+
+### Fixed
+
+- `assets/body-example.md` showed the human-review box **ticked**, contradicting the
+  binding rule it was meant to illustrate.
+
 ## 1.1.0 - 2026-08-26
 
 ### Added
