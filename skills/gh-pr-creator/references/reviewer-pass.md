@@ -68,7 +68,7 @@ sentence you wish were true. See **Binding rules** in `SKILL.md`.
 
 - `não executado` / `INCONCLUSIVE` / an `N/A` plus its concrete reason
 - the local≠CI ceiling
-- the unchecked human-review checkbox
+- the `pendente` human-review status line
 - any `[OB-n]`/`[PD-n]` pair or break-the-fix proof
 - an accepted risk or a follow-up issue reference
 
@@ -156,11 +156,12 @@ real result plus a named gap. Same change, fewer lines, and now reviewable.
 
 ## Exit criteria
 
-Before submitting, confirm:
+Before submitting, confirm (this list is for you, not for the PR body — the body carries no
+checkboxes):
 
-- [ ] Every remaining sentence maps to one of the six keep-list categories.
-- [ ] No sentence restates something `--stat` or a hunk shows faster.
-- [ ] Body length tracks diff size.
-- [ ] The pass only removed and tightened — it added no new factual claim.
-- [ ] Every honest gap that was in the draft is still in the body.
-- [ ] Read aloud, it sounds like an engineer explaining the change, not a release note.
+- Every remaining sentence maps to one of the six keep-list categories.
+- No sentence restates something `--stat` or a hunk shows faster.
+- Body length tracks diff size.
+- The pass only removed and tightened — it added no new factual claim.
+- Every honest gap that was in the draft is still in the body.
+- Read aloud, it sounds like an engineer explaining the change, not a release note.

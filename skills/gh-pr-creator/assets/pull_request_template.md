@@ -20,8 +20,8 @@
      - Gerado por: modelo + versão + harness (ex.: Claude Code / Opus 4.8), ou "humano".
      - Prompt/origem (opcional): pedido que originou a mudança.
        REDIJA segredos/PII/hosts internos. É contexto, NÃO é a prova de rigor. -->
-- [ ] Um humano revisou o diff COMPLETO antes de submeter.
-- [ ] Testado adversarialmente, não só o happy path (a prova break-the-fix em "Risco antes do merge" já satisfaz isto).
+- Revisão humana do diff completo: **pendente** (o autor agente não atesta isso).
+- Testado adversarialmente: aponte a prova (a break-the-fix em "Risco antes do merge" já satisfaz isto); sem prova, escreva "não" e o motivo.
 
 ### Risco antes do merge
 <!-- Skill: pre-merge-verify. Preencha com EVIDÊNCIA, não com "parece seguro":
