@@ -652,6 +652,57 @@
         "technical-writing"
       ],
       "description": "Rewrite a PR body around what a reviewer actually needs by applying one deletion test to every paragraph, bullet, row and proof, then rewriting what survives from the final understanding of the change rather than the investigation chronology. Preserves required template sections, markers and language; keeps correctness-bearing nuance and honest gaps."
+    },
+    "do-pragmatically-deliver": {
+      "version": "0.2.1",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "claude",
+        "agents"
+      ],
+      "tags": [
+        "epic",
+        "delivery",
+        "autonomous",
+        "github",
+        "reconciliation",
+        "planning"
+      ],
+      "description": "Own an epic end to end and autonomously deliver it in verifiable slices, starting by reconciling the epic against work that already landed, is in flight, or was superseded. Use when someone hands over an epic/initiative/multi-story GitHub issue and wants progress rather than a plan to approve."
+    },
+    "dr": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "claude",
+        "agents"
+      ],
+      "tags": [
+        "collaboration",
+        "agent-guidance",
+        "instructions",
+        "retrospective"
+      ],
+      "description": "Review the collaboration itself when working with the agent feels repetitive, over-steered, bureaucratic, or confused: find recurring friction, name the guidance causing it, and propose subtraction-first changes."
+    },
+    "pr-sanity-check": {
+      "version": "0.1.0",
+      "author": "felipeblassioli",
+      "scope": "global",
+      "targets": [
+        "claude",
+        "agents"
+      ],
+      "tags": [
+        "pull-request",
+        "release",
+        "production",
+        "judgment",
+        "review"
+      ],
+      "description": "Lightweight release judgment for an already-reviewed PR: is the problem worth addressing now, does this change add value, and what is the sensible release boundary. Use pre-merge, pre-deploy, post-deploy, or when reconsidering an older PR."
     }
   },
   "targetPaths": {
