@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "October 2026",
+  "abstract": "Release judgment for an already-reviewed PR. Reconstructs the problem behind the PR and the related work that could change the decision, asks whether acting now is worthwhile, finds the minimum coherent intervention, re-checks present release reality, and defines an outcome test from production signals. Produces three separate judgments (worth addressing now, approach value, next action) in a short briefing. Read-only."
+}

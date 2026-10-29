@@ -1,0 +1,6 @@
+{
+  "version": "0.1.0",
+  "author": "felipeblassioli",
+  "date": "October 2026",
+  "abstract": "Pause the task and review the collaboration itself. Finds recurring friction between what the user asks, what the agent tends to do, and the durable guidance behind it (CLAUDE.md/AGENTS.md, skills, ADRs, memories, templates), names the actual source of each pattern, challenges stale or over-broad guidance subtraction-first, and challenges the user too. Ends with at most five concrete changes and one cheap experiment; edits nothing unless asked."
+}

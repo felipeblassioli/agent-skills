@@ -1,0 +1,6 @@
+{
+  "version": "0.2.1",
+  "author": "felipeblassioli",
+  "date": "August 2026",
+  "abstract": "Own an epic end to end and autonomously deliver it in verifiable slices. Warm-up step reconciles the epic against work that already landed, is in flight, or was superseded before any code is written; delivery then proceeds one coherent slice at a time with a named falsifier per slice. Encodes the autonomous-operation contract (decide unknowns, record decisions, no permission-asking mid-task) and leaves state in the epic so a cold session can resume."
+}
