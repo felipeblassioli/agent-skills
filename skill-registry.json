@@ -654,7 +654,7 @@
       "description": "Rewrite a PR body around what a reviewer actually needs by applying one deletion test to every paragraph, bullet, row and proof, then rewriting what survives from the final understanding of the change rather than the investigation chronology. Preserves required template sections, markers and language; keeps correctness-bearing nuance and honest gaps."
     },
     "ts-prod-code": {
-      "version": "0.2.0",
+      "version": "0.3.0",
       "author": "felipeblassioli",
       "scope": "global",
       "targets": [

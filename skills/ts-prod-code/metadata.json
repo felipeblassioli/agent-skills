@@ -1,6 +1,6 @@
 {
   "name": "ts-prod-code",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "felipeblassioli",
   "date": "2026-05-06",
   "abstract": "Production TypeScript guidance for layered module boundaries, strict typing, domain modeling, boundary validation, error ownership, and observability.",
