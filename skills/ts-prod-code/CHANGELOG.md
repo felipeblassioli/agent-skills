@@ -2,6 +2,17 @@
 
 All notable changes to this skill will be documented in this file.
 
+## 0.3.0 - 2026-10-30
+
+### Added
+
+- Hard rule 11: imports at the top of the module; lazy imports need a stated reason.
+- Hard rule 12: exhaustive `switch` with an `assertNever` default, promoted from the type-safety checklist so it applies without loading references.
+
+### Validation
+
+- `scripts/validate-skill.sh skills/ts-prod-code` passes.
+
 ## [0.2.0] - 2026-05-06
 
 ### Changed

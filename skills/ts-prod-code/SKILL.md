@@ -58,6 +58,8 @@ Do NOT apply this skill to:
 8. **One responsibility per file** encoded by suffix. Splitting roles (entity + repository in one file) is a fail.
 9. **One throw → one log** at the boundary. Never log secrets/PII.
 10. **Domain code never imports infrastructure.** Repositories/gateways are interfaces in the domain; impls live in infra.
+11. **Imports at the top of the module.** No mid-file `require`, `await import()`, or inline `import("x").T` types; a lazy import needs a stated reason (cold start, optional dependency).
+12. **Exhaustive `switch` on unions.** End with `default: return assertNever(x)` so a new variant is a compile error ([type-safety-checklist](references/type-safety-checklist.md)).
 
 ## Procedure
 
